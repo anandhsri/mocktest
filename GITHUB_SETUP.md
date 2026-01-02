@@ -50,6 +50,12 @@ git branch -M main
 git push -u origin main
 ```
 
+**OR use the automated script:**
+```bash
+# First add the remote manually, then:
+./push_to_github.sh
+```
+
 ## Step 5: Verify
 
 Visit your repository on GitHub to verify all files are uploaded.
