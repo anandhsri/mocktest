@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematics Mock Test - 10th Grade CBSE</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Login Screen -->
+        <div id="login-screen" class="screen active">
+            <div class="login-content">
+                <h1>CBSE Mock Test Portal</h1>
+                <h2>10th Grade Test System</h2>
+                <div class="login-options">
+                    <div class="login-card" id="student-login-card">
+                        <div class="login-icon">👤</div>
+                        <h3>Student Login</h3>
+                        <p>Take mock tests and view your results</p>
+                        <button id="student-login-btn" class="btn-primary">Login as Student</button>
+                    </div>
+                    <div class="login-card" id="admin-login-card">
+                        <div class="login-icon">🔐</div>
+                        <h3>Admin Login</h3>
+                        <p>Review all test results and analytics</p>
+                        <button id="admin-login-btn" class="btn-primary">Login as Admin</button>
+                    </div>
+                </div>
+                <div id="admin-password-section" class="admin-password-section" style="display: none;">
+                    <input type="password" id="admin-password" placeholder="Enter Admin Password" class="password-input">
+                    <button id="admin-submit-btn" class="btn-primary">Submit</button>
+                    <button id="cancel-admin-login-btn" class="btn-secondary">Cancel</button>
+                    <p id="admin-error" class="error-message" style="display: none;"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subject Selection Screen -->
+        <div id="subject-selection-screen" class="screen">
+            <div class="subject-selection-content">
+                <h1>Choose Your Subject</h1>
+                <h2>10th Grade CBSE Mock Test</h2>
+                <div class="candidate-info">
+                    <div class="candidate-details">
+                        <p><strong>Candidate Name:</strong> Siddesh Anand</p>
+                        <p><strong>School:</strong> JGRVK</p>
+                        <p><strong>Grade:</strong> 10th Grade</p>
+                    </div>
+                </div>
+                <div class="subject-grid">
+                    <div class="subject-card" data-subject="Mathematics">
+                        <div class="subject-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.2)"/>
+                                <path d="M30 50 L50 30 L70 50 L50 70 Z" fill="white" opacity="0.9"/>
+                                <text x="50" y="65" font-size="20" fill="white" text-anchor="middle" font-weight="bold">π</text>
+                            </svg>
+                        </div>
+                        <h3>Mathematics</h3>
+                        <p class="subject-description">50 Questions | 60 Minutes</p>
+                        <p class="subject-years">Years: 2020-2025</p>
+                    </div>
+                    <div class="subject-card" data-subject="Physics">
+                        <div class="subject-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.2)"/>
+                                <circle cx="35" cy="35" r="8" fill="white" opacity="0.9"/>
+                                <circle cx="65" cy="35" r="8" fill="white" opacity="0.9"/>
+                                <circle cx="50" cy="65" r="8" fill="white" opacity="0.9"/>
+                                <path d="M35 35 L50 65 M65 35 L50 65" stroke="white" stroke-width="2" opacity="0.9"/>
+                            </svg>
+                        </div>
+                        <h3>Physics</h3>
+                        <p class="subject-description">50 Questions | 60 Minutes</p>
+                        <p class="subject-years">Years: 2020-2025</p>
+                    </div>
+                    <div class="subject-card" data-subject="Chemistry">
+                        <div class="subject-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.2)"/>
+                                <rect x="35" y="30" width="30" height="40" rx="5" fill="white" opacity="0.9"/>
+                                <rect x="40" y="35" width="20" height="30" fill="rgba(255,255,255,0.5)"/>
+                                <circle cx="50" cy="50" r="5" fill="white" opacity="0.9"/>
+                                <path d="M50 50 L50 70" stroke="white" stroke-width="2" opacity="0.9"/>
+                            </svg>
+                        </div>
+                        <h3>Chemistry</h3>
+                        <p class="subject-description">50 Questions | 60 Minutes</p>
+                        <p class="subject-years">Years: 2020-2025</p>
+                    </div>
+                    <div class="subject-card" data-subject="Biology">
+                        <div class="subject-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.2)"/>
+                                <ellipse cx="50" cy="50" rx="25" ry="35" fill="white" opacity="0.9"/>
+                                <ellipse cx="50" cy="45" rx="20" ry="25" fill="rgba(255,255,255,0.3)"/>
+                                <circle cx="45" cy="40" r="3" fill="white" opacity="0.9"/>
+                                <circle cx="55" cy="40" r="3" fill="white" opacity="0.9"/>
+                                <path d="M40 55 Q50 60 60 55" stroke="white" stroke-width="2" fill="none" opacity="0.9"/>
+                            </svg>
+                        </div>
+                        <h3>Biology</h3>
+                        <p class="subject-description">50 Questions | 60 Minutes</p>
+                        <p class="subject-years">Years: 2020-2025</p>
+                    </div>
+                    <div class="subject-card" data-subject="Social Science">
+                        <div class="subject-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.2)"/>
+                                <rect x="30" y="35" width="40" height="30" rx="3" fill="white" opacity="0.9"/>
+                                <rect x="35" y="40" width="30" height="20" fill="rgba(255,255,255,0.3)"/>
+                                <line x1="40" y1="50" x2="60" y2="50" stroke="white" stroke-width="2" opacity="0.9"/>
+                                <line x1="50" y1="45" x2="50" y2="55" stroke="white" stroke-width="2" opacity="0.9"/>
+                                <circle cx="50" cy="75" r="8" fill="white" opacity="0.9"/>
+                            </svg>
+                        </div>
+                        <h3>Social Science</h3>
+                        <p class="subject-description">50 Questions | 60 Minutes</p>
+                        <p class="subject-years">Years: 2020-2025</p>
+                    </div>
+                    <div class="subject-card" data-subject="English">
+                        <div class="subject-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.2)"/>
+                                <path d="M30 30 L50 20 L70 30 L70 50 L50 60 L30 50 Z" fill="white" opacity="0.9"/>
+                                <text x="50" y="45" font-family="Arial, sans-serif" font-size="24" fill="#9b59b6" text-anchor="middle" font-weight="bold">E</text>
+                                <path d="M35 65 L45 75 M50 70 L50 80 M55 75 L65 65" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+                            </svg>
+                        </div>
+                        <h3>English</h3>
+                        <p class="subject-description">50 Questions | 60 Minutes</p>
+                        <p class="subject-years">Years: 2020-2025</p>
+                    </div>
+                </div>
+                <div class="subject-actions">
+                    <button class="logout-btn btn-secondary">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen">
+            <div class="welcome-content">
+                <h1 id="welcome-title">Select a Subject</h1>
+                <h2 id="welcome-subtitle">10th Grade CBSE - Tough Questions</h2>
+                <div id="selected-subject-badge" class="selected-subject-badge" style="display: none;">
+                    <span id="selected-subject-name">Mathematics</span>
+                </div>
+                <div class="candidate-info">
+                    <div class="candidate-details">
+                        <p><strong>Candidate Name:</strong> Siddesh Anand</p>
+                        <p><strong>School:</strong> JGRVK</p>
+                        <p><strong>Grade:</strong> 10th Grade</p>
+                    </div>
+                </div>
+                <div class="test-info">
+                    <div class="info-card">
+                        <h3>Test Details</h3>
+                        <ul>
+                            <li><strong>Total Questions:</strong> 50</li>
+                            <li><strong>Duration:</strong> 60 minutes (1 hour)</li>
+                            <li><strong>Mathematics:</strong> 50 questions (100%)</li>
+                            <li><strong>Question Source:</strong> Years 2020-2025</li>
+                            <li><strong>Difficulty:</strong> Tough</li>
+                            <li><strong>Marking:</strong> +4 for correct, -1 for incorrect</li>
+                        </ul>
+                    </div>
+                    <div class="instructions-card">
+                        <h3>Instructions</h3>
+                        <ul>
+                            <li>Read each question carefully before answering</li>
+                            <li>You can navigate between questions using Previous/Next buttons</li>
+                            <li>You can mark questions for review</li>
+                            <li>Submit your test when you're ready</li>
+                            <li>Timer will be displayed at the top</li>
+                        </ul>
+                    </div>
+                    <div class="proctoring-notice">
+                        <h3>⚠️ Proctoring Rules</h3>
+                        <ul>
+                            <li><strong>Fullscreen Mode:</strong> Test must be taken in fullscreen mode</li>
+                            <li><strong>No Tab Switching:</strong> Switching tabs/windows is not allowed</li>
+                            <li><strong>No Copy/Paste:</strong> Copying or pasting is disabled</li>
+                            <li><strong>No Right-Click:</strong> Right-click menu is disabled</li>
+                            <li><strong>No Developer Tools:</strong> Opening developer tools is not allowed</li>
+                            <li><strong>Violation Limit:</strong> Maximum 3 violations allowed. Exceeding will auto-submit test</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="welcome-actions">
+                    <button id="change-subject-btn" class="btn-secondary">Change Subject</button>
+                    <button id="start-test-btn" class="btn-primary">Start Test</button>
+                    <button id="view-last-results-btn" class="btn-secondary">View Last Test Results</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Screen -->
+        <div id="test-screen" class="screen">
+            <div class="test-header">
+                <div class="test-header-left">
+                    <div class="subject-icon-test" id="subject-icon-test">
+                        <!-- Subject icon will be dynamically inserted here -->
+                    </div>
+                    <div class="candidate-header">
+                        <span class="candidate-name">Siddesh Anand</span>
+                        <span class="candidate-school">JGRVK - 10th Grade</span>
+                    </div>
+                </div>
+                <div class="timer-section">
+                    <span class="timer-label">Time Remaining:</span>
+                    <span id="timer" class="timer">60:00</span>
+                </div>
+                <div class="question-counter">
+                    <span id="question-number">1</span> / <span id="total-questions">100</span>
+                </div>
+                <div class="proctor-status">
+                    <span id="proctor-warning" class="proctor-warning" style="display: none;"></span>
+                    <span id="violation-count" class="violation-count" style="display: none;">Violations: 0</span>
+                </div>
+            </div>
+            
+            <!-- Proctor Warning Modal -->
+            <div id="proctor-warning-modal" class="proctor-modal" style="display: none;">
+                <div class="proctor-modal-content">
+                    <h2>⚠️ Proctoring Warning</h2>
+                    <p id="proctor-warning-message"></p>
+                    <div class="proctor-violation-info">
+                        <p><strong>Violations:</strong> <span id="modal-violation-count">0</span> / <span id="max-violations">3</span></p>
+                        <p class="warning-text">Repeated violations will result in automatic test submission.</p>
+                    </div>
+                    <button id="acknowledge-warning-btn" class="btn-primary">I Understand</button>
+                </div>
+            </div>
+
+            <div class="test-body">
+                <div class="question-panel">
+                    <div class="question-header">
+                        <span class="subject-badge" id="subject-badge">Physics</span>
+                        <span class="year-badge" id="year-badge">2023</span>
+                        <span class="marks-badge">4 Marks</span>
+                    </div>
+                    <div class="question-text" id="question-text">
+                        Question will appear here
+                    </div>
+                    <div class="question-diagram" id="question-diagram"></div>
+                    <div class="options" id="options">
+                        <!-- Options will be dynamically generated -->
+                    </div>
+                    <div class="question-actions">
+                        <div class="action-buttons">
+                            <button id="mark-review-btn" class="btn-secondary">Mark for Review</button>
+                            <button id="clear-answer-btn" class="btn-secondary">Clear Answer</button>
+                        </div>
+                        <div class="nav-buttons">
+                            <button id="prev-btn" class="btn-nav">Previous</button>
+                            <button id="next-btn" class="btn-nav">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="question-palette">
+                        <h3>Question Palette</h3>
+                        <div class="legend">
+                            <div class="legend-item">
+                                <span class="legend-box answered"></span>
+                                <span>Answered</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-box marked"></span>
+                                <span>Marked</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-box not-answered"></span>
+                                <span>Not Answered</span>
+                            </div>
+                        </div>
+                        <div class="subject-section">
+                            <h4>Mathematics (50)</h4>
+                            <div id="mathematics-questions" class="question-grid"></div>
+                        </div>
+                    </div>
+                    <button id="submit-test-btn" class="btn-submit">Submit Test</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test History Screen -->
+        <div id="test-history-screen" class="screen">
+            <div class="history-content">
+                <h1>Test History</h1>
+                <div class="history-header">
+                    <button id="back-to-welcome-btn" class="btn-secondary">← Back to Home</button>
+                    <button id="clear-all-results-btn" class="btn-danger">Clear All Results</button>
+                </div>
+                <div id="test-history-list" class="test-history-list">
+                    <!-- Test results will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <!-- Celebration Overlay -->
+            <div id="celebration-overlay" class="celebration-overlay" style="display: none;">
+                <div class="celebration-content">
+                    <h1 class="celebration-title">🎉 Outstanding Performance! 🎉</h1>
+                    <h2 class="celebration-subtitle">You scored above 95%!</h2>
+                    <div class="celebration-message">Congratulations on this exceptional achievement!</div>
+                    <button id="close-celebration-btn" class="btn-primary">Continue</button>
+                </div>
+                <div id="sparkler-container" class="sparkler-container"></div>
+            </div>
+            <div class="results-content">
+                <div class="candidate-info-results">
+                    <p><strong>Candidate:</strong> Siddesh Anand | <strong>School:</strong> JGRVK | <strong>Grade:</strong> 10th Grade</p>
+                </div>
+                <h1>Test Results</h1>
+                <div class="score-card">
+                    <div class="score-item">
+                        <h3>Total Score</h3>
+                        <div class="score-value" id="total-score">0</div>
+                        <div class="score-max">out of 200</div>
+                    </div>
+                    <div class="score-item">
+                        <h3>Correct Answers</h3>
+                        <div class="score-value" id="correct-count">0</div>
+                    </div>
+                    <div class="score-item">
+                        <h3>Incorrect Answers</h3>
+                        <div class="score-value incorrect" id="incorrect-count">0</div>
+                    </div>
+                    <div class="score-item">
+                        <h3>Unanswered</h3>
+                        <div class="score-value" id="unanswered-count">0</div>
+                    </div>
+                </div>
+                <div class="subject-scores">
+                    <div class="subject-score-card">
+                        <h3 id="result-subject-name">Mathematics</h3>
+                        <div class="subject-score" id="mathematics-score">0/200</div>
+                    </div>
+                </div>
+                <div id="results-analysis" class="results-analysis"></div>
+                <div id="chapter-performance" class="chapter-performance-section"></div>
+                <div id="answer-review" class="answer-review-section"></div>
+                <div class="results-actions">
+                    <button id="download-pdf-btn" class="btn-primary">Download PDF</button>
+                    <button id="review-answers-btn" class="btn-primary">Review Answers</button>
+                    <button id="restart-test-btn" class="btn-secondary">Take Another Test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Configure PDF.js worker
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
+    <script src="questions.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+

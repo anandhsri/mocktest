@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Test Results - Mathematics Mock Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .results-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .no-results {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .no-results h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .no-results p {
+            color: #666;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="results-container">
+            <div id="results-display"></div>
+        </div>
+    </div>
+
+    <script>
+        function loadAndDisplayResults() {
+            const display = document.getElementById('results-display');
+            
+            try {
+                const saved = localStorage.getItem('lastTestResults');
+                if (!saved) {
+                    display.innerHTML = `
+                        <div class="no-results">
+                            <h2>No Test Results Found</h2>
+                            <p>You haven't taken any test yet, or the results have been cleared.</p>
+                            <p style="margin-top: 20px;">
+                                <a href="index.html" style="color: #667eea; text-decoration: none; font-weight: bold;">← Go Back to Test</a>
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const results = JSON.parse(saved);
+                const timestamp = new Date(results.timestamp);
+                
+                // Create results HTML
+                let html = `
+                    <div class="results-content">
+                        <div class="candidate-info-results">
+                            <p><strong>Candidate:</strong> Siddesh Anand | <strong>School:</strong> JGRVK | <strong>Grade:</strong> 10th Grade</p>
+                            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                                <strong>Test Taken:</strong> ${timestamp.toLocaleString()}
+                            </p>
+                        </div>
+                        <h1>Last Test Results</h1>
+                        <div class="score-card">
+                            <div class="score-item">
+                                <h3>Total Score</h3>
+                                <div class="score-value">${results.totalScore}</div>
+                                <div class="score-max">out of 200</div>
+                            </div>
+                            <div class="score-item">
+                                <h3>Correct Answers</h3>
+                                <div class="score-value">${results.correctCount}</div>
+                            </div>
+                            <div class="score-item">
+                                <h3>Incorrect Answers</h3>
+                                <div class="score-value incorrect">${results.incorrectCount}</div>
+                            </div>
+                            <div class="score-item">
+                                <h3>Unanswered</h3>
+                                <div class="score-value">${results.unansweredCount}</div>
+                            </div>
+                        </div>
+                        <div class="subject-scores">
+                            <div class="subject-score-card">
+                                <h3>Mathematics</h3>
+                                <div class="subject-score">${results.mathematicsScore}/200</div>
+                            </div>
+                        </div>
+                `;
+                
+                // Add detailed analysis
+                const totalQuestions = results.questions.length;
+                const attempted = totalQuestions - results.unansweredCount;
+                const accuracy = attempted > 0 ? (results.correctCount / attempted) * 100 : 0;
+                const attemptRate = (attempted / totalQuestions) * 100;
+                
+                html += `
+                    <div id="results-analysis" class="results-analysis">
+                        <h2>Detailed Results Analysis</h2>
+                        <div class="analysis-grid">
+                            <div class="analysis-card">
+                                <h4>Overall</h4>
+                                <div class="analysis-metric">
+                                    <span class="metric-label">Accuracy</span>
+                                    <span class="metric-value">${accuracy.toFixed(1)}%</span>
+                                </div>
+                                <div class="analysis-metric">
+                                    <span class="metric-label">Attempt Rate</span>
+                                    <span class="metric-value">${attemptRate.toFixed(1)}%</span>
+                                </div>
+                                <div class="analysis-metric">
+                                    <span class="metric-label">Attempted</span>
+                                    <span class="metric-value">${attempted}/${totalQuestions}</span>
+                                </div>
+                                <div class="analysis-metric">
+                                    <span class="metric-label">Total Score</span>
+                                    <span class="metric-value">${results.totalScore}/200</span>
+                                </div>
+                            </div>
+                            <div class="analysis-card">
+                                <h4>By Subject</h4>
+                                <div class="analysis-metric">
+                                    <span class="metric-label">Mathematics</span>
+                                    <span class="metric-value">${results.mathematicsScore}/200 (${((results.mathematicsScore/200)*100).toFixed(1)}%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add chapter performance
+                if (results.chapterPerformance) {
+                    const chapters = Object.keys(results.chapterPerformance).map(chapter => {
+                        const perf = results.chapterPerformance[chapter];
+                        const percentage = perf.total > 0 ? ((perf.correct / perf.total) * 100).toFixed(1) : 0;
+                        return {
+                            name: chapter,
+                            ...perf,
+                            percentage: parseFloat(percentage)
+                        };
+                    });
+                    chapters.sort((a, b) => a.percentage - b.percentage);
+                    
+                    html += `
+                        <div id="chapter-performance" class="chapter-performance-section">
+                            <h2>Chapter-wise Performance Analysis</h2>
+                            <div class="all-chapters-section">
+                                <h3 class="all-chapters-title">Complete Chapter-wise Breakdown</h3>
+                                <div class="chapters-by-subject">
+                                    <div class="subject-chapters">
+                                        <h4 class="subject-chapters-title">Mathematics</h4>
+                                        <div class="chapters-list">
+                                            ${chapters.map(chapter => {
+                                                const percentageClass = chapter.percentage >= 80 ? 'excellent' : 
+                                                                        chapter.percentage >= 60 ? 'good' : 
+                                                                        chapter.percentage >= 40 ? 'average' : 'poor';
+                                                return `
+                                                    <div class="chapter-item ${percentageClass}">
+                                                        <div class="chapter-name">${chapter.name}</div>
+                                                        <div class="chapter-details">
+                                                            <span class="chapter-score">${chapter.correct}/${chapter.total}</span>
+                                                            <span class="chapter-percentage">${chapter.percentage}%</span>
+                                                            <span class="chapter-marks">${chapter.score > 0 ? '+' : ''}${chapter.score}</span>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Add answer review
+                if (results.questions && results.answers) {
+                    const incorrectQuestions = [];
+                    const unansweredQuestions = [];
+                    
+                    results.questions.forEach((question, index) => {
+                        const userAnswer = results.answers[index];
+                        const questionNum = index + 1;
+                        
+                        if (userAnswer === null) {
+                            unansweredQuestions.push({
+                                questionNum,
+                                question: question.question,
+                                options: question.options,
+                                correct: question.correct,
+                                chapter: question.chapter,
+                                year: question.year,
+                                userAnswer: null
+                            });
+                        } else if (userAnswer !== question.correct) {
+                            incorrectQuestions.push({
+                                questionNum,
+                                question: question.question,
+                                options: question.options,
+                                correct: question.correct,
+                                chapter: question.chapter,
+                                year: question.year,
+                                userAnswer: userAnswer
+                            });
+                        }
+                    });
+                    
+                    if (incorrectQuestions.length > 0 || unansweredQuestions.length > 0) {
+                        html += '<div id="answer-review" class="answer-review-section"><div class="review-section">';
+                        
+                        if (incorrectQuestions.length > 0) {
+                            html += `
+                                <h2 class="review-title">❌ Incorrect Answers (${incorrectQuestions.length})</h2>
+                                <p class="review-subtitle">Review your mistakes and learn the correct solutions</p>
+                                <div class="review-questions">
+                                    ${incorrectQuestions.map(item => `
+                                        <div class="review-question-card incorrect">
+                                            <div class="review-question-header">
+                                                <span class="review-question-number">Question ${item.questionNum}</span>
+                                                <span class="review-chapter-badge">${item.chapter}</span>
+                                                <span class="review-year-badge">${item.year}</span>
+                                            </div>
+                                            <div class="review-question-text">${item.question}</div>
+                                            <div class="review-options">
+                                                ${item.options.map((option, idx) => {
+                                                    let optionClass = 'review-option';
+                                                    if (idx === item.correct) {
+                                                        optionClass += ' correct-answer';
+                                                    } else if (idx === item.userAnswer) {
+                                                        optionClass += ' user-answer-incorrect';
+                                                    }
+                                                    return `
+                                                        <div class="${optionClass}">
+                                                            <span class="option-label">${String.fromCharCode(65 + idx)}.</span>
+                                                            <span class="option-text">${option}</span>
+                                                            ${idx === item.correct ? '<span class="correct-badge">✓ Correct Answer</span>' : ''}
+                                                            ${idx === item.userAnswer ? '<span class="incorrect-badge">✗ Your Answer</span>' : ''}
+                                                        </div>
+                                                    `;
+                                                }).join('')}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
+                        }
+                        
+                        if (unansweredQuestions.length > 0) {
+                            html += `
+                                <h2 class="review-title">⏭️ Unanswered Questions (${unansweredQuestions.length})</h2>
+                                <p class="review-subtitle">Questions you didn't attempt - check the correct answers</p>
+                                <div class="review-questions">
+                                    ${unansweredQuestions.map(item => `
+                                        <div class="review-question-card unanswered">
+                                            <div class="review-question-header">
+                                                <span class="review-question-number">Question ${item.questionNum}</span>
+                                                <span class="review-chapter-badge">${item.chapter}</span>
+                                                <span class="review-year-badge">${item.year}</span>
+                                            </div>
+                                            <div class="review-question-text">${item.question}</div>
+                                            <div class="review-options">
+                                                ${item.options.map((option, idx) => {
+                                                    let optionClass = 'review-option';
+                                                    if (idx === item.correct) {
+                                                        optionClass += ' correct-answer';
+                                                    }
+                                                    return `
+                                                        <div class="${optionClass}">
+                                                            <span class="option-label">${String.fromCharCode(65 + idx)}.</span>
+                                                            <span class="option-text">${option}</span>
+                                                            ${idx === item.correct ? '<span class="correct-badge">✓ Correct Answer</span>' : ''}
+                                                        </div>
+                                                    `;
+                                                }).join('')}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
+                        }
+                        
+                        html += '</div></div>';
+                    }
+                }
+                
+                html += `
+                    <div class="results-actions">
+                        <a href="index.html" class="btn-primary" style="text-decoration: none; display: inline-block;">Take Another Test</a>
+                    </div>
+                </div>
+                `;
+                
+                display.innerHTML = html;
+                
+            } catch (e) {
+                display.innerHTML = `
+                    <div class="no-results">
+                        <h2>Error Loading Results</h2>
+                        <p>There was an error loading the test results: ${e.message}</p>
+                        <p style="margin-top: 20px;">
+                            <a href="index.html" style="color: #667eea; text-decoration: none; font-weight: bold;">← Go Back to Test</a>
+                        </p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Load results when page loads
+        window.addEventListener('DOMContentLoaded', loadAndDisplayResults);
+    </script>
+</body>
+</html>
+
+
+
+

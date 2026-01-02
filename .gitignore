@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Logs
+*.log
+refresh_questions_error.log
+refresh_questions.log
+
+# Backup files
+backups/
+*.backup
+*_backup.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+dummy
+*.tmp
+
+# Sensitive files (if any)
+*_password.txt
+*_secret.*
+
