@@ -11,6 +11,11 @@ class NEETMockTest {
         this.timeRemaining = 60 * 60; // 60 minutes in seconds
         this.timerInterval = null;
         this.testStarted = false;
+        // Per-question timer
+        this.questionTimeRemaining = 0; // Time remaining for current question in seconds
+        this.questionTimerInterval = null;
+        this.timeSpentPerQuestion = []; // Track time spent on each question
+        this.questionStartTime = null; // Track when current question was started
         this.adminPassword = 'admin123'; // Default admin password
         this.currentResults = null; // Store current results for PDF generation
         
@@ -23,7 +28,164 @@ class NEETMockTest {
         this.proctorCheckInterval = null;
         this.lastActivityTime = Date.now();
         
+        // Background music
+        this.backgroundMusic = null;
+        this.audioContext = null;
+        this.musicGainNode = null;
+        this.musicOscillators = [];
+        this.musicFadeInterval = null;
+        
         this.initializeEventListeners();
+    }
+    
+    async startBackgroundMusic() {
+        try {
+            // Stop any existing music first
+            this.stopBackgroundMusic();
+            
+            // Create HTML5 Audio element for South Indian instrumental music
+            this.backgroundMusic = new Audio();
+            
+            // Try local file first, then fallback to URL
+            // To use your own music: Place a file named 'south-indian-instrumental.mp3' in the project directory
+            // Recommended: Use royalty-free South Indian instrumental music (Carnatic/light instrumental)
+            // You can download from: YouTube Audio Library, Free Music Archive, or purchase royalty-free tracks
+            const localMusicFile = 'south-indian-instrumental.mp3';
+            const musicUrl = 'https://archive.org/download/testmp3testfile/mpthreetest.mp3'; // Placeholder - replace with actual South Indian music URL
+            
+            // Try local file first
+            this.backgroundMusic.src = localMusicFile;
+            
+            // Configure audio settings
+            this.backgroundMusic.loop = true; // Loop continuously
+            this.backgroundMusic.volume = 0.25; // 25% volume for background music
+            this.backgroundMusic.preload = 'auto';
+            
+            // Fade in effect
+            this.backgroundMusic.volume = 0;
+            this.backgroundMusic.play().catch(e => {
+                console.log('Autoplay prevented, will start on user interaction:', e);
+            });
+            
+            // Smooth fade in over 3 seconds
+            let currentVolume = 0;
+            const targetVolume = 0.25;
+            const fadeInDuration = 3000; // 3 seconds
+            const fadeInSteps = 30;
+            const volumeIncrement = targetVolume / fadeInSteps;
+            const stepDuration = fadeInDuration / fadeInSteps;
+            
+            let stepCount = 0;
+            this.musicFadeInterval = setInterval(() => {
+                if (stepCount < fadeInSteps && this.backgroundMusic) {
+                    currentVolume += volumeIncrement;
+                    this.backgroundMusic.volume = Math.min(currentVolume, targetVolume);
+                    stepCount++;
+                } else {
+                    if (this.musicFadeInterval) {
+                        clearInterval(this.musicFadeInterval);
+                        this.musicFadeInterval = null;
+                    }
+                }
+            }, stepDuration);
+            
+            // Handle errors - try fallback URL if local file doesn't exist
+            this.backgroundMusic.addEventListener('error', (e) => {
+                console.log('Local music file not found, trying fallback URL...');
+                // Fallback: Try URL if local file fails
+                const currentSrc = this.backgroundMusic.src;
+                if (currentSrc.includes('south-indian-instrumental.mp3') || currentSrc.endsWith('south-indian-instrumental.mp3')) {
+                    const musicUrl = 'https://archive.org/download/testmp3testfile/mpthreetest.mp3'; // Placeholder URL
+                    this.backgroundMusic.src = musicUrl;
+                    this.backgroundMusic.load();
+                    this.backgroundMusic.play().catch(err => {
+                        console.log('Could not play background music from URL. Please add a music file named "south-indian-instrumental.mp3" to the project directory.');
+                        console.log('Recommended: Download royalty-free South Indian instrumental music and save it as "south-indian-instrumental.mp3"');
+                    });
+                } else {
+                    console.log('Could not play background music. Please add a music file named "south-indian-instrumental.mp3" to the project directory.');
+                }
+            });
+            
+            // Handle when music ends (should loop, but just in case)
+            this.backgroundMusic.addEventListener('ended', () => {
+                if (this.backgroundMusic && this.backgroundMusic.loop) {
+                    this.backgroundMusic.currentTime = 0;
+                    this.backgroundMusic.play();
+                }
+            });
+            
+            console.log('South Indian instrumental background music started');
+        } catch (e) {
+            console.log('Could not start background music:', e);
+        }
+    }
+    
+    stopBackgroundMusic() {
+        // Clear fade interval if running
+        if (this.musicFadeInterval) {
+            clearInterval(this.musicFadeInterval);
+            this.musicFadeInterval = null;
+        }
+        
+        // Stop HTML5 Audio with gentle fade out
+        if (this.backgroundMusic) {
+            try {
+                // Fade out over 1.5 seconds
+                const fadeOutDuration = 1500; // 1.5 seconds
+                const fadeOutSteps = 15;
+                const initialVolume = this.backgroundMusic.volume;
+                const volumeDecrement = initialVolume / fadeOutSteps;
+                const stepDuration = fadeOutDuration / fadeOutSteps;
+                
+                let stepCount = 0;
+                const fadeOutInterval = setInterval(() => {
+                    if (stepCount < fadeOutSteps && this.backgroundMusic) {
+                        this.backgroundMusic.volume = Math.max(0, this.backgroundMusic.volume - volumeDecrement);
+                        stepCount++;
+                    } else {
+                        clearInterval(fadeOutInterval);
+                        if (this.backgroundMusic) {
+                            this.backgroundMusic.pause();
+                            this.backgroundMusic.currentTime = 0;
+                            this.backgroundMusic = null;
+                        }
+                    }
+                }, stepDuration);
+            } catch (e) {
+                // If fade out fails, just stop immediately
+                if (this.backgroundMusic) {
+                    this.backgroundMusic.pause();
+                    this.backgroundMusic.currentTime = 0;
+                    this.backgroundMusic = null;
+                }
+            }
+        }
+        
+        // Also clean up any old Web Audio API oscillators (legacy support)
+        if (this.musicOscillators && this.musicOscillators.length > 0 && this.audioContext) {
+            const now = this.audioContext.currentTime;
+            this.musicOscillators.forEach(({ oscillator, gainNode, lfo, volumeLfo }) => {
+                try {
+                    oscillator.stop();
+                    if (lfo) lfo.stop();
+                    if (volumeLfo) volumeLfo.stop();
+                } catch (e) {
+                    // Already stopped
+                }
+            });
+            this.musicOscillators = [];
+        }
+        
+        // Close audio context if exists
+        if (this.audioContext) {
+            setTimeout(() => {
+                if (this.audioContext) {
+                    this.audioContext.close().catch(() => {});
+                    this.audioContext = null;
+                }
+            }, 2000);
+        }
     }
 
     initializeEventListeners() {
@@ -53,6 +215,13 @@ class NEETMockTest {
             // Acknowledge proctor warning
             if (e.target.id === 'acknowledge-warning-btn') {
                 document.getElementById('proctor-warning-modal').style.display = 'none';
+            }
+            
+            // Exit test button
+            if (e.target.id === 'exit-test-btn' || e.target.closest('#exit-test-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.exitTest();
             }
         });
         
@@ -1545,6 +1714,51 @@ class NEETMockTest {
         }
     }
     
+    exitTest() {
+        const answeredCount = this.answers.filter(a => a !== null).length;
+        const message = `Are you sure you want to exit the test?\n\n` +
+                       `Questions answered: ${answeredCount} / ${this.questions.length}\n\n` +
+                       `Your progress will be lost and the test cannot be resumed.`;
+        
+        if (confirm(message)) {
+            // Stop proctoring
+            this.stopProctoring();
+            
+            // Stop all timers
+            if (this.timerInterval) {
+                clearInterval(this.timerInterval);
+                this.timerInterval = null;
+            }
+            this.stopQuestionTimer();
+            
+            // Reset test state
+            this.testStarted = false;
+            this.currentQuestionIndex = 0;
+            this.answers = [];
+            this.markedForReview = [];
+            this.timeRemaining = 60 * 60;
+            this.timeSpentPerQuestion = [];
+            this.questionStartTime = null;
+            
+            // Exit fullscreen if active
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                }
+            }
+            
+            // Stop background music
+            this.stopBackgroundMusic();
+            
+            // Return to subject selection
+            this.goToSubjectSelection();
+        }
+    }
+
     goToSubjectSelection() {
         // Reset selected subject
         this.selectedSubject = null;
@@ -1590,6 +1804,17 @@ class NEETMockTest {
         
         // Request fullscreen
         this.requestFullScreen();
+        
+        // Start background music (after user interaction, so it should work)
+        setTimeout(() => {
+            this.startBackgroundMusic();
+        }, 500); // Small delay to ensure audio context is ready
+        
+        // Reset timer and time tracking
+        this.timeRemaining = 60 * 60; // 60 minutes
+        this.currentQuestionIndex = 0;
+        this.timeSpentPerQuestion = [];
+        this.questionStartTime = null;
         
         // Render subject icon for the selected subject
         if (this.selectedSubject) {
@@ -1878,6 +2103,127 @@ class NEETMockTest {
         }, 1000);
         
         this.updateTimer();
+        this.startQuestionTimer();
+    }
+    
+    getQuestionComplexity(question) {
+        // Check if question has explicit difficulty field
+        if (question.difficulty) {
+            return question.difficulty.toLowerCase(); // 'easy', 'medium', 'hard'
+        }
+        
+        // Infer complexity based on question characteristics
+        const questionText = question.question.toLowerCase();
+        const questionLength = question.question.length;
+        
+        // Hard indicators
+        const hardKeywords = ['prove', 'derive', 'demonstrate', 'show that', 'verify', 'establish'];
+        const hasHardKeywords = hardKeywords.some(keyword => questionText.includes(keyword));
+        
+        // Medium indicators
+        const mediumKeywords = ['find', 'calculate', 'solve', 'determine', 'evaluate'];
+        const hasMediumKeywords = mediumKeywords.some(keyword => questionText.includes(keyword));
+        
+        // Chapter-based complexity (some chapters are inherently harder)
+        const hardChapters = [
+            'polynomials', 'quadratic equations', 'arithmetic progressions',
+            'introduction to trigonometry', 'some applications of trigonometry',
+            'triangles', 'circles', 'coordinate geometry'
+        ];
+        const isHardChapter = hardChapters.some(chapter => 
+            question.chapter && question.chapter.toLowerCase().includes(chapter.toLowerCase())
+        );
+        
+        // Determine complexity
+        if (hasHardKeywords || (questionLength > 200 && isHardChapter)) {
+            return 'hard';
+        } else if (hasMediumKeywords || questionLength > 150 || isHardChapter) {
+            return 'medium';
+        } else {
+            return 'easy';
+        }
+    }
+    
+    getTimeForComplexity(complexity) {
+        // Time allocations based on complexity (in seconds)
+        const timeAllocations = {
+            'easy': 60,      // 1 minute
+            'medium': 90,    // 1.5 minutes
+            'hard': 120      // 2 minutes
+        };
+        
+        return timeAllocations[complexity] || timeAllocations['medium'];
+    }
+    
+    startQuestionTimer() {
+        const question = this.questions[this.currentQuestionIndex];
+        
+        // Get complexity and allocate time
+        const complexity = this.getQuestionComplexity(question);
+        const baseTime = this.getTimeForComplexity(complexity);
+        
+        // Calculate remaining questions and their total time needs
+        const remainingQuestions = this.questions.slice(this.currentQuestionIndex);
+        let totalTimeNeeded = 0;
+        
+        remainingQuestions.forEach(q => {
+            const qComplexity = this.getQuestionComplexity(q);
+            totalTimeNeeded += this.getTimeForComplexity(qComplexity);
+        });
+        
+        // If we have enough time, use the base time for this question
+        // Otherwise, proportionally distribute remaining time
+        if (totalTimeNeeded <= this.timeRemaining) {
+            this.questionTimeRemaining = baseTime;
+        } else {
+            // Proportionally allocate time based on complexity
+            const proportion = baseTime / totalTimeNeeded;
+            this.questionTimeRemaining = Math.max(30, Math.floor(this.timeRemaining * proportion));
+        }
+        
+        // Ensure we don't exceed remaining time
+        this.questionTimeRemaining = Math.min(this.questionTimeRemaining, this.timeRemaining);
+        
+        // Track start time for current question
+        this.questionStartTime = Date.now();
+        
+        // Clear any existing question timer
+        if (this.questionTimerInterval) {
+            clearInterval(this.questionTimerInterval);
+        }
+        
+        // Start per-question timer
+        this.questionTimerInterval = setInterval(() => {
+            this.questionTimeRemaining--;
+            this.updateQuestionTimer();
+            
+            if (this.questionTimeRemaining <= 0) {
+                // Auto-advance to next question if time runs out
+                if (this.currentQuestionIndex < this.questions.length - 1) {
+                    this.navigateQuestion(1);
+                }
+            }
+        }, 1000);
+        
+        this.updateQuestionTimer();
+    }
+    
+    updateQuestionTimer() {
+        // Timer logic runs in background for auto-advance functionality
+        // Display removed per user request
+    }
+    
+    stopQuestionTimer() {
+        // Save time spent on current question
+        if (this.questionStartTime !== null && this.timeSpentPerQuestion.length === this.currentQuestionIndex) {
+            const timeSpent = Math.floor((Date.now() - this.questionStartTime) / 1000);
+            this.timeSpentPerQuestion.push(timeSpent);
+        }
+        
+        if (this.questionTimerInterval) {
+            clearInterval(this.questionTimerInterval);
+            this.questionTimerInterval = null;
+        }
     }
 
     updateTimer() {
@@ -1951,6 +2297,9 @@ class NEETMockTest {
         const question = this.questions[this.currentQuestionIndex];
         const questionNum = this.currentQuestionIndex + 1;
         
+        // Stop timer for previous question and start for current
+        this.stopQuestionTimer();
+        
         // Update question number
         document.getElementById('question-number').textContent = questionNum;
         document.getElementById('total-questions').textContent = this.questions.length;
@@ -1962,12 +2311,30 @@ class NEETMockTest {
         // Render subject icon
         this.renderSubjectIcon(subject);
         
+        // Update complexity badge
+        const complexity = this.getQuestionComplexity(question);
+        const complexityBadge = document.getElementById('complexity-badge');
+        if (complexityBadge) {
+            const complexityLabels = {
+                'easy': 'Easy',
+                'medium': 'Medium',
+                'hard': 'Hard'
+            };
+            complexityBadge.textContent = complexityLabels[complexity] || 'Medium';
+            complexityBadge.className = 'complexity-badge ' + complexity;
+        }
+        
         // Update year badge
         const year = question.year || '2023';
         document.getElementById('year-badge').textContent = `CBSE ${year}`;
         
         // Update question text
         document.getElementById('question-text').textContent = question.question;
+        
+        // Start timer for current question
+        if (this.testStarted) {
+            this.startQuestionTimer();
+        }
         
         // Render diagram if available
         this.renderDiagram(question);
@@ -2069,6 +2436,9 @@ class NEETMockTest {
     }
 
     navigateQuestion(direction) {
+        // Stop timer for current question before navigating
+        this.stopQuestionTimer();
+        
         const newIndex = this.currentQuestionIndex + direction;
         if (newIndex >= 0 && newIndex < this.questions.length) {
             this.currentQuestionIndex = newIndex;
@@ -2077,6 +2447,9 @@ class NEETMockTest {
     }
 
     goToQuestion(index) {
+        // Stop timer for current question before navigating
+        this.stopQuestionTimer();
+        
         if (index >= 0 && index < this.questions.length) {
             this.currentQuestionIndex = index;
             this.renderQuestion();
@@ -2125,9 +2498,14 @@ class NEETMockTest {
         // Stop proctoring
         this.stopProctoring();
         
+        // Stop all timers
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
         }
+        this.stopQuestionTimer();
+        
+        // Stop background music
+        this.stopBackgroundMusic();
         
         this.calculateResults();
         document.getElementById('test-screen').classList.remove('active');
@@ -2969,11 +3347,14 @@ class NEETMockTest {
         this.markedForReview = new Array(this.questions.length).fill(false);
         this.timeRemaining = 60 * 60;
         this.testStarted = false;
+        this.timeSpentPerQuestion = [];
+        this.questionStartTime = null;
         
-        // Clear timer
+        // Clear timers
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
         }
+        this.stopQuestionTimer();
         
         // Show subject selection screen
         document.getElementById('results-screen').classList.remove('active');
