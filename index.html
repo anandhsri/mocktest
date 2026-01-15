@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <!-- Login Screen -->
-        <div id="login-screen" class="screen active">
+        <div id="login-screen" class="screen" style="display: none;">
             <div class="login-content">
                 <h1>CBSE Mock Test Portal</h1>
                 <h2>10th Grade Test System</h2>
@@ -37,7 +37,7 @@
         </div>
 
         <!-- Subject Selection Screen -->
-        <div id="subject-selection-screen" class="screen">
+        <div id="subject-selection-screen" class="screen active">
             <div class="subject-selection-content">
                 <h1>Choose Your Subject</h1>
                 <h2>10th Grade CBSE Mock Test</h2>
@@ -132,6 +132,32 @@
                         <p class="subject-description">50 Questions | 60 Minutes</p>
                         <p class="subject-years">Years: 2020-2025</p>
                     </div>
+                    <div class="subject-card" data-subject="Sanskrit">
+                        <div class="subject-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.2)"/>
+                                <text x="50" y="60" font-family="Arial, sans-serif" font-size="36" fill="white" text-anchor="middle" font-weight="bold">स</text>
+                            </svg>
+                        </div>
+                        <h3>Sanskrit</h3>
+                        <p class="subject-description">50 Questions | 60 Minutes</p>
+                        <p class="subject-years">Years: 2020-2025</p>
+                    </div>
+                    <div class="subject-card" data-subject="Physics Descriptive">
+                        <div class="subject-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.2)"/>
+                                <circle cx="35" cy="35" r="8" fill="white" opacity="0.9"/>
+                                <circle cx="65" cy="35" r="8" fill="white" opacity="0.9"/>
+                                <circle cx="50" cy="65" r="8" fill="white" opacity="0.9"/>
+                                <path d="M35 35 L50 65 M65 35 L50 65" stroke="white" stroke-width="2" opacity="0.9"/>
+                                <text x="50" y="85" font-size="12" fill="white" text-anchor="middle" font-weight="bold">DESC</text>
+                            </svg>
+                        </div>
+                        <h3>Physics Descriptive</h3>
+                        <p class="subject-description">5 Questions | 90 Minutes</p>
+                        <p class="subject-years">25 Marks | 2020-2025</p>
+                    </div>
                 </div>
                 <div class="subject-actions">
                     <button class="logout-btn btn-secondary">Logout</button>
@@ -190,7 +216,7 @@
                 </div>
                 <div class="welcome-actions">
                     <button id="change-subject-btn" class="btn-secondary">Change Subject</button>
-                    <button id="start-test-btn" class="btn-primary">Start Test</button>
+                <button id="start-test-btn" class="btn-primary">Start Test</button>
                     <button id="view-last-results-btn" class="btn-secondary">View Last Test Results</button>
                 </div>
             </div>
@@ -219,6 +245,9 @@
                     <span id="proctor-warning" class="proctor-warning" style="display: none;"></span>
                     <span id="violation-count" class="violation-count" style="display: none;">Violations: 0</span>
                 </div>
+                <div class="exit-test-section">
+                    <button id="exit-test-btn" class="exit-test-btn" title="Exit Test">✕</button>
+                </div>
             </div>
             
             <!-- Proctor Warning Modal -->
@@ -238,6 +267,7 @@
                 <div class="question-panel">
                     <div class="question-header">
                         <span class="subject-badge" id="subject-badge">Physics</span>
+                        <span class="complexity-badge medium" id="complexity-badge">Medium</span>
                         <span class="year-badge" id="year-badge">2023</span>
                         <span class="marks-badge">4 Marks</span>
                     </div>
@@ -248,9 +278,24 @@
                     <div class="options" id="options">
                         <!-- Options will be dynamically generated -->
                     </div>
+                    <div class="descriptive-answer-section" id="descriptive-answer-section" style="display: none;">
+                        <label for="descriptive-answer" style="font-weight: bold; display: block; margin-bottom: 10px; color: #333;">
+                            Your Answer:
+                        </label>
+                        <textarea 
+                            id="descriptive-answer" 
+                            class="descriptive-textarea" 
+                            placeholder="Write your detailed answer here. Include diagrams, calculations, and explanations..."
+                            rows="10"
+                        ></textarea>
+                        <div class="expected-points" id="expected-points" style="display: none;">
+                            <h4 style="color: #2e7d32; margin-top: 15px; margin-bottom: 10px;">Expected Answer Points (for reference):</h4>
+                            <ul id="expected-points-list"></ul>
+                        </div>
+                    </div>
                     <div class="question-actions">
                         <div class="action-buttons">
-                            <button id="mark-review-btn" class="btn-secondary">Mark for Review</button>
+                        <button id="mark-review-btn" class="btn-secondary">Mark for Review</button>
                             <button id="clear-answer-btn" class="btn-secondary">Clear Answer</button>
                         </div>
                         <div class="nav-buttons">
@@ -346,6 +391,15 @@
                 <div id="results-analysis" class="results-analysis"></div>
                 <div id="chapter-performance" class="chapter-performance-section"></div>
                 <div id="answer-review" class="answer-review-section"></div>
+                <div id="descriptive-correction" class="descriptive-correction-section" style="display: none;">
+                    <h2>Answer Correction & Evaluation</h2>
+                    <p class="correction-instructions">Please review each answer and assign marks. Click "Calculate Score" to update the results.</p>
+                    <div id="correction-questions-list"></div>
+                    <div class="correction-actions">
+                        <button id="calculate-score-btn" class="btn-primary">Calculate Score</button>
+                        <button id="save-correction-btn" class="btn-secondary">Save Correction</button>
+                    </div>
+                </div>
                 <div class="results-actions">
                     <button id="download-pdf-btn" class="btn-primary">Download PDF</button>
                     <button id="review-answers-btn" class="btn-primary">Review Answers</button>
@@ -365,6 +419,8 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
     <script src="questions.js"></script>
+    <script src="physics_descriptive_25marks.js"></script>
+    <script src="mathematics_40marks.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

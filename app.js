@@ -14,7 +14,7 @@ class NEETMockTest {
         this.adminPassword = 'admin123'; // Default admin password
         this.currentResults = null; // Store current results for PDF generation
         
-        // Proctoring system
+        // Proctoring system properties
         this.proctorViolations = 0;
         this.maxViolations = 3; // Auto-submit after 3 violations
         this.isFullScreen = false;
@@ -27,14 +27,42 @@ class NEETMockTest {
     }
 
     initializeEventListeners() {
-        // Login buttons
-        document.getElementById('student-login-btn').addEventListener('click', () => {
-            this.loginAsStudent();
-        });
+        // Login buttons - simple and reliable approach
+        const studentLoginBtn = document.getElementById('student-login-btn');
+        if (studentLoginBtn) {
+            // Remove inline onclick to avoid conflicts
+            studentLoginBtn.removeAttribute('onclick');
+            
+            // Add click listener with proper binding
+            studentLoginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Student login button clicked via addEventListener');
+                if (this && this.loginAsStudent) {
+                    this.loginAsStudent();
+                } else {
+                    console.error('this.loginAsStudent is not available');
+                    // Direct fallback
+                    const loginScreen = document.getElementById('login-screen');
+                    const subjectScreen = document.getElementById('subject-selection-screen');
+                    if (loginScreen && subjectScreen) {
+                        loginScreen.classList.remove('active');
+                        subjectScreen.classList.add('active');
+                    }
+                }
+            }, false);
+            
+            console.log('Student login button listener attached successfully');
+        } else {
+            console.error('Student login button not found during initialization!');
+        }
         
-        document.getElementById('admin-login-btn').addEventListener('click', () => {
-            this.showAdminPasswordInput();
-        });
+        const adminLoginBtn = document.getElementById('admin-login-btn');
+        if (adminLoginBtn) {
+            adminLoginBtn.addEventListener('click', () => {
+                this.showAdminPasswordInput();
+            });
+        }
         
         document.getElementById('admin-submit-btn').addEventListener('click', () => {
             this.loginAsAdmin();
@@ -54,13 +82,26 @@ class NEETMockTest {
             if (e.target.id === 'acknowledge-warning-btn') {
                 document.getElementById('proctor-warning-modal').style.display = 'none';
             }
+            
+            // Exit test button
+            if (e.target.id === 'exit-test-btn' || e.target.closest('#exit-test-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.exitTest();
+            }
         });
         
         // Subject selection cards
         document.querySelectorAll('.subject-card').forEach(card => {
             card.addEventListener('click', (e) => {
+                e.preventDefault();
                 const subject = e.currentTarget.getAttribute('data-subject');
-                this.selectSubject(subject);
+                if (!subject) return;
+                
+                // Get base URL without query parameters
+                const baseUrl = window.location.origin + window.location.pathname;
+                // Navigate to full page with subject parameter
+                window.location.href = baseUrl + '?subject=' + encodeURIComponent(subject);
             });
         });
         
@@ -123,6 +164,15 @@ class NEETMockTest {
             this.showReviewScreen();
         });
         
+        // Descriptive test correction buttons
+        document.getElementById('calculate-score-btn')?.addEventListener('click', () => {
+            this.calculateDescriptiveScore();
+        });
+        
+        document.getElementById('save-correction-btn')?.addEventListener('click', () => {
+            this.saveCorrection();
+        });
+        
         // View last results button
         document.getElementById('view-last-results-btn').addEventListener('click', () => {
             this.displayLastTestResults();
@@ -154,9 +204,48 @@ class NEETMockTest {
     }
 
     loginAsStudent() {
-        this.userType = 'student';
-        document.getElementById('login-screen').classList.remove('active');
-        document.getElementById('subject-selection-screen').classList.add('active');
+        console.log('loginAsStudent() method called');
+        try {
+            this.userType = 'student';
+            console.log('User type set to:', this.userType);
+            
+            const loginScreen = document.getElementById('login-screen');
+            const subjectScreen = document.getElementById('subject-selection-screen');
+            
+            console.log('Login screen element:', loginScreen ? 'Found' : 'NOT FOUND');
+            console.log('Subject screen element:', subjectScreen ? 'Found' : 'NOT FOUND');
+            
+            if (!loginScreen) {
+                console.error('login-screen element not found in DOM');
+                alert('Error: Login screen element not found. Please refresh the page.');
+                return;
+            }
+            
+            if (!subjectScreen) {
+                console.error('subject-selection-screen element not found in DOM');
+                alert('Error: Subject selection screen element not found. Please refresh the page.');
+                return;
+            }
+            
+            // Remove active class from login screen
+            loginScreen.classList.remove('active');
+            console.log('Removed active class from login screen');
+            
+            // Add active class to subject selection screen
+            subjectScreen.classList.add('active');
+            console.log('Added active class to subject selection screen');
+            
+            console.log('Navigation successful - moved to subject selection screen');
+            
+        } catch (error) {
+            console.error('Error in loginAsStudent:', error);
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                name: error.name
+            });
+            alert('An error occurred during login: ' + error.message + '\n\nPlease check the browser console for details.');
+        }
     }
 
     showAdminPasswordInput() {
@@ -1475,28 +1564,47 @@ class NEETMockTest {
 
     selectSubject(subject) {
         this.selectedSubject = subject;
+        this.isDescriptiveTest = subject === 'Physics Descriptive';
+        this.is80MarksTest = false; // Disabled 80 marks test
+        this.is40MarksTest = subject === 'Mathematics';
         
-        // Get base questions from questions.js
-        let baseQuestions = allQuestions.filter(q => q.subject === subject);
-        
-        // Get uploaded questions for this subject
-        const uploadedQuestions = this.getUploadedQuestions().filter(q => q.subject === subject);
-        
-        // Merge questions (uploaded questions take precedence if same ID)
-        const questionMap = new Map();
-        
-        // Add base questions first
-        baseQuestions.forEach(q => {
-            questionMap.set(q.id, q);
-        });
-        
-        // Add/override with uploaded questions
-        uploadedQuestions.forEach(q => {
-            questionMap.set(q.id, q);
-        });
-        
-        // Convert back to array
-        this.questions = Array.from(questionMap.values());
+        // Handle descriptive test
+        if (this.isDescriptiveTest && typeof physicsDescriptiveTest !== 'undefined') {
+            this.questions = physicsDescriptiveTest.questions.map(q => ({
+                ...q,
+                subject: 'Physics Descriptive',
+                isDescriptive: true
+            }));
+        } else if (this.is40MarksTest && typeof mathematics40Marks !== 'undefined') {
+            // Handle 40 marks mathematics MCQ test
+            this.questions = mathematics40Marks.questions.map(q => ({
+                ...q,
+                subject: 'Mathematics',
+                marks: q.marks || 1
+            }));
+        } else {
+            // Get base questions from questions.js
+            let baseQuestions = allQuestions.filter(q => q.subject === subject);
+            
+            // Get uploaded questions for this subject
+            const uploadedQuestions = this.getUploadedQuestions().filter(q => q.subject === subject);
+            
+            // Merge questions (uploaded questions take precedence if same ID)
+            const questionMap = new Map();
+            
+            // Add base questions first
+            baseQuestions.forEach(q => {
+                questionMap.set(q.id, q);
+            });
+            
+            // Add/override with uploaded questions
+            uploadedQuestions.forEach(q => {
+                questionMap.set(q.id, q);
+            });
+            
+            // Convert back to array
+            this.questions = Array.from(questionMap.values());
+        }
         
         if (this.questions.length === 0) {
             alert(`${subject} test is coming soon! Questions are being added.`);
@@ -1514,6 +1622,9 @@ class NEETMockTest {
         // Show welcome screen
         document.getElementById('subject-selection-screen').classList.remove('active');
         document.getElementById('welcome-screen').classList.add('active');
+        
+        // Scroll to top of the page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
     updateWelcomeScreenForSubject(subject) {
@@ -1524,7 +1635,11 @@ class NEETMockTest {
         const testInfo = document.querySelector('.test-info .info-card ul');
         
         if (welcomeTitle) welcomeTitle.textContent = `${subject} Mock Test`;
-        if (welcomeSubtitle) welcomeSubtitle.textContent = '10th Grade CBSE - Tough Questions';
+        if (welcomeSubtitle) {
+            welcomeSubtitle.textContent = this.isDescriptiveTest 
+                ? '10th Grade CBSE - Descriptive Type Test' 
+                : '10th Grade CBSE - Tough Questions';
+        }
         if (subjectBadge) {
             subjectBadge.style.display = 'block';
         }
@@ -1534,17 +1649,83 @@ class NEETMockTest {
         
         if (testInfo) {
             const questionCount = this.questions.length;
-            testInfo.innerHTML = `
-                <li><strong>Total Questions:</strong> ${questionCount}</li>
-                <li><strong>Duration:</strong> 60 minutes (1 hour)</li>
-                <li><strong>${subject}:</strong> ${questionCount} questions (100%)</li>
-                <li><strong>Question Source:</strong> Years 2020-2025</li>
-                <li><strong>Difficulty:</strong> Moderate</li>
-                <li><strong>Marking:</strong> +4 for correct, -1 for incorrect</li>
-            `;
+            if (this.isDescriptiveTest) {
+                const totalMarks = this.questions.reduce((sum, q) => sum + (q.marks || 5), 0);
+                testInfo.innerHTML = `
+                    <li><strong>Total Questions:</strong> ${questionCount}</li>
+                    <li><strong>Total Marks:</strong> ${totalMarks}</li>
+                    <li><strong>Duration:</strong> 90 minutes (1.5 hours)</li>
+                `;
+            } else if (this.is40MarksTest) {
+                const totalMarks = this.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
+                const marksBreakdown = {
+                    1: this.questions.filter(q => q.marks === 1).length,
+                    2: this.questions.filter(q => q.marks === 2).length,
+                    3: this.questions.filter(q => q.marks === 3).length,
+                    5: this.questions.filter(q => q.marks === 5).length
+                };
+                testInfo.innerHTML = `
+                    <li><strong>Total Questions:</strong> ${questionCount}</li>
+                    <li><strong>Total Marks:</strong> ${totalMarks}</li>
+                    <li><strong>Duration:</strong> 90 minutes (1.5 hours)</li>
+                    <li><strong>Marking Scheme:</strong> ${marksBreakdown[1]}×1, ${marksBreakdown[2]}×2, ${marksBreakdown[3]}×3, ${marksBreakdown[5]}×5 marks</li>
+                    <li><strong>Question Type:</strong> Multiple Choice (MCQ)</li>
+                    <li><strong>Question Source:</strong> Years 2020-2025</li>
+                    <li><strong>Difficulty:</strong> Moderate</li>
+                    <li><strong>Marking:</strong> Variable marks per question, negative marking applies</li>
+                `;
+            } else {
+                testInfo.innerHTML = `
+                    <li><strong>Total Questions:</strong> ${questionCount}</li>
+                    <li><strong>Duration:</strong> 60 minutes (1 hour)</li>
+                    <li><strong>${subject}:</strong> ${questionCount} questions (100%)</li>
+                    <li><strong>Question Source:</strong> Years 2020-2025</li>
+                    <li><strong>Difficulty:</strong> Moderate</li>
+                    <li><strong>Marking:</strong> +4 for correct, -1 for incorrect</li>
+                `;
+            }
         }
     }
     
+    exitTest() {
+        const answeredCount = this.answers.filter(a => a !== null).length;
+        const message = `Are you sure you want to exit the test?\n\n` +
+                       `Questions answered: ${answeredCount} / ${this.questions.length}\n\n` +
+                       `Your progress will be lost and the test cannot be resumed.`;
+        
+        if (confirm(message)) {
+            // Stop proctoring
+            this.stopProctoring();
+            
+            // Stop all timers
+            if (this.timerInterval) {
+                clearInterval(this.timerInterval);
+                this.timerInterval = null;
+            }
+            // Reset test state
+            this.testStarted = false;
+            this.currentQuestionIndex = 0;
+            this.answers = [];
+            this.markedForReview = [];
+            this.timeRemaining = 60 * 60;
+            
+            // Exit fullscreen if active
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                }
+            }
+            
+            // Stop background music
+            // Return to subject selection
+            this.goToSubjectSelection();
+        }
+    }
+
     goToSubjectSelection() {
         // Reset selected subject
         this.selectedSubject = null;
@@ -1585,11 +1766,12 @@ class NEETMockTest {
         document.getElementById('welcome-screen').classList.remove('active');
         document.getElementById('test-screen').classList.add('active');
         
-        // Initialize proctoring system
+        // Initialize proctoring system (includes fullscreen request)
         this.initializeProctoring();
         
-        // Request fullscreen
-        this.requestFullScreen();
+        // Reset timer and time tracking (90 minutes for descriptive, 90 for 40 marks math, 60 for others)
+        this.timeRemaining = this.isDescriptiveTest ? 90 * 60 : (this.is40MarksTest ? 90 * 60 : 60 * 60);
+        this.currentQuestionIndex = 0;
         
         // Render subject icon for the selected subject
         if (this.selectedSubject) {
@@ -1602,245 +1784,245 @@ class NEETMockTest {
     }
     
     initializeProctoring() {
+        console.log('Initializing proctoring system...');
+        
         // Reset violations
         this.proctorViolations = 0;
         this.proctorWarnings = [];
         this.lastActivityTime = Date.now();
         
-        // Prevent right-click
+        // Request fullscreen
+        this.requestFullScreen();
+        
+        // Block right-click context menu
         document.addEventListener('contextmenu', (e) => {
             if (this.testStarted) {
                 e.preventDefault();
-                this.recordViolation('Right-click disabled during test');
+                this.recordViolation('Right-click attempted');
                 return false;
             }
         });
         
-        // Prevent copy
+        // Block copy, cut, paste
         document.addEventListener('copy', (e) => {
             if (this.testStarted) {
                 e.preventDefault();
-                this.recordViolation('Copying is not allowed during test');
+                this.recordViolation('Copy attempted');
                 return false;
             }
         });
         
-        // Prevent cut
         document.addEventListener('cut', (e) => {
             if (this.testStarted) {
                 e.preventDefault();
-                this.recordViolation('Cutting is not allowed during test');
+                this.recordViolation('Cut attempted');
                 return false;
             }
         });
         
-        // Prevent paste
         document.addEventListener('paste', (e) => {
             if (this.testStarted) {
                 e.preventDefault();
-                this.recordViolation('Pasting is not allowed during test');
+                this.recordViolation('Paste attempted');
                 return false;
             }
         });
         
-        // Prevent keyboard shortcuts
+        // Block keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (!this.testStarted) return;
+            
+            // Block Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+A, Ctrl+S, Ctrl+P, Ctrl+U
+            if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'a', 's', 'p', 'u'].includes(e.key.toLowerCase())) {
+                e.preventDefault();
+                this.recordViolation(`Keyboard shortcut blocked: ${e.key}`);
+                return false;
+            }
             
             // Block F12 (Developer Tools)
             if (e.key === 'F12') {
                 e.preventDefault();
-                this.recordViolation('Developer tools are not allowed');
+                this.recordViolation('Developer tools access attempted');
                 return false;
             }
             
             // Block Ctrl+Shift+I (Developer Tools)
-            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
                 e.preventDefault();
-                this.recordViolation('Developer tools are not allowed');
-                return false;
-            }
-            
-            // Block Ctrl+Shift+J (Console)
-            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-                e.preventDefault();
-                this.recordViolation('Developer tools are not allowed');
-                return false;
-            }
-            
-            // Block Ctrl+U (View Source)
-            if (e.ctrlKey && e.key === 'u') {
-                e.preventDefault();
-                this.recordViolation('View source is not allowed');
-                return false;
-            }
-            
-            // Block Ctrl+S (Save)
-            if (e.ctrlKey && e.key === 's') {
-                e.preventDefault();
-                this.recordViolation('Saving is not allowed during test');
-                return false;
-            }
-            
-            // Block Ctrl+P (Print)
-            if (e.ctrlKey && e.key === 'p') {
-                e.preventDefault();
-                this.recordViolation('Printing is not allowed during test');
-                return false;
-            }
-            
-            // Block Ctrl+A (Select All)
-            if (e.ctrlKey && e.key === 'a') {
-                e.preventDefault();
-                this.recordViolation('Select all is not allowed');
+                this.recordViolation('Developer tools access attempted');
                 return false;
             }
         });
         
-        // Detect tab switching
+        // Monitor tab visibility
         document.addEventListener('visibilitychange', () => {
-            if (this.testStarted) {
-                if (document.hidden) {
-                    this.isTabActive = false;
-                    this.recordViolation('Tab switched or window minimized');
-                } else {
-                    this.isTabActive = true;
-                }
+            if (!this.testStarted) return;
+            
+            if (document.hidden) {
+                this.isTabActive = false;
+                this.recordViolation('Tab switched or minimized');
+            } else {
+                this.isTabActive = true;
+                this.lastActivityTime = Date.now();
             }
         });
         
-        // Detect window blur (switching away)
+        // Monitor window blur
         window.addEventListener('blur', () => {
             if (this.testStarted) {
-                this.recordViolation('Window focus lost');
+                this.recordViolation('Window lost focus');
             }
         });
         
         // Monitor fullscreen changes
         document.addEventListener('fullscreenchange', () => {
-            if (this.testStarted) {
-                this.isFullScreen = !!document.fullscreenElement;
-                if (!this.isFullScreen) {
-                    this.recordViolation('Fullscreen mode exited');
-                    this.requestFullScreen();
-                }
+            this.isFullScreen = !!document.fullscreenElement;
+            if (!this.isFullScreen && this.testStarted) {
+                this.recordViolation('Exited fullscreen mode');
+                setTimeout(() => this.requestFullScreen(), 500);
             }
         });
         
-        // Continuous proctoring checks
+        document.addEventListener('webkitfullscreenchange', () => {
+            this.isFullScreen = !!document.webkitFullscreenElement;
+        });
+        
+        document.addEventListener('mozfullscreenchange', () => {
+            this.isFullScreen = !!document.mozFullScreenElement;
+        });
+        
+        // Monitor activity
+        const updateActivity = () => {
+            if (this.testStarted) {
+                this.lastActivityTime = Date.now();
+            }
+        };
+        
+        document.addEventListener('mousedown', updateActivity);
+        document.addEventListener('mousemove', updateActivity);
+        document.addEventListener('keypress', updateActivity);
+        document.addEventListener('scroll', updateActivity);
+        document.addEventListener('touchstart', updateActivity);
+        
+        // Periodic proctoring check
         this.proctorCheckInterval = setInterval(() => {
             if (this.testStarted) {
                 this.checkProctoringViolations();
             }
-        }, 2000); // Check every 2 seconds
+        }, 5000); // Check every 5 seconds
         
-        // Track user activity
-        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
-            document.addEventListener(event, () => {
-                if (this.testStarted) {
-                    this.lastActivityTime = Date.now();
-                }
-            }, { passive: true });
-        });
+        console.log('Proctoring system initialized');
     }
     
     requestFullScreen() {
-        const elem = document.documentElement;
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen().catch(err => {
+        const element = document.documentElement;
+        
+        if (element.requestFullscreen) {
+            element.requestFullscreen().then(() => {
+                this.isFullScreen = true;
+                console.log('Fullscreen enabled');
+            }).catch((err) => {
                 console.log('Fullscreen request denied:', err);
-                this.showProctorWarning('Please enable fullscreen mode for the test. Click anywhere to continue.');
+                if (this.testStarted) {
+                    this.showProctorWarning('Please enable fullscreen mode for the test');
+                }
             });
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+            this.isFullScreen = true;
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+            this.isFullScreen = true;
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+            this.isFullScreen = true;
         }
     }
     
     checkProctoringViolations() {
+        if (!this.testStarted) return;
+        
+        // Check if tab is still active
+        if (!this.isTabActive) {
+            this.recordViolation('Tab inactive for extended period');
+        }
+        
         // Check if still in fullscreen
-        if (this.testStarted && !document.fullscreenElement) {
-            this.isFullScreen = false;
-            // Don't record violation immediately, just request again
+        if (!this.isFullScreen) {
+            this.recordViolation('Not in fullscreen mode');
             this.requestFullScreen();
         }
         
-        // Check for inactivity (more than 5 minutes)
+        // Check for inactivity (more than 2 minutes)
         const inactivityTime = Date.now() - this.lastActivityTime;
-        if (inactivityTime > 300000) { // 5 minutes
-            this.recordViolation('Inactivity detected for more than 5 minutes');
+        if (inactivityTime > 120000) { // 2 minutes
+            this.recordViolation('Extended inactivity detected');
         }
     }
     
-    recordViolation(violationType) {
-        // Don't record duplicate violations within 10 seconds
-        const recentWarning = this.proctorWarnings.find(w => 
-            w.type === violationType && 
-            (Date.now() - w.timestamp) < 10000
-        );
-        
-        if (recentWarning) {
-            return; // Ignore duplicate
-        }
+    recordViolation(type) {
+        if (!this.testStarted) return;
         
         this.proctorViolations++;
-        this.proctorWarnings.push({
-            type: violationType,
-            timestamp: Date.now()
-        });
+        const violation = {
+            type: type,
+            timestamp: new Date().toISOString(),
+            timeRemaining: this.timeRemaining
+        };
         
-        // Update violation count display
+        this.proctorWarnings.push(violation);
+        console.warn('Proctoring violation:', violation);
+        
+        // Update UI
         const violationCountEl = document.getElementById('violation-count');
         if (violationCountEl) {
             violationCountEl.textContent = `Violations: ${this.proctorViolations}`;
             violationCountEl.style.display = 'block';
-            if (this.proctorViolations >= this.maxViolations) {
-                violationCountEl.style.color = '#dc3545';
-                violationCountEl.style.fontWeight = 'bold';
-            }
         }
         
-        // Show warning modal
-        this.showProctorWarning(violationType);
+        // Show warning
+        this.showProctorWarning(`Warning: ${type}. Violations: ${this.proctorViolations}/${this.maxViolations}`);
         
         // Auto-submit if max violations reached
         if (this.proctorViolations >= this.maxViolations) {
-            setTimeout(() => {
-                alert(`Maximum violations (${this.maxViolations}) reached. Test will be submitted automatically.`);
-                this.submitTest();
-            }, 2000);
+            alert(`Maximum violations (${this.maxViolations}) reached. Test will be submitted automatically.`);
+            this.submitTest();
         }
     }
     
     showProctorWarning(message) {
-        const modal = document.getElementById('proctor-warning-modal');
-        const messageEl = document.getElementById('proctor-warning-message');
-        const violationCountEl = document.getElementById('modal-violation-count');
-        const maxViolationsEl = document.getElementById('max-violations');
-        
-        if (modal && messageEl) {
-            messageEl.textContent = message;
-            if (violationCountEl) violationCountEl.textContent = this.proctorViolations;
-            if (maxViolationsEl) maxViolationsEl.textContent = this.maxViolations;
-            modal.style.display = 'flex';
+        const warningModal = document.getElementById('proctor-warning-modal');
+        if (warningModal) {
+            const warningText = document.getElementById('proctor-warning-message');
+            const violationCount = document.getElementById('modal-violation-count');
             
-            // Auto-hide after 5 seconds if not max violations
-            if (this.proctorViolations < this.maxViolations) {
-                setTimeout(() => {
-                    if (modal.style.display === 'flex') {
-                        modal.style.display = 'none';
-                    }
-                }, 5000);
+            if (warningText) {
+                warningText.textContent = message;
             }
+            if (violationCount) {
+                violationCount.textContent = this.proctorViolations;
+            }
+            
+            warningModal.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                warningModal.style.display = 'none';
+            }, 5000);
         }
         
-        // Also show in header
-        const warningEl = document.getElementById('proctor-warning');
-        if (warningEl) {
-            warningEl.textContent = `⚠️ ${message}`;
-            warningEl.style.display = 'block';
-            warningEl.style.color = this.proctorViolations >= this.maxViolations ? '#dc3545' : '#ffc107';
+        // Also update status bar
+        const proctorWarning = document.getElementById('proctor-warning');
+        if (proctorWarning) {
+            proctorWarning.textContent = message;
+            proctorWarning.style.display = 'block';
         }
     }
     
     stopProctoring() {
+        console.log('Stopping proctoring system...');
+        
+        // Clear interval
         if (this.proctorCheckInterval) {
             clearInterval(this.proctorCheckInterval);
             this.proctorCheckInterval = null;
@@ -1849,7 +2031,15 @@ class NEETMockTest {
         // Exit fullscreen
         if (document.fullscreenElement) {
             document.exitFullscreen().catch(() => {});
+        } else if (document.webkitFullscreenElement) {
+            document.webkitExitFullscreen();
+        } else if (document.mozFullScreenElement) {
+            document.mozCancelFullScreen();
         }
+        
+        this.isFullScreen = false;
+        
+        console.log('Proctoring system stopped');
     }
     
     shuffleQuestions() {
@@ -1879,6 +2069,57 @@ class NEETMockTest {
         
         this.updateTimer();
     }
+    
+    getQuestionComplexity(question) {
+        // Check if question has explicit difficulty field
+        if (question.difficulty) {
+            return question.difficulty.toLowerCase(); // 'easy', 'medium', 'hard'
+        }
+        
+        // Infer complexity based on question characteristics
+        const questionText = question.question.toLowerCase();
+        const questionLength = question.question.length;
+        
+        // Hard indicators
+        const hardKeywords = ['prove', 'derive', 'demonstrate', 'show that', 'verify', 'establish'];
+        const hasHardKeywords = hardKeywords.some(keyword => questionText.includes(keyword));
+        
+        // Medium indicators
+        const mediumKeywords = ['find', 'calculate', 'solve', 'determine', 'evaluate'];
+        const hasMediumKeywords = mediumKeywords.some(keyword => questionText.includes(keyword));
+        
+        // Chapter-based complexity (some chapters are inherently harder)
+        const hardChapters = [
+            'polynomials', 'quadratic equations', 'arithmetic progressions',
+            'introduction to trigonometry', 'some applications of trigonometry',
+            'triangles', 'circles', 'coordinate geometry'
+        ];
+        const isHardChapter = hardChapters.some(chapter => 
+            question.chapter && question.chapter.toLowerCase().includes(chapter.toLowerCase())
+        );
+        
+        // Determine complexity
+        if (hasHardKeywords || (questionLength > 200 && isHardChapter)) {
+            return 'hard';
+        } else if (hasMediumKeywords || questionLength > 150 || isHardChapter) {
+            return 'medium';
+        } else {
+            return 'easy';
+        }
+    }
+    
+    getTimeForComplexity(complexity) {
+        // Time allocations based on complexity (in seconds)
+        const timeAllocations = {
+            'easy': 60,      // 1 minute
+            'medium': 90,    // 1.5 minutes
+            'hard': 120      // 2 minutes
+        };
+        
+        return timeAllocations[complexity] || timeAllocations['medium'];
+    }
+    
+    // Per-question timer removed
 
     updateTimer() {
         const minutes = Math.floor(this.timeRemaining / 60);
@@ -1950,6 +2191,9 @@ class NEETMockTest {
     renderQuestion() {
         const question = this.questions[this.currentQuestionIndex];
         const questionNum = this.currentQuestionIndex + 1;
+        const isDescriptive = question.isDescriptive || this.isDescriptiveTest;
+        
+        // Stop timer for previous question and start for current
         
         // Update question number
         document.getElementById('question-number').textContent = questionNum;
@@ -1957,56 +2201,117 @@ class NEETMockTest {
         
         // Update subject badge (use question's subject property since questions are shuffled)
         const subject = question.subject || 'Mathematics';
-        document.getElementById('subject-badge').textContent = subject;
+        document.getElementById('subject-badge').textContent = isDescriptive ? 'Physics Descriptive' : subject;
         
         // Render subject icon
-        this.renderSubjectIcon(subject);
+        this.renderSubjectIcon(isDescriptive ? 'Physics' : subject);
+        
+        // Update complexity badge
+        const complexity = this.getQuestionComplexity(question);
+        const complexityBadge = document.getElementById('complexity-badge');
+        if (complexityBadge) {
+            const complexityLabels = {
+                'easy': 'Easy',
+                'medium': 'Medium',
+                'hard': 'Hard'
+            };
+            complexityBadge.textContent = complexityLabels[complexity] || 'Medium';
+            complexityBadge.className = 'complexity-badge ' + complexity;
+        }
         
         // Update year badge
         const year = question.year || '2023';
         document.getElementById('year-badge').textContent = `CBSE ${year}`;
         
-        // Update question text
-        document.getElementById('question-text').textContent = question.question;
+        // Update marks badge
+        const marksBadge = document.querySelector('.marks-badge');
+        if (marksBadge && question.marks) {
+            marksBadge.textContent = `${question.marks} Marks`;
+        }
+        
+        // Update question text (preserve line breaks for descriptive)
+        const questionTextEl = document.getElementById('question-text');
+        if (isDescriptive) {
+            questionTextEl.innerHTML = question.question.replace(/\n/g, '<br>');
+        } else {
+            questionTextEl.textContent = question.question;
+        }
+        
+        // Start timer for current question
+        if (this.testStarted) {
+        }
         
         // Render diagram if available
         this.renderDiagram(question);
         
-        // Render options
+        // Show/hide options vs descriptive answer
         const optionsContainer = document.getElementById('options');
-        optionsContainer.innerHTML = '';
+        const descriptiveSection = document.getElementById('descriptive-answer-section');
+        const descriptiveTextarea = document.getElementById('descriptive-answer');
+        const expectedPoints = document.getElementById('expected-points');
+        const expectedPointsList = document.getElementById('expected-points-list');
         
-        question.options.forEach((option, index) => {
-            const optionDiv = document.createElement('div');
-            optionDiv.className = 'option';
-            if (this.answers[this.currentQuestionIndex] === index) {
-                optionDiv.classList.add('selected');
+        if (isDescriptive) {
+            // Hide options, show descriptive answer
+            optionsContainer.style.display = 'none';
+            descriptiveSection.style.display = 'block';
+            
+            // Load saved answer
+            descriptiveTextarea.value = this.answers[this.currentQuestionIndex] || '';
+            
+            // Update textarea on input
+            descriptiveTextarea.oninput = () => {
+                this.answers[this.currentQuestionIndex] = descriptiveTextarea.value;
+                this.updateQuestionPalette();
+            };
+            
+            // Show expected points if available
+            if (question.expectedPoints && question.expectedPoints.length > 0) {
+                expectedPoints.style.display = 'block';
+                expectedPointsList.innerHTML = question.expectedPoints.map(point => 
+                    `<li>${point}</li>`
+                ).join('');
+            } else {
+                expectedPoints.style.display = 'none';
             }
+        } else {
+            // Show options, hide descriptive answer
+            descriptiveSection.style.display = 'none';
+            optionsContainer.style.display = 'block';
+            optionsContainer.innerHTML = '';
             
-            const radio = document.createElement('input');
-            radio.type = 'radio';
-            radio.name = 'answer';
-            radio.value = index;
-            radio.id = `option-${index}`;
-            radio.checked = this.answers[this.currentQuestionIndex] === index;
-            radio.addEventListener('change', () => {
-                this.selectAnswer(index);
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                if (this.answers[this.currentQuestionIndex] === index) {
+                    optionDiv.classList.add('selected');
+                }
+                
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'answer';
+                radio.value = index;
+                radio.id = `option-${index}`;
+                radio.checked = this.answers[this.currentQuestionIndex] === index;
+                radio.addEventListener('change', () => {
+                    this.selectAnswer(index);
+                });
+                
+                const label = document.createElement('label');
+                label.className = 'option-label';
+                label.htmlFor = `option-${index}`;
+                label.textContent = option;
+                
+                optionDiv.appendChild(radio);
+                optionDiv.appendChild(label);
+                optionDiv.addEventListener('click', () => {
+                    radio.checked = true;
+                    this.selectAnswer(index);
+                });
+                
+                optionsContainer.appendChild(optionDiv);
             });
-            
-            const label = document.createElement('label');
-            label.className = 'option-label';
-            label.htmlFor = `option-${index}`;
-            label.textContent = option;
-            
-            optionDiv.appendChild(radio);
-            optionDiv.appendChild(label);
-            optionDiv.addEventListener('click', () => {
-                radio.checked = true;
-                this.selectAnswer(index);
-            });
-            
-            optionsContainer.appendChild(optionDiv);
-        });
+        }
         
         // Update navigation buttons
         document.getElementById('prev-btn').disabled = this.currentQuestionIndex === 0;
@@ -2069,6 +2374,8 @@ class NEETMockTest {
     }
 
     navigateQuestion(direction) {
+        // Stop timer for current question before navigating
+        
         const newIndex = this.currentQuestionIndex + direction;
         if (newIndex >= 0 && newIndex < this.questions.length) {
             this.currentQuestionIndex = newIndex;
@@ -2077,6 +2384,8 @@ class NEETMockTest {
     }
 
     goToQuestion(index) {
+        // Stop timer for current question before navigating
+        
         if (index >= 0 && index < this.questions.length) {
             this.currentQuestionIndex = index;
             this.renderQuestion();
@@ -2094,7 +2403,12 @@ class NEETMockTest {
             numberDiv.className = 'question-number';
             numberDiv.textContent = questionNum;
             
-            if (this.answers[index] !== null) {
+            // Check if answered (for descriptive, check if answer exists and is not empty)
+            const isAnswered = this.isDescriptiveTest 
+                ? (this.answers[index] !== null && this.answers[index].trim() !== '')
+                : (this.answers[index] !== null);
+            
+            if (isAnswered) {
                 numberDiv.classList.add('answered');
             } else if (this.markedForReview[index]) {
                 numberDiv.classList.add('marked');
@@ -2113,7 +2427,10 @@ class NEETMockTest {
     }
 
     confirmSubmit() {
-        const unanswered = this.answers.filter(a => a === null).length;
+        // Count unanswered questions (for descriptive, also check for empty strings)
+        const unanswered = this.isDescriptiveTest
+            ? this.answers.filter(a => a === null || (typeof a === 'string' && a.trim() === '')).length
+            : this.answers.filter(a => a === null).length;
         const message = `Are you sure you want to submit the test?\n\nUnanswered questions: ${unanswered}\n\nYou cannot change your answers after submission.`;
         
         if (confirm(message)) {
@@ -2125,6 +2442,7 @@ class NEETMockTest {
         // Stop proctoring
         this.stopProctoring();
         
+        // Stop all timers
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
         }
@@ -2135,11 +2453,75 @@ class NEETMockTest {
     }
 
     calculateResults() {
+        // Handle descriptive tests differently
+        if (this.isDescriptiveTest) {
+            let answeredCount = 0;
+            let unansweredCount = 0;
+            const totalMarks = this.questions.reduce((sum, q) => sum + (q.marks || 5), 0);
+            
+            this.questions.forEach((question, index) => {
+                const userAnswer = this.answers[index];
+                if (userAnswer === null || userAnswer.trim() === '') {
+                    unansweredCount++;
+                } else {
+                    answeredCount++;
+                }
+            });
+            
+            // For descriptive tests, just show completion status
+            document.getElementById('total-score').textContent = 'N/A (Descriptive)';
+            document.getElementById('correct-count').textContent = answeredCount;
+            document.getElementById('incorrect-count').textContent = 'N/A';
+            document.getElementById('unanswered-count').textContent = unansweredCount;
+            document.getElementById('mathematics-score').textContent = `${answeredCount}/${this.questions.length} Answered`;
+            const resultSubjectName = document.getElementById('result-subject-name');
+            if (resultSubjectName) {
+                resultSubjectName.textContent = 'Physics Descriptive';
+            }
+            
+            // Initialize marks array if not present
+            if (!this.currentResults || !this.currentResults.marks) {
+                this.currentResults = {
+                    subject: 'Physics Descriptive',
+                    totalQuestions: this.questions.length,
+                    answeredCount: answeredCount,
+                    unansweredCount: unansweredCount,
+                    totalMarks: totalMarks,
+                    answers: this.answers,
+                    questions: this.questions,
+                    isDescriptive: true,
+                    candidateName: 'Siddesh Anand',
+                    timestamp: new Date().toISOString(),
+                    marks: new Array(this.questions.length).fill(null), // Marks assigned by evaluator
+                    totalScore: null // Will be calculated after correction
+                };
+            } else {
+                // Update existing results
+                this.currentResults.answeredCount = answeredCount;
+                this.currentResults.unansweredCount = unansweredCount;
+                this.currentResults.answers = this.answers;
+            }
+            
+            // Save results to localStorage
+            this.saveResultsToStorage(this.currentResults);
+            
+            // Show correction interface for descriptive tests
+            this.displayDescriptiveCorrection();
+            
+            // Hide detailed results for descriptive tests
+            this.hideDetailedResults();
+            return;
+        }
+        
+        // Regular MCQ test scoring
         let correctCount = 0;
         let incorrectCount = 0;
         let unansweredCount = 0;
         let subjectScore = 0;
         const subject = this.selectedSubject || 'Mathematics';
+        
+        // Check if this is 40 marks test with variable marking
+        const isVariableMarking = this.is40MarksTest && this.questions.some(q => q.marks && q.marks !== 4);
         
         // Track chapter-wise performance
         const chapterPerformance = {};
@@ -2149,6 +2531,10 @@ class NEETMockTest {
             const questionNum = index + 1;
             const chapter = question.chapter || 'Unknown';
             const questionSubject = question.subject || subject;
+            
+            // Get marks for this question (default to 4 for regular tests, or question.marks for 80 marks test)
+            const questionMarks = isVariableMarking ? (question.marks || 1) : 4;
+            const negativeMark = isVariableMarking ? Math.floor(questionMarks / 3) : 1; // Negative marking: 1/3 of marks
             
             // Initialize chapter tracking
             if (!chapterPerformance[chapter]) {
@@ -2170,19 +2556,21 @@ class NEETMockTest {
             } else if (userAnswer === question.correct) {
                 correctCount++;
                 chapterPerformance[chapter].correct++;
-                chapterPerformance[chapter].score += 4;
-                subjectScore += 4;
+                chapterPerformance[chapter].score += questionMarks;
+                subjectScore += questionMarks;
             } else {
                 incorrectCount++;
                 chapterPerformance[chapter].incorrect++;
-                chapterPerformance[chapter].score -= 1;
-                // Negative marking: -1 for incorrect
-                subjectScore -= 1;
+                chapterPerformance[chapter].score -= negativeMark;
+                // Negative marking
+                subjectScore -= negativeMark;
             }
         });
         
         const totalScore = subjectScore;
-        const maxScore = this.questions.length * 4;
+        const maxScore = isVariableMarking 
+            ? this.questions.reduce((sum, q) => sum + (q.marks || 1), 0)
+            : this.questions.length * 4;
         const percentage = maxScore > 0 ? (totalScore / maxScore * 100) : 0;
         
         // Update results display
@@ -2252,6 +2640,209 @@ class NEETMockTest {
         // Hide review answers button for students
         const reviewBtn = document.getElementById('review-answers-btn');
         if (reviewBtn) reviewBtn.style.display = 'none';
+    }
+    
+    displayDescriptiveCorrection() {
+        const correctionSection = document.getElementById('descriptive-correction');
+        const questionsList = document.getElementById('correction-questions-list');
+        
+        if (!correctionSection || !questionsList) return;
+        
+        // Show correction section
+        correctionSection.style.display = 'block';
+        
+        // Get current marks or initialize
+        const marks = this.currentResults.marks || new Array(this.questions.length).fill(null);
+        const totalMarks = this.currentResults.totalMarks || this.questions.reduce((sum, q) => sum + (q.marks || 5), 0);
+        const currentTotal = marks.reduce((sum, m) => sum + (m !== null ? m : 0), 0);
+        const marksAssigned = marks.filter(m => m !== null).length;
+        const isCorrected = this.currentResults.totalScore !== null && this.currentResults.totalScore !== undefined;
+        
+        // Generate correction interface for each question
+        let html = `
+            <div class="correction-summary">
+                <div class="summary-card">
+                    <h3>Correction Summary</h3>
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Marks:</span>
+                            <span class="stat-value">${totalMarks}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Marks Assigned:</span>
+                            <span class="stat-value">${marksAssigned}/${this.questions.length}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Current Score:</span>
+                            <span class="stat-value ${isCorrected ? 'score-calculated' : ''}">${isCorrected ? this.currentResults.totalScore.toFixed(1) : currentTotal.toFixed(1)}/${totalMarks}</span>
+                        </div>
+                        ${isCorrected ? `
+                        <div class="stat-item">
+                            <span class="stat-label">Percentage:</span>
+                            <span class="stat-value score-calculated">${((this.currentResults.totalScore / totalMarks) * 100).toFixed(1)}%</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+        this.questions.forEach((question, index) => {
+            const questionNum = index + 1;
+            const userAnswer = this.answers[index] || '';
+            const maxMarks = question.marks || 5;
+            const currentMarks = marks[index] !== null ? marks[index] : '';
+            
+            html += `
+                <div class="correction-question-card">
+                    <div class="correction-question-header">
+                        <h3>Question ${questionNum} (${maxMarks} Marks)</h3>
+                        <span class="question-meta">Year: ${question.year} | Chapter: ${question.chapter}</span>
+                    </div>
+                    <div class="correction-question-content">
+                        <div class="question-text-correction">
+                            <strong>Question:</strong>
+                            <div class="question-display">${question.question.replace(/\n/g, '<br>')}</div>
+                        </div>
+                        <div class="expected-points-correction">
+                            <strong>Expected Points:</strong>
+                            <ul>
+                                ${question.expectedPoints ? question.expectedPoints.map(p => `<li>${p}</li>`).join('') : '<li>No expected points provided</li>'}
+                            </ul>
+                        </div>
+                        <div class="student-answer-correction">
+                            <strong>Student Answer:</strong>
+                            <div class="answer-display">${userAnswer ? userAnswer.replace(/\n/g, '<br>') : '<em>No answer provided</em>'}</div>
+                        </div>
+                        <div class="marks-input-section">
+                            <label for="marks-${index}">
+                                <strong>Marks Awarded:</strong> (0 - ${maxMarks})
+                            </label>
+                            <input 
+                                type="number" 
+                                id="marks-${index}" 
+                                class="marks-input" 
+                                min="0" 
+                                max="${maxMarks}" 
+                                step="0.5"
+                                value="${currentMarks}"
+                                placeholder="Enter marks"
+                            />
+                            <span class="marks-out-of">/ ${maxMarks}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        questionsList.innerHTML = html;
+    }
+    
+    calculateDescriptiveScore() {
+        if (!this.currentResults || !this.currentResults.isDescriptive) {
+            alert('This function is only available for descriptive tests.');
+            return;
+        }
+        
+        const marks = [];
+        let totalScore = 0;
+        let allMarksAssigned = true;
+        
+        this.questions.forEach((question, index) => {
+            const marksInput = document.getElementById(`marks-${index}`);
+            const maxMarks = question.marks || 5;
+            
+            if (marksInput) {
+                const value = parseFloat(marksInput.value);
+                if (value !== null && !isNaN(value) && value >= 0 && value <= maxMarks) {
+                    marks[index] = value;
+                    totalScore += value;
+                } else if (marksInput.value.trim() !== '') {
+                    alert(`Invalid marks for Question ${index + 1}. Please enter a number between 0 and ${maxMarks}.`);
+                    marksInput.focus();
+                    allMarksAssigned = false;
+                    return;
+                } else {
+                    marks[index] = null;
+                    allMarksAssigned = false;
+                }
+            } else {
+                marks[index] = null;
+                allMarksAssigned = false;
+            }
+        });
+        
+        if (!allMarksAssigned) {
+            const confirmMsg = 'Some questions do not have marks assigned. Do you want to calculate score with partial marks?';
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+        }
+        
+        // Update current results
+        this.currentResults.marks = marks;
+        this.currentResults.totalScore = totalScore;
+        const totalMarks = this.currentResults.totalMarks;
+        const percentage = totalMarks > 0 ? (totalScore / totalMarks * 100) : 0;
+        
+        // Update results display
+        document.getElementById('total-score').textContent = `${totalScore.toFixed(1)}`;
+        document.getElementById('correct-count').textContent = marks.filter(m => m !== null && m > 0).length;
+        document.getElementById('incorrect-count').textContent = marks.filter(m => m === 0).length;
+        document.getElementById('unanswered-count').textContent = marks.filter(m => m === null).length;
+        document.getElementById('mathematics-score').textContent = `${totalScore.toFixed(1)}/${totalMarks}`;
+        
+        // Update score card max
+        const scoreMax = document.querySelector('.score-max');
+        if (scoreMax) {
+            scoreMax.textContent = `out of ${totalMarks}`;
+        }
+        
+        // Show success message
+        const message = `Score calculated: ${totalScore.toFixed(1)}/${totalMarks} (${percentage.toFixed(1)}%)\n\n` +
+                       `Marks Breakdown:\n` +
+                       `• Questions with marks: ${marks.filter(m => m !== null).length}/${this.questions.length}\n` +
+                       `• Total Score: ${totalScore.toFixed(1)}/${totalMarks}\n` +
+                       `• Percentage: ${percentage.toFixed(1)}%\n\n` +
+                       `Click "Save Correction" to save these marks permanently.`;
+        alert(message);
+    }
+    
+    saveCorrection() {
+        if (!this.currentResults || !this.currentResults.isDescriptive) {
+            alert('This function is only available for descriptive tests.');
+            return;
+        }
+        
+        // Calculate score first if not already calculated
+        if (this.currentResults.totalScore === null || this.currentResults.totalScore === undefined) {
+            this.calculateDescriptiveScore();
+        }
+        
+        // Verify marks are assigned
+        const marksAssigned = this.currentResults.marks.filter(m => m !== null).length;
+        if (marksAssigned === 0) {
+            alert('Please assign marks to at least one question before saving.');
+            return;
+        }
+        
+        // Save to localStorage
+        this.saveResultsToStorage(this.currentResults);
+        
+        // Update the test in allTestResults array
+        try {
+            const allResults = this.getAllTestResults();
+            const resultIndex = allResults.findIndex(r => r.id === this.currentResults.id);
+            if (resultIndex !== -1) {
+                allResults[resultIndex] = { ...this.currentResults };
+                localStorage.setItem('allTestResults', JSON.stringify(allResults.slice(-100)));
+            }
+        } catch (e) {
+            console.error('Failed to update test in history:', e);
+        }
+        
+        alert('✅ Correction saved successfully!\n\n' +
+              `Total Score: ${this.currentResults.totalScore.toFixed(1)}/${this.currentResults.totalMarks}\n` +
+              `Percentage: ${((this.currentResults.totalScore / this.currentResults.totalMarks) * 100).toFixed(1)}%`);
     }
 
     downloadResultsPDF() {
@@ -2732,6 +3323,7 @@ class NEETMockTest {
         // Restore questions and answers for display
         this.questions = results.questions;
         this.answers = results.answers;
+        this.isDescriptiveTest = results.isDescriptive || false;
         
         // Store current results for PDF generation
         this.currentResults = results;
@@ -2741,33 +3333,70 @@ class NEETMockTest {
         document.getElementById('test-screen').classList.remove('active');
         document.getElementById('results-screen').classList.add('active');
         
-        // Update results display
-        const maxScore = (results.questions?.length || 0) * 4;
-        document.getElementById('total-score').textContent = results.totalScore || 0;
-        document.getElementById('correct-count').textContent = results.correctCount || 0;
-        document.getElementById('incorrect-count').textContent = results.incorrectCount || 0;
-        document.getElementById('unanswered-count').textContent = results.unansweredCount || 0;
-        document.getElementById('mathematics-score').textContent = `${results.mathematicsScore || 0}/${maxScore}`;
-        
-        const resultSubjectName = document.getElementById('result-subject-name');
-        if (resultSubjectName) {
-            resultSubjectName.textContent = results.subject || 'Mathematics';
-        }
-        
-        // Display detailed results only for admin
-        if (this.userType === 'admin') {
-            this.displayChapterPerformance(results.chapterPerformance);
-            this.displayResultsAnalysis({
-                correctCount: results.correctCount,
-                incorrectCount: results.incorrectCount,
-                unansweredCount: results.unansweredCount,
-                totalScore: results.totalScore,
-                mathematicsScore: results.mathematicsScore,
-                chapterPerformance: results.chapterPerformance
-            });
-            this.displayAnswerReview();
-        } else {
+        // Handle descriptive tests
+        if (results.isDescriptive) {
+            const totalMarks = results.totalMarks || results.questions.reduce((sum, q) => sum + (q.marks || 5), 0);
+            const totalScore = results.totalScore !== null && results.totalScore !== undefined ? results.totalScore : 'N/A (Not Corrected)';
+            const answeredCount = results.answeredCount || 0;
+            const unansweredCount = results.unansweredCount || 0;
+            
+            // Update results display
+            document.getElementById('total-score').textContent = typeof totalScore === 'number' ? totalScore.toFixed(1) : totalScore;
+            document.getElementById('correct-count').textContent = answeredCount;
+            document.getElementById('incorrect-count').textContent = 'N/A';
+            document.getElementById('unanswered-count').textContent = unansweredCount;
+            document.getElementById('mathematics-score').textContent = typeof totalScore === 'number' 
+                ? `${totalScore.toFixed(1)}/${totalMarks}` 
+                : `${answeredCount}/${results.questions.length} Answered`;
+            
+            const scoreMax = document.querySelector('.score-max');
+            if (scoreMax) {
+                scoreMax.textContent = typeof totalScore === 'number' ? `out of ${totalMarks}` : '';
+            }
+            
+            const resultSubjectName = document.getElementById('result-subject-name');
+            if (resultSubjectName) {
+                resultSubjectName.textContent = 'Physics Descriptive';
+            }
+            
+            // Show correction interface
+            this.displayDescriptiveCorrection();
             this.hideDetailedResults();
+        } else {
+            // Regular MCQ test results
+            const maxScore = (results.questions?.length || 0) * 4;
+            document.getElementById('total-score').textContent = results.totalScore || 0;
+            document.getElementById('correct-count').textContent = results.correctCount || 0;
+            document.getElementById('incorrect-count').textContent = results.incorrectCount || 0;
+            document.getElementById('unanswered-count').textContent = results.unansweredCount || 0;
+            document.getElementById('mathematics-score').textContent = `${results.mathematicsScore || 0}/${maxScore}`;
+            
+            const resultSubjectName = document.getElementById('result-subject-name');
+            if (resultSubjectName) {
+                resultSubjectName.textContent = results.subject || 'Mathematics';
+            }
+            
+            // Hide correction interface for MCQ tests
+            const correctionSection = document.getElementById('descriptive-correction');
+            if (correctionSection) {
+                correctionSection.style.display = 'none';
+            }
+            
+            // Display detailed results only for admin
+            if (this.userType === 'admin') {
+                this.displayChapterPerformance(results.chapterPerformance);
+                this.displayResultsAnalysis({
+                    correctCount: results.correctCount,
+                    incorrectCount: results.incorrectCount,
+                    unansweredCount: results.unansweredCount,
+                    totalScore: results.totalScore,
+                    mathematicsScore: results.mathematicsScore,
+                    chapterPerformance: results.chapterPerformance
+                });
+                this.displayAnswerReview();
+            } else {
+                this.hideDetailedResults();
+            }
         }
         
         // Show timestamp
@@ -2970,7 +3599,7 @@ class NEETMockTest {
         this.timeRemaining = 60 * 60;
         this.testStarted = false;
         
-        // Clear timer
+        // Clear timers
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
         }
@@ -3209,6 +3838,7 @@ class NEETMockTest {
         this.selectedSubject = result.subject || 'Mathematics';
         this.questions = result.questions;
         this.answers = result.answers;
+        this.isDescriptiveTest = result.isDescriptive || false;
         
         // Store current results for PDF generation
         this.currentResults = result;
@@ -3220,33 +3850,70 @@ class NEETMockTest {
         document.getElementById('subject-selection-screen').classList.remove('active');
         document.getElementById('results-screen').classList.add('active');
         
-        // Update results display
-        const maxScore = (result.questions?.length || 0) * 4;
-        document.getElementById('total-score').textContent = result.totalScore || 0;
-        document.getElementById('correct-count').textContent = result.correctCount || 0;
-        document.getElementById('incorrect-count').textContent = result.incorrectCount || 0;
-        document.getElementById('unanswered-count').textContent = result.unansweredCount || 0;
-        document.getElementById('mathematics-score').textContent = `${result.mathematicsScore || 0}/${maxScore}`;
-        
-        const resultSubjectName = document.getElementById('result-subject-name');
-        if (resultSubjectName) {
-            resultSubjectName.textContent = result.subject || 'Mathematics';
-        }
-        
-        // Display detailed results only for admin
-        if (this.userType === 'admin') {
-            this.displayChapterPerformance(result.chapterPerformance);
-            this.displayResultsAnalysis({
-                correctCount: result.correctCount,
-                incorrectCount: result.incorrectCount,
-                unansweredCount: result.unansweredCount,
-                totalScore: result.totalScore,
-                mathematicsScore: result.mathematicsScore,
-                chapterPerformance: result.chapterPerformance
-            });
-            this.displayAnswerReview();
-        } else {
+        // Handle descriptive tests
+        if (result.isDescriptive) {
+            const totalMarks = result.totalMarks || result.questions.reduce((sum, q) => sum + (q.marks || 5), 0);
+            const totalScore = result.totalScore !== null && result.totalScore !== undefined ? result.totalScore : 'N/A (Not Corrected)';
+            const answeredCount = result.answeredCount || 0;
+            const unansweredCount = result.unansweredCount || 0;
+            
+            // Update results display
+            document.getElementById('total-score').textContent = typeof totalScore === 'number' ? totalScore.toFixed(1) : totalScore;
+            document.getElementById('correct-count').textContent = answeredCount;
+            document.getElementById('incorrect-count').textContent = 'N/A';
+            document.getElementById('unanswered-count').textContent = unansweredCount;
+            document.getElementById('mathematics-score').textContent = typeof totalScore === 'number' 
+                ? `${totalScore.toFixed(1)}/${totalMarks}` 
+                : `${answeredCount}/${result.questions.length} Answered`;
+            
+            const scoreMax = document.querySelector('.score-max');
+            if (scoreMax) {
+                scoreMax.textContent = typeof totalScore === 'number' ? `out of ${totalMarks}` : '';
+            }
+            
+            const resultSubjectName = document.getElementById('result-subject-name');
+            if (resultSubjectName) {
+                resultSubjectName.textContent = 'Physics Descriptive';
+            }
+            
+            // Show correction interface
+            this.displayDescriptiveCorrection();
             this.hideDetailedResults();
+        } else {
+            // Regular MCQ test results
+            const maxScore = (result.questions?.length || 0) * 4;
+            document.getElementById('total-score').textContent = result.totalScore || 0;
+            document.getElementById('correct-count').textContent = result.correctCount || 0;
+            document.getElementById('incorrect-count').textContent = result.incorrectCount || 0;
+            document.getElementById('unanswered-count').textContent = result.unansweredCount || 0;
+            document.getElementById('mathematics-score').textContent = `${result.mathematicsScore || 0}/${maxScore}`;
+            
+            const resultSubjectName = document.getElementById('result-subject-name');
+            if (resultSubjectName) {
+                resultSubjectName.textContent = result.subject || 'Mathematics';
+            }
+            
+            // Hide correction interface for MCQ tests
+            const correctionSection = document.getElementById('descriptive-correction');
+            if (correctionSection) {
+                correctionSection.style.display = 'none';
+            }
+            
+            // Display detailed results only for admin
+            if (this.userType === 'admin') {
+                this.displayChapterPerformance(result.chapterPerformance);
+                this.displayResultsAnalysis({
+                    correctCount: result.correctCount,
+                    incorrectCount: result.incorrectCount,
+                    unansweredCount: result.unansweredCount,
+                    totalScore: result.totalScore,
+                    mathematicsScore: result.mathematicsScore,
+                    chapterPerformance: result.chapterPerformance
+                });
+                this.displayAnswerReview();
+            } else {
+                this.hideDetailedResults();
+            }
         }
         
         // Show timestamp
@@ -3434,9 +4101,69 @@ class NEETMockTest {
 
 // Initialize the application when the page loads
 let app;
+
+// Global fallback function for login (works even if app not initialized)
+window.handleStudentLogin = function() {
+    console.log('Global handleStudentLogin called');
+    if (window.app && window.app.loginAsStudent) {
+        window.app.loginAsStudent();
+    } else {
+        console.log('App not ready, using direct navigation');
+        const loginScreen = document.getElementById('login-screen');
+        const subjectScreen = document.getElementById('subject-selection-screen');
+        if (loginScreen && subjectScreen) {
+            loginScreen.classList.remove('active');
+            subjectScreen.classList.add('active');
+            console.log('Direct navigation successful');
+        } else {
+            console.error('Screen elements not found for direct navigation');
+            alert('Application not fully loaded. Please wait a moment and try again.');
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-    app = new NEETMockTest();
-    window.app = app; // Make accessible globally for onclick handlers
+    console.log('DOMContentLoaded event fired');
+    try {
+        console.log('Initializing NEETMockTest application...');
+        app = new NEETMockTest();
+        window.app = app; // Make accessible globally
+        
+        // Auto-login as student
+        app.userType = 'student';
+        const loginScreen = document.getElementById('login-screen');
+        const subjectScreen = document.getElementById('subject-selection-screen');
+        
+        if (loginScreen) {
+            loginScreen.classList.remove('active');
+            loginScreen.style.display = 'none';
+        }
+        
+        // Check if subject parameter is in URL (for full page load)
+        const urlParams = new URLSearchParams(window.location.search);
+        const subjectParam = urlParams.get('subject');
+        
+        if (subjectParam) {
+            // Load test directly for the subject in full page
+            console.log('Subject parameter found, loading test:', subjectParam);
+            setTimeout(() => {
+                app.selectSubject(subjectParam);
+            }, 100);
+        } else {
+            // Show subject selection screen
+            if (subjectScreen) {
+                subjectScreen.classList.add('active');
+                subjectScreen.style.display = 'block';
+            }
+        }
+        
+        console.log('Application initialized successfully - auto-logged in as student');
+        
+    } catch (error) {
+        console.error('Error initializing application:', error);
+        console.error('Error stack:', error.stack);
+        alert('Error loading application: ' + error.message + '\n\nPlease refresh the page.');
+    }
 });
 
 

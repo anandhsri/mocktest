@@ -156,14 +156,6 @@ const questions = {
             chapter: "Circles"
         },
         {
-            id: 20,
-            question: "In the figure, if TP and TQ are two tangents to a circle with centre O so that ∠POQ = 110°, then ∠PTQ is equal to:",
-            options: ["60°", "70°", "80°", "90°"],
-            correct: 1,
-            year: "2024",
-            chapter: "Circles"
-        },
-        {
             id: 21,
             question: "A solid is in the shape of a cone standing on a hemisphere with both their radii being equal to 1 cm and the height of the cone is equal to its radius. Find the volume of the solid in terms of π.",
             options: ["π cm³", "2π cm³", "3π cm³", "4π cm³"],
@@ -180,28 +172,12 @@ const questions = {
             chapter: "Surface Areas and Volumes"
         },
         {
-            id: 23,
-            question: "Find the area of the shaded region in the given figure, where ABCD is a square of side 14 cm and semicircles are drawn with each side of the square as diameter.",
-            options: ["(196 - 49π) cm²", "(196 - 98π) cm²", "(196 - 147π) cm²", "(196 - 196π) cm²"],
-            correct: 0,
-            year: "2023",
-            chapter: "Areas Related to Circles"
-        },
-        {
             id: 24,
             question: "A chord of a circle of radius 10 cm subtends a right angle at the centre. Find the area of the corresponding minor segment. (Use π = 3.14)",
             options: ["28.5 cm²", "28.6 cm²", "28.7 cm²", "28.8 cm²"],
             correct: 0,
             year: "2024",
             chapter: "Areas Related to Circles"
-        },
-        {
-            id: 25,
-            question: "The following distribution gives the daily income of 50 workers of a factory. Convert the distribution above to a less than type cumulative frequency distribution and draw its ogive. Daily Income (₹): 100-120: 12, 120-140: 14, 140-160: 8, 160-180: 6, 180-200: 10. Find the median.",
-            options: ["₹125", "₹135", "₹145", "₹155"],
-            correct: 0,
-            year: "2021",
-            chapter: "Statistics"
         },
         {
             id: 26,
@@ -314,14 +290,6 @@ const questions = {
             correct: 0,
             year: "2022",
             chapter: "Surface Areas and Volumes"
-        },
-        {
-            id: 40,
-            question: "Find the area of the shaded region in the given figure, where a circular arc of radius 6 cm has been drawn with vertex O of an equilateral triangle OAB of side 12 cm as centre.",
-            options: ["(36√3 - 12π) cm²", "(36√3 - 18π) cm²", "(48√3 - 12π) cm²", "(48√3 - 18π) cm²"],
-            correct: 1,
-            year: "2023",
-            chapter: "Areas Related to Circles"
         },
         {
             id: 41,
@@ -2015,6 +1983,408 @@ const questions = {
             year: "2024",
             chapter: "History - Nationalism in India"
         }
+    ],
+    sanskrit: [
+        {
+            id: 1,
+            question: "कः सन्धिः 'रामः + अयोध्याम्' इत्यत्र भवति?",
+            options: ["दीर्घ सन्धिः", "गुण सन्धिः", "वृद्धि सन्धिः", "यण् सन्धिः"],
+            correct: 0,
+            year: "2021",
+            chapter: "सन्धिः (Sandhi)"
+        },
+        {
+            id: 2,
+            question: "'रामः + इन्द्रः' इत्यत्र कः सन्धिः?",
+            options: ["रामेन्द्रः", "राम इन्द्रः", "रामयिन्द्रः", "रामेन्द्रः"],
+            correct: 0,
+            year: "2021",
+            chapter: "सन्धिः (Sandhi)"
+        },
+        {
+            id: 3,
+            question: "'देव + आलयः' इत्यत्र सन्धिविच्छेदः कः?",
+            options: ["देव + आलयः", "देवा + लयः", "देवः + आलयः", "देव + लयः"],
+            correct: 0,
+            year: "2022",
+            chapter: "सन्धिः (Sandhi)"
+        },
+        {
+            id: 4,
+            question: "'राजा + ऋषिः' इत्यत्र कः सन्धिः?",
+            options: ["राजर्षिः", "राज ऋषिः", "राजार्षिः", "राजर्षिः"],
+            correct: 0,
+            year: "2022",
+            chapter: "सन्धिः (Sandhi)"
+        },
+        {
+            id: 5,
+            question: "'पुस्तकालयः' इत्यस्य समासविग्रहः कः?",
+            options: ["पुस्तकस्य आलयः", "पुस्तकं आलयः", "पुस्तक आलयः", "पुस्तकाय आलयः"],
+            correct: 0,
+            year: "2021",
+            chapter: "समासः (Samas)"
+        },
+        {
+            id: 6,
+            question: "'रामकृष्णः' इत्यस्य समासः कः?",
+            options: ["द्वन्द्व समासः", "तत्पुरुष समासः", "बहुव्रीहि समासः", "कर्मधारय समासः"],
+            correct: 0,
+            year: "2021",
+            chapter: "समासः (Samas)"
+        },
+        {
+            id: 7,
+            question: "'पीताम्बरः' इत्यस्य समासः कः?",
+            options: ["द्वन्द्व समासः", "तत्पुरुष समासः", "बहुव्रीहि समासः", "कर्मधारय समासः"],
+            correct: 2,
+            year: "2022",
+            chapter: "समासः (Samas)"
+        },
+        {
+            id: 8,
+            question: "'नीलोत्पलम्' इत्यस्य समासः कः?",
+            options: ["द्वन्द्व समासः", "तत्पुरुष समासः", "बहुव्रीहि समासः", "कर्मधारय समासः"],
+            correct: 3,
+            year: "2022",
+            chapter: "समासः (Samas)"
+        },
+        {
+            id: 9,
+            question: "'रामः वनं गच्छति' इत्यत्र 'वनं' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "करण", "अपादान"],
+            correct: 1,
+            year: "2021",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 10,
+            question: "'रामः बाणेन मारीचं हन्ति' इत्यत्र 'बाणेन' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "करण", "अपादान"],
+            correct: 2,
+            year: "2021",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 11,
+            question: "'रामः लक्ष्मणात् बलवान्' इत्यत्र 'लक्ष्मणात्' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "करण", "अपादान"],
+            correct: 3,
+            year: "2022",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 12,
+            question: "'रामः सीतायै पुष्पं ददाति' इत्यत्र 'सीतायै' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "सम्प्रदान", "अधिकरण"],
+            correct: 2,
+            year: "2022",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 13,
+            question: "'गम्' धातोः लट् लकारे प्रथमपुरुष एकवचने रूपं किम्?",
+            options: ["गच्छति", "गच्छसि", "गच्छामि", "गच्छन्ति"],
+            correct: 0,
+            year: "2021",
+            chapter: "धातु रूप (Dhatu Rupa)"
+        },
+        {
+            id: 14,
+            question: "'पठ्' धातोः लट् लकारे मध्यमपुरुष बहुवचने रूपं किम्?",
+            options: ["पठति", "पठसि", "पठथः", "पठथ"],
+            correct: 3,
+            year: "2021",
+            chapter: "धातु रूप (Dhatu Rupa)"
+        },
+        {
+            id: 15,
+            question: "'लिख्' धातोः लङ् लकारे प्रथमपुरुष एकवचने रूपं किम्?",
+            options: ["लिखति", "लिखति स्म", "अलिखत्", "लिखेत्"],
+            correct: 2,
+            year: "2022",
+            chapter: "धातु रूप (Dhatu Rupa)"
+        },
+        {
+            id: 16,
+            question: "'राम' शब्दस्य द्वितीया विभक्तिः एकवचने किम्?",
+            options: ["रामः", "रामम्", "रामेण", "रामाय"],
+            correct: 1,
+            year: "2021",
+            chapter: "विभक्तिः (Vibhakti)"
+        },
+        {
+            id: 17,
+            question: "'बालक' शब्दस्य तृतीया विभक्तिः बहुवचने किम्?",
+            options: ["बालकैः", "बालकान्", "बालकेषु", "बालकानाम्"],
+            correct: 0,
+            year: "2021",
+            chapter: "विभक्तिः (Vibhakti)"
+        },
+        {
+            id: 18,
+            question: "'गुरु' शब्दस्य षष्ठी विभक्तिः एकवचने किम्?",
+            options: ["गुरोः", "गुरुः", "गुरुम्", "गुरुणा"],
+            correct: 0,
+            year: "2022",
+            chapter: "विभक्तिः (Vibhakti)"
+        },
+        {
+            id: 19,
+            question: "'पुस्तक' शब्दस्य सप्तमी विभक्तिः बहुवचने किम्?",
+            options: ["पुस्तकेषु", "पुस्तकानि", "पुस्तकैः", "पुस्तकानाम्"],
+            correct: 0,
+            year: "2022",
+            chapter: "विभक्तिः (Vibhakti)"
+        },
+        {
+            id: 20,
+            question: "'सः' सर्वनामशब्दस्य प्रथमा विभक्तिः बहुवचने किम्?",
+            options: ["ते", "तान्", "तैः", "तेषाम्"],
+            correct: 0,
+            year: "2021",
+            chapter: "सर्वनाम (Sarvanama)"
+        },
+        {
+            id: 21,
+            question: "'यः' सर्वनामशब्दस्य द्वितीया विभक्तिः एकवचने किम्?",
+            options: ["यः", "यम्", "येन", "यस्मै"],
+            correct: 1,
+            year: "2021",
+            chapter: "सर्वनाम (Sarvanama)"
+        },
+        {
+            id: 22,
+            question: "'किम्' सर्वनामशब्दस्य तृतीया विभक्तिः एकवचने किम्?",
+            options: ["कः", "किम्", "केन", "कस्मै"],
+            correct: 2,
+            year: "2022",
+            chapter: "सर्वनाम (Sarvanama)"
+        },
+        {
+            id: 23,
+            question: "'अस्मद्' सर्वनामशब्दस्य प्रथमा विभक्तिः एकवचने किम्?",
+            options: ["अहम्", "त्वम्", "यूयम्", "वयम्"],
+            correct: 0,
+            year: "2022",
+            chapter: "सर्वनाम (Sarvanama)"
+        },
+        {
+            id: 24,
+            question: "'प्रसन्नः' इत्यस्य विपरीतार्थकशब्दः कः?",
+            options: ["सन्तुष्टः", "दुःखितः", "हर्षितः", "आनन्दितः"],
+            correct: 1,
+            year: "2021",
+            chapter: "शब्दकोशः (Vocabulary)"
+        },
+        {
+            id: 25,
+            question: "'दयालुः' इत्यस्य समानार्थकशब्दः कः?",
+            options: ["क्रूरः", "निर्दयः", "करुणः", "कठोरः"],
+            correct: 2,
+            year: "2021",
+            chapter: "शब्दकोशः (Vocabulary)"
+        },
+        {
+            id: 26,
+            question: "'शीघ्रम्' इत्यस्य समानार्थकशब्दः कः?",
+            options: ["मन्दम्", "विलम्बेन", "त्वरितम्", "स्थिरम्"],
+            correct: 2,
+            year: "2022",
+            chapter: "शब्दकोशः (Vocabulary)"
+        },
+        {
+            id: 27,
+            question: "'सत्यम्' इत्यस्य विपरीतार्थकशब्दः कः?",
+            options: ["असत्यम्", "यथार्थम्", "वास्तविकम्", "प्रामाणिकम्"],
+            correct: 0,
+            year: "2022",
+            chapter: "शब्दकोशः (Vocabulary)"
+        },
+        {
+            id: 28,
+            question: "'रामायणम्' इत्यस्य लेखकः कः?",
+            options: ["वाल्मीकिः", "व्यासः", "कालिदासः", "भासः"],
+            correct: 0,
+            year: "2021",
+            chapter: "साहित्य (Literature)"
+        },
+        {
+            id: 29,
+            question: "'महाभारतम्' इत्यस्य लेखकः कः?",
+            options: ["वाल्मीकिः", "व्यासः", "कालिदासः", "भासः"],
+            correct: 1,
+            year: "2021",
+            chapter: "साहित्य (Literature)"
+        },
+        {
+            id: 30,
+            question: "'अभिज्ञानशाकुन्तलम्' इत्यस्य लेखकः कः?",
+            options: ["वाल्मीकिः", "व्यासः", "कालिदासः", "भासः"],
+            correct: 2,
+            year: "2022",
+            chapter: "साहित्य (Literature)"
+        },
+        {
+            id: 31,
+            question: "'शकुन्तला' नाटके राजा कः?",
+            options: ["रामः", "युधिष्ठिरः", "दुष्यन्तः", "अर्जुनः"],
+            correct: 2,
+            year: "2022",
+            chapter: "साहित्य (Literature)"
+        },
+        {
+            id: 32,
+            question: "'रामः वनं गच्छति' इत्यस्य अंग्रेजी अनुवादः कः?",
+            options: ["Rama goes to forest", "Rama comes from forest", "Rama lives in forest", "Rama returns from forest"],
+            correct: 0,
+            year: "2021",
+            chapter: "अनुवाद (Translation)"
+        },
+        {
+            id: 33,
+            question: "'The teacher teaches students' इत्यस्य संस्कृत अनुवादः कः?",
+            options: ["शिक्षकः छात्रान् पाठयति", "शिक्षकः छात्रैः पठति", "शिक्षकः छात्राय पुस्तकं ददाति", "शिक्षकः छात्रस्य गृहं गच्छति"],
+            correct: 0,
+            year: "2021",
+            chapter: "अनुवाद (Translation)"
+        },
+        {
+            id: 34,
+            question: "'सः पुस्तकं पठति' इत्यस्य अंग्रेजी अनुवादः कः?",
+            options: ["He reads a book", "He writes a book", "He gives a book", "He buys a book"],
+            correct: 0,
+            year: "2022",
+            chapter: "अनुवाद (Translation)"
+        },
+        {
+            id: 35,
+            question: "'I go to school' इत्यस्य संस्कृत अनुवादः कः?",
+            options: ["अहं विद्यालयं गच्छामि", "अहं विद्यालयात् आगच्छामि", "अहं विद्यालये पठामि", "अहं विद्यालयं पश्यामि"],
+            correct: 0,
+            year: "2022",
+            chapter: "अनुवाद (Translation)"
+        },
+        {
+            id: 36,
+            question: "'रामः सीतां प्रेम करोति' इत्यत्र 'सीतां' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "करण", "सम्प्रदान"],
+            correct: 1,
+            year: "2023",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 37,
+            question: "'बालकः पुस्तकं पठति' इत्यत्र 'पुस्तकं' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "करण", "अपादान"],
+            correct: 1,
+            year: "2023",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 38,
+            question: "'गङ्गा हिमालयात् निर्गच्छति' इत्यत्र 'हिमालयात्' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "करण", "अपादान"],
+            correct: 3,
+            year: "2023",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 39,
+            question: "'रामः अयोध्यायां वसति' इत्यत्र 'अयोध्यायां' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "सम्प्रदान", "अधिकरण"],
+            correct: 3,
+            year: "2023",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 40,
+            question: "'रामः लक्ष्मणेन सह वनं गच्छति' इत्यत्र 'लक्ष्मणेन' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "सहाय", "अधिकरण"],
+            correct: 2,
+            year: "2023",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 41,
+            question: "'भवत्' शब्दस्य प्रथमा विभक्तिः बहुवचने किम्?",
+            options: ["भवन्तः", "भवतः", "भवन्ति", "भवद्भ्यः"],
+            correct: 0,
+            year: "2023",
+            chapter: "विभक्तिः (Vibhakti)"
+        },
+        {
+            id: 42,
+            question: "'तत्' शब्दस्य द्वितीया विभक्तिः बहुवचने किम्?",
+            options: ["तानि", "तेषाम्", "तैः", "तेषु"],
+            correct: 0,
+            year: "2023",
+            chapter: "विभक्तिः (Vibhakti)"
+        },
+        {
+            id: 43,
+            question: "'एतत्' शब्दस्य तृतीया विभक्तिः एकवचने किम्?",
+            options: ["एतेन", "एतस्य", "एतस्मै", "एतस्मिन्"],
+            correct: 0,
+            year: "2024",
+            chapter: "विभक्तिः (Vibhakti)"
+        },
+        {
+            id: 44,
+            question: "'किम्' सर्वनामशब्दस्य षष्ठी विभक्तिः एकवचने किम्?",
+            options: ["कस्य", "कस्मै", "केन", "कस्मिन्"],
+            correct: 0,
+            year: "2024",
+            chapter: "सर्वनाम (Sarvanama)"
+        },
+        {
+            id: 45,
+            question: "'अस्मद्' सर्वनामशब्दस्य द्वितीया विभक्तिः बहुवचने किम्?",
+            options: ["अस्मान्", "अस्माकम्", "अस्माभिः", "अस्मासु"],
+            correct: 0,
+            year: "2024",
+            chapter: "सर्वनाम (Sarvanama)"
+        },
+        {
+            id: 46,
+            question: "'दा' धातोः लट् लकारे उत्तमपुरुष एकवचने रूपं किम्?",
+            options: ["ददाति", "ददासि", "ददामि", "ददथः"],
+            correct: 2,
+            year: "2023",
+            chapter: "धातु रूप (Dhatu Rupa)"
+        },
+        {
+            id: 47,
+            question: "'भू' धातोः लृट् लकारे प्रथमपुरुष एकवचने रूपं किम्?",
+            options: ["भवति", "भविष्यति", "भवेत्", "भवतु"],
+            correct: 1,
+            year: "2023",
+            chapter: "धातु रूप (Dhatu Rupa)"
+        },
+        {
+            id: 48,
+            question: "'कृ' धातोः लोट् लकारे मध्यमपुरुष एकवचने रूपं किम्?",
+            options: ["करोति", "कुरु", "करोतु", "कुरुत"],
+            correct: 1,
+            year: "2024",
+            chapter: "धातु रूप (Dhatu Rupa)"
+        },
+        {
+            id: 49,
+            question: "'राजपुत्रः' इत्यस्य समासविग्रहः कः?",
+            options: ["राज्ञः पुत्रः", "राजा पुत्रः", "राजाय पुत्रः", "राजेन पुत्रः"],
+            correct: 0,
+            year: "2024",
+            chapter: "समासः (Samas)"
+        },
+        {
+            id: 50,
+            question: "'चतुर्भुजः' इत्यस्य समासः कः?",
+            options: ["द्वन्द्व समासः", "तत्पुरुष समासः", "बहुव्रीहि समासः", "कर्मधारय समासः"],
+            correct: 2,
+            year: "2024",
+            chapter: "समासः (Samas)"
+        }
     ]
 };
 
@@ -2024,5 +2394,6 @@ const allQuestions = [
     ...questions.physics.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Physics'})),
     ...questions.chemistry.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Chemistry'})),
     ...questions.biology.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Biology'})),
-    ...questions.socialScience.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Social Science'}))
+    ...questions.socialScience.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Social Science'})),
+    ...questions.sanskrit.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Sanskrit'}))
 ];

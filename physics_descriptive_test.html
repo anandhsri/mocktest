@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBSE Class 10 Physics - Descriptive Test (25 Marks)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header h2 {
+            color: #764ba2;
+            font-size: 1.5em;
+            font-weight: normal;
+        }
+        
+        .test-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .test-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .test-info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .test-info li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .test-info li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .question {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #764ba2;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .question-number {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #764ba2;
+        }
+        
+        .question-marks {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .question-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .question-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            white-space: pre-line;
+        }
+        
+        .answer-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #ddd;
+        }
+        
+        .answer-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1em;
+            line-height: 1.6;
+            resize: vertical;
+        }
+        
+        .answer-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .expected-points {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 3px solid #4caf50;
+        }
+        
+        .expected-points h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .expected-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .expected-points li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .expected-points li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #764ba2;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .topics-covered {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .topics-covered h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .topics-covered ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .topics-covered li {
+            padding: 5px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .topics-covered li:before {
+            content: "📚";
+            position: absolute;
+            left: 0;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+            
+            .answer-section, .btn, .timer {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="timer" id="timer">Time: 90:00</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>CBSE Class 10 Physics</h1>
+            <h2>Descriptive Type Test (25 Marks)</h2>
+            <p style="margin-top: 10px; color: #666;">Based on CBSE Board Exam Papers (2020-2025)</p>
+        </div>
+        
+        <div class="test-info">
+            <h3>Test Information</h3>
+            <ul>
+                <li><strong>Total Marks:</strong> 25</li>
+                <li><strong>Duration:</strong> 90 minutes</li>
+                <li><strong>Question Type:</strong> Long Answer Type (Descriptive)</li>
+                <li><strong>Number of Questions:</strong> 5 (5 marks each)</li>
+            </ul>
+            
+            <h3 style="margin-top: 20px;">Instructions</h3>
+            <ul>
+                <li>Answer all questions.</li>
+                <li>Each question carries 5 marks.</li>
+                <li>Draw neat and labeled diagrams wherever necessary.</li>
+                <li>Show all calculations clearly.</li>
+                <li>Use appropriate units in your answers.</li>
+            </ul>
+        </div>
+        
+        <div id="questions-container"></div>
+        
+        <div class="topics-covered">
+            <h3>Topics Covered</h3>
+            <ul>
+                <li>Ohm's Law and Electrical Circuits</li>
+                <li>Light - Reflection (Mirrors)</li>
+                <li>Magnetic Effects of Electric Current</li>
+                <li>The Human Eye and Optical Phenomena</li>
+                <li>Series and Parallel Resistor Combinations</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn" onclick="window.print()">Print Test</button>
+            <button class="btn btn-secondary" onclick="clearAllAnswers()">Clear All Answers</button>
+        </div>
+    </div>
+    
+    <script>
+        // Embedded Physics Descriptive Test Data
+        const physicsDescriptiveTest = {
+            testInfo: {
+                title: "CBSE Class 10 Physics - Descriptive Type Test",
+                totalMarks: 25,
+                duration: "90 minutes",
+                instructions: [
+                    "Answer all questions.",
+                    "Each question carries 5 marks.",
+                    "Draw neat and labeled diagrams wherever necessary.",
+                    "Show all calculations clearly.",
+                    "Use appropriate units in your answers."
+                ],
+                year: "2020-2025 Pattern"
+            },
+            
+            questions: [
+                {
+                    id: 1,
+                    marks: 5,
+                    year: "2023",
+                    chapter: "Electricity",
+                    question: "State Ohm's law. Draw a circuit diagram to verify Ohm's law. A student performs an experiment and obtains the following data:\n\nVoltage (V) | Current (A)\n2.0        | 0.4\n4.0        | 0.8\n6.0        | 1.2\n8.0        | 1.6\n\n(a) Plot a graph of V vs I.\n(b) Calculate the resistance of the conductor.\n(c) What would be the current when voltage is 10V?",
+                    expectedPoints: [
+                        "Statement of Ohm's law: V ∝ I or V = IR (1 mark)",
+                        "Circuit diagram with ammeter, voltmeter, resistor, battery, and key (1 mark)",
+                        "Graph plotting V vs I (straight line through origin) (1 mark)",
+                        "Calculation: R = V/I = 2.0/0.4 = 5Ω (1 mark)",
+                        "Current at 10V: I = V/R = 10/5 = 2A (1 mark)"
+                    ]
+                },
+                {
+                    id: 2,
+                    marks: 5,
+                    year: "2024",
+                    chapter: "Light - Reflection and Refraction",
+                    question: "An object is placed at a distance of 30 cm from a concave mirror of focal length 15 cm.\n\n(a) Draw a ray diagram to show the formation of image.\n(b) State the position, nature, and size of the image formed.\n(c) If the object is moved 10 cm towards the mirror, what will be the new position of the image?",
+                    expectedPoints: [
+                        "Ray diagram with at least two rays (incident parallel to principal axis, passing through focus) (2 marks)",
+                        "Image position calculation using mirror formula: 1/f = 1/v + 1/u (1 mark)",
+                        "Image characteristics: Real, inverted, same size, at 30 cm (1 mark)",
+                        "New position calculation when object moves to 20 cm (1 mark)"
+                    ]
+                },
+                {
+                    id: 3,
+                    marks: 5,
+                    year: "2022",
+                    chapter: "Magnetic Effects of Electric Current",
+                    question: "Explain the working of an electric motor with the help of a labeled diagram. State Fleming's left-hand rule. A current-carrying conductor experiences a force when placed in a magnetic field. Explain why this happens and what factors affect the magnitude of this force.",
+                    expectedPoints: [
+                        "Labeled diagram of electric motor (armature, commutator, brushes, field magnets) (1.5 marks)",
+                        "Explanation of working principle (rotation due to force on current-carrying conductor) (1 mark)",
+                        "Statement of Fleming's left-hand rule (1 mark)",
+                        "Explanation of force and factors affecting it (F = BIL) (1.5 marks)"
+                    ]
+                },
+                {
+                    id: 4,
+                    marks: 5,
+                    year: "2021",
+                    chapter: "The Human Eye and the Colourful World",
+                    question: "Explain the following phenomena with reasons:\n\n(a) Why does the sky appear blue during the day?\n(b) Why does the sun appear reddish at sunrise and sunset?\n(c) What causes the formation of a rainbow?\n\nAlso, explain the defect of vision called myopia. How can it be corrected? Draw a ray diagram showing the correction.",
+                    expectedPoints: [
+                        "Explanation of blue sky (scattering of blue light) (1 mark)",
+                        "Explanation of red sun (scattering, longer path) (1 mark)",
+                        "Explanation of rainbow (dispersion and total internal reflection) (1 mark)",
+                        "Myopia explanation and correction with ray diagram (2 marks)"
+                    ]
+                },
+                {
+                    id: 5,
+                    marks: 5,
+                    year: "2025",
+                    chapter: "Electricity",
+                    question: "Three resistors of resistances 2Ω, 3Ω, and 6Ω are connected:\n\n(a) In series across a 12V battery. Calculate:\n   (i) Total resistance\n   (ii) Current flowing through each resistor\n   (iii) Potential difference across each resistor\n\n(b) In parallel across the same battery. Calculate:\n   (i) Total resistance\n   (ii) Current through each resistor\n   (iii) Total current drawn from battery\n\n(c) Which combination draws more current? Justify your answer.",
+                    expectedPoints: [
+                        "Series combination calculations (R_total, I, V across each) (2 marks)",
+                        "Parallel combination calculations (1/R_total, I through each, I_total) (2 marks)",
+                        "Comparison and justification (1 mark)"
+                    ]
+                }
+            ]
+        };
+        
+        // Main script
+        let timeRemaining = 90 * 60; // 90 minutes in seconds
+        let timerInterval;
+        
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert('Time is up! Please submit your answers.');
+                }
+                updateTimer();
+            }, 1000);
+        }
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+        
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            const test = physicsDescriptiveTest;
+            
+            test.questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        <span class="question-number">Question ${q.id}</span>
+                        <span class="question-marks">${q.marks} Marks</span>
+                    </div>
+                    <div class="question-meta">
+                        <strong>Year:</strong> ${q.year} | <strong>Chapter:</strong> ${q.chapter}
+                    </div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="answer-section">
+                        <label for="answer-${q.id}" style="font-weight: bold; display: block; margin-bottom: 10px;">
+                            Your Answer:
+                        </label>
+                        <textarea 
+                            id="answer-${q.id}" 
+                            class="answer-textarea" 
+                            placeholder="Write your detailed answer here. Include diagrams, calculations, and explanations..."
+                            oninput="saveAnswer(${q.id})"
+                        ></textarea>
+                        <div class="expected-points">
+                            <h4>Expected Answer Points (for reference):</h4>
+                            <ul>
+                                ${q.expectedPoints.map(point => `<li>${point}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+                
+                // Load saved answer
+                const savedAnswer = localStorage.getItem(`physics_answer_${q.id}`);
+                if (savedAnswer) {
+                    document.getElementById(`answer-${q.id}`).value = savedAnswer;
+                }
+            });
+        }
+        
+        function saveAnswer(questionId) {
+            const answer = document.getElementById(`answer-${questionId}`).value;
+            localStorage.setItem(`physics_answer_${questionId}`, answer);
+        }
+        
+        function clearAllAnswers() {
+            if (confirm('Are you sure you want to clear all answers? This cannot be undone.')) {
+                physicsDescriptiveTest.questions.forEach(q => {
+                    localStorage.removeItem(`physics_answer_${q.id}`);
+                    document.getElementById(`answer-${q.id}`).value = '';
+                });
+            }
+        }
+        
+        // Initialize
+        renderQuestions();
+        startTimer();
+        updateTimer();
+        
+        // Save answers periodically
+        setInterval(() => {
+            physicsDescriptiveTest.questions.forEach(q => {
+                const answer = document.getElementById(`answer-${q.id}`).value;
+                if (answer) {
+                    localStorage.setItem(`physics_answer_${q.id}`, answer);
+                }
+            });
+        }, 30000); // Auto-save every 30 seconds
+    </script>
+</body>
+</html>
+
