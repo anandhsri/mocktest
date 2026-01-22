@@ -933,6 +933,96 @@ const questions = {
             correct: 2,
             year: "2025",
             chapter: "The Human Eye and the Colourful World"
+        },
+        {
+            id: 61,
+            question: "A body of mass 5 kg is moving with a velocity of 10 m/s. A force of 20 N is applied opposite to the direction of motion. How long will it take for the body to come to rest?",
+            options: ["2.5 s", "2.0 s", "1.5 s", "1.0 s"],
+            correct: 0,
+            year: "2025",
+            chapter: "Force and Laws of Motion",
+            difficulty: "tough"
+        },
+        {
+            id: 62,
+            question: "Two resistors of 6Ω and 12Ω are connected in series with a battery of 18V. What is the current through the 6Ω resistor and the power dissipated in it?",
+            options: ["1 A, 6 W", "1 A, 12 W", "2 A, 24 W", "0.5 A, 1.5 W"],
+            correct: 0,
+            year: "2025",
+            chapter: "Electricity",
+            difficulty: "tough"
+        },
+        {
+            id: 63,
+            question: "A convex lens of focal length 20 cm forms a real image at a distance of 60 cm from the lens. If the object is moved 10 cm closer to the lens, what will be the new image distance?",
+            options: ["30 cm", "40 cm", "50 cm", "80 cm"],
+            correct: 0,
+            year: "2025",
+            chapter: "Light - Reflection and Refraction",
+            difficulty: "tough"
+        },
+        {
+            id: 64,
+            question: "A body is dropped from a height of 80 m. At the same instant, another body is thrown upward from the ground with a velocity of 40 m/s. After how many seconds will they meet?",
+            options: ["2 s", "3 s", "4 s", "5 s"],
+            correct: 0,
+            year: "2025",
+            chapter: "Gravitation",
+            difficulty: "tough"
+        },
+        {
+            id: 65,
+            question: "Three resistors of 4Ω, 6Ω, and 12Ω are connected in parallel. If a current of 3 A flows through the 4Ω resistor, what is the total current in the circuit?",
+            options: ["6 A", "9 A", "12 A", "15 A"],
+            correct: 0,
+            year: "2025",
+            chapter: "Electricity",
+            difficulty: "tough"
+        },
+        {
+            id: 66,
+            question: "A sound wave of frequency 1000 Hz travels through air at 340 m/s. If it enters water where the speed is 1500 m/s, what will be its new wavelength?",
+            options: ["0.34 m", "0.15 m", "1.5 m", "0.23 m"],
+            correct: 2,
+            year: "2025",
+            chapter: "Sound",
+            difficulty: "tough"
+        },
+        {
+            id: 67,
+            question: "An object is placed at a distance of 30 cm from a concave mirror of focal length 15 cm. What is the nature, position, and magnification of the image?",
+            options: ["Real, 30 cm, -1", "Virtual, 30 cm, +1", "Real, 15 cm, -0.5", "Virtual, 15 cm, +0.5"],
+            correct: 0,
+            year: "2025",
+            chapter: "Light - Reflection and Refraction",
+            difficulty: "tough"
+        },
+        {
+            id: 68,
+            question: "A force of 50 N is applied to move a block of mass 10 kg up an inclined plane at 30° to the horizontal. If the coefficient of friction is 0.3, what is the acceleration of the block? (g = 10 m/s²)",
+            options: ["0.5 m/s²", "1.0 m/s²", "1.5 m/s²", "2.0 m/s²"],
+            correct: 0,
+            year: "2025",
+            chapter: "Force and Laws of Motion",
+            difficulty: "tough"
+        },
+        {
+            id: 69,
+            question: "A transformer has 1000 turns in the primary coil and 5000 turns in the secondary coil. If the primary voltage is 220 V, what is the secondary voltage?",
+            options: ["1100 V", "44 V", "110 V", "2200 V"],
+            correct: 0,
+            year: "2025",
+            chapter: "Magnetic Effects of Electric Current",
+            difficulty: "tough"
+        },
+        {
+            id: 70,
+            question: "A ray of light passes from air (n=1) into glass (n=1.5) at an angle of incidence of 30°. What is the angle of refraction? (sin 30° = 0.5, sin 19.5° ≈ 0.33)",
+            options: ["19.5°", "30°", "45°", "60°"],
+            correct: 0,
+            year: "2025",
+            chapter: "Light - Reflection and Refraction",
+            difficulty: "tough"
         }
     ],
     chemistry: [
@@ -1415,6 +1505,96 @@ const questions = {
             correct: 1,
             year: "2025",
             chapter: "Acids, Bases and Salts"
+        },
+        {
+            id: 61,
+            question: "In the reaction: 2Al + 3CuSO₄ → Al₂(SO₄)₃ + 3Cu, if 27 g of Al reacts completely, how many grams of Cu will be produced? (Atomic masses: Al=27, Cu=63.5)",
+            options: ["63.5 g", "95.25 g", "127 g", "190.5 g"],
+            correct: 1,
+            year: "2025",
+            chapter: "Chemical Reactions and Equations",
+            difficulty: "tough"
+        },
+        {
+            id: 62,
+            question: "What is the pH of a solution prepared by mixing 50 mL of 0.1 M HCl with 50 mL of 0.1 M NaOH?",
+            options: ["1", "7", "13", "14"],
+            correct: 1,
+            year: "2025",
+            chapter: "Acids, Bases and Salts",
+            difficulty: "tough"
+        },
+        {
+            id: 63,
+            question: "Which of the following compounds will undergo saponification reaction?",
+            options: ["Ethanol", "Ethanoic acid", "Ethyl ethanoate", "Ethane"],
+            correct: 2,
+            year: "2025",
+            chapter: "Carbon and its Compounds",
+            difficulty: "tough"
+        },
+        {
+            id: 64,
+            question: "In the extraction of iron from haematite (Fe₂O₃), the reducing agent used in the blast furnace is:",
+            options: ["Carbon monoxide", "Carbon dioxide", "Oxygen", "Hydrogen"],
+            correct: 0,
+            year: "2025",
+            chapter: "Metals and Non-metals",
+            difficulty: "tough"
+        },
+        {
+            id: 65,
+            question: "A solution has pH = 4. If it is diluted 100 times, what will be the new pH?",
+            options: ["5", "6", "7", "4"],
+            correct: 1,
+            year: "2025",
+            chapter: "Acids, Bases and Salts",
+            difficulty: "tough"
+        },
+        {
+            id: 66,
+            question: "Which of the following reactions represents the complete combustion of methane?",
+            options: ["CH₄ + O₂ → CO₂ + H₂O", "CH₄ + 2O₂ → CO₂ + 2H₂O", "CH₄ + O₂ → CO + H₂O", "2CH₄ + 3O₂ → 2CO + 4H₂O"],
+            correct: 1,
+            year: "2025",
+            chapter: "Carbon and its Compounds",
+            difficulty: "tough"
+        },
+        {
+            id: 67,
+            question: "When zinc reacts with dilute sulfuric acid, hydrogen gas is produced. If 65 g of zinc reacts completely, what volume of hydrogen gas at STP will be produced? (Zn = 65, H₂ = 2 g/mol, 1 mol = 22.4 L at STP)",
+            options: ["11.2 L", "22.4 L", "33.6 L", "44.8 L"],
+            correct: 1,
+            year: "2025",
+            chapter: "Chemical Reactions and Equations",
+            difficulty: "tough"
+        },
+        {
+            id: 68,
+            question: "Which of the following is the correct order of reactivity series for metals?",
+            options: ["K > Na > Ca > Mg > Al", "K > Na > Mg > Ca > Al", "Na > K > Ca > Mg > Al", "K > Ca > Na > Mg > Al"],
+            correct: 0,
+            year: "2025",
+            chapter: "Metals and Non-metals",
+            difficulty: "tough"
+        },
+        {
+            id: 69,
+            question: "In the reaction: CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂, if 100 g of CaCO₃ produces 44 g of CO₂, what is the percentage yield? (Molar mass: CaCO₃ = 100 g/mol, CO₂ = 44 g/mol)",
+            options: ["50%", "75%", "100%", "125%"],
+            correct: 2,
+            year: "2025",
+            chapter: "Chemical Reactions and Equations",
+            difficulty: "tough"
+        },
+        {
+            id: 70,
+            question: "Which functional group is present in both aldehydes and ketones?",
+            options: ["-OH", "-COOH", "-CHO", "-CO-"],
+            correct: 3,
+            year: "2025",
+            chapter: "Carbon and its Compounds",
+            difficulty: "tough"
         }
     ],
     biology: [
@@ -1897,6 +2077,96 @@ const questions = {
             correct: 2,
             year: "2025",
             chapter: "Life Processes"
+        },
+        {
+            id: 61,
+            question: "In which phase of cell division do chromosomes align at the equator of the cell?",
+            options: ["Prophase", "Metaphase", "Anaphase", "Telophase"],
+            correct: 1,
+            year: "2025",
+            chapter: "How do Organisms Reproduce",
+            difficulty: "tough"
+        },
+        {
+            id: 62,
+            question: "Which enzyme is responsible for breaking down starch into maltose in the human digestive system?",
+            options: ["Pepsin", "Amylase", "Trypsin", "Lipase"],
+            correct: 1,
+            year: "2025",
+            chapter: "Life Processes",
+            difficulty: "tough"
+        },
+        {
+            id: 63,
+            question: "In a dihybrid cross between two heterozygous parents (RrYy × RrYy), what is the probability of getting offspring with both recessive traits (rryy)?",
+            options: ["1/16", "1/4", "1/8", "1/2"],
+            correct: 0,
+            year: "2025",
+            chapter: "Heredity and Evolution",
+            difficulty: "tough"
+        },
+        {
+            id: 64,
+            question: "Which part of the nephron is responsible for the reabsorption of glucose and amino acids?",
+            options: ["Glomerulus", "Proximal convoluted tubule", "Loop of Henle", "Distal convoluted tubule"],
+            correct: 1,
+            year: "2025",
+            chapter: "Life Processes",
+            difficulty: "tough"
+        },
+        {
+            id: 65,
+            question: "What is the role of the hormone ADH (Antidiuretic Hormone) in the human body?",
+            options: ["Regulates blood sugar", "Controls water reabsorption in kidneys", "Stimulates growth", "Regulates metabolism"],
+            correct: 1,
+            year: "2025",
+            chapter: "Control and Coordination",
+            difficulty: "tough"
+        },
+        {
+            id: 66,
+            question: "In photosynthesis, which molecule is the primary electron acceptor in the light-dependent reactions?",
+            options: ["NADP+", "NADPH", "ATP", "Chlorophyll"],
+            correct: 0,
+            year: "2025",
+            chapter: "Life Processes",
+            difficulty: "tough"
+        },
+        {
+            id: 67,
+            question: "If a plant with genotype Tt (tall) is crossed with a plant with genotype tt (short), what percentage of offspring will be tall?",
+            options: ["0%", "25%", "50%", "100%"],
+            correct: 2,
+            year: "2025",
+            chapter: "Heredity and Evolution",
+            difficulty: "tough"
+        },
+        {
+            id: 68,
+            question: "Which type of blood vessel has the thinnest walls and allows exchange of materials between blood and tissues?",
+            options: ["Arteries", "Veins", "Capillaries", "Arterioles"],
+            correct: 2,
+            year: "2025",
+            chapter: "Life Processes",
+            difficulty: "tough"
+        },
+        {
+            id: 69,
+            question: "In the process of aerobic respiration, how many ATP molecules are produced from one molecule of glucose?",
+            options: ["2 ATP", "36-38 ATP", "4 ATP", "6 ATP"],
+            correct: 1,
+            year: "2025",
+            chapter: "Life Processes",
+            difficulty: "tough"
+        },
+        {
+            id: 70,
+            question: "Which part of the brain is responsible for maintaining homeostasis, including body temperature and hunger?",
+            options: ["Cerebrum", "Cerebellum", "Hypothalamus", "Medulla oblongata"],
+            correct: 2,
+            year: "2025",
+            chapter: "Control and Coordination",
+            difficulty: "tough"
         }
     ],
     socialScience: [
