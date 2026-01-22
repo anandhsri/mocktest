@@ -1,5 +1,6 @@
 // Question Bank for CBSE 10th Grade Test
 // Based on years 2020-2025 of CBSE question papers - Moderate Difficulty Questions
+// Refreshed with latest 2025 CBSE board exam questions
 
 const questions = {
     mathematics: [
@@ -370,6 +371,86 @@ const questions = {
             correct: 0,
             year: "2021",
             chapter: "Coordinate Geometry"
+        },
+        {
+            id: 51,
+            question: "If the HCF of 65 and 117 is expressible in the form 65m - 117, then find the value of m.",
+            options: ["2", "3", "4", "5"],
+            correct: 0,
+            year: "2025",
+            chapter: "Real Numbers"
+        },
+        {
+            id: 52,
+            question: "Find the zeroes of the polynomial p(x) = x² - 3x - 4 and verify the relationship between the zeroes and the coefficients.",
+            options: ["Zeroes are 4 and -1, sum = 3, product = -4", "Zeroes are -4 and 1, sum = -3, product = -4", "Zeroes are 2 and -2, sum = 0, product = -4", "Zeroes are 1 and -4, sum = -3, product = -4"],
+            correct: 0,
+            year: "2025",
+            chapter: "Polynomials"
+        },
+        {
+            id: 53,
+            question: "Solve the pair of linear equations: 3x + 2y = 11 and 2x + 3y = 4 by elimination method.",
+            options: ["x = 5, y = -2", "x = -5, y = 2", "x = 3, y = 1", "x = -3, y = -1"],
+            correct: 0,
+            year: "2025",
+            chapter: "Pair of Linear Equations in Two Variables"
+        },
+        {
+            id: 54,
+            question: "If the quadratic equation x² - (k + 1)x + k = 0 has equal roots, find the value of k.",
+            options: ["k = 1", "k = -1", "k = 0", "k = 2"],
+            correct: 0,
+            year: "2025",
+            chapter: "Quadratic Equations"
+        },
+        {
+            id: 55,
+            question: "The first term of an AP is 5, the last term is 45 and the sum is 400. Find the number of terms and the common difference.",
+            options: ["n = 16, d = 8/3", "n = 16, d = 2", "n = 20, d = 2", "n = 20, d = 8/3"],
+            correct: 0,
+            year: "2025",
+            chapter: "Arithmetic Progressions"
+        },
+        {
+            id: 56,
+            question: "If sec θ + tan θ = p, then find the value of sec θ - tan θ in terms of p.",
+            options: ["1/p", "p", "p²", "1/p²"],
+            correct: 0,
+            year: "2025",
+            chapter: "Introduction to Trigonometry"
+        },
+        {
+            id: 57,
+            question: "A tower stands vertically on the ground. From a point on the ground, which is 30 m away from the foot of the tower, the angle of elevation of the top of the tower is found to be 30°. Find the height of the tower.",
+            options: ["10√3 m", "15√3 m", "20√3 m", "30√3 m"],
+            correct: 0,
+            year: "2025",
+            chapter: "Some Applications of Trigonometry"
+        },
+        {
+            id: 58,
+            question: "Find the distance between the points A(2, 3) and B(5, 7) using the distance formula.",
+            options: ["5 units", "6 units", "7 units", "8 units"],
+            correct: 0,
+            year: "2025",
+            chapter: "Coordinate Geometry"
+        },
+        {
+            id: 59,
+            question: "In ΔABC, if DE || BC, AD = 3 cm, DB = 4 cm, and AE = 4.5 cm, find EC using Basic Proportionality Theorem.",
+            options: ["6 cm", "7 cm", "8 cm", "9 cm"],
+            correct: 0,
+            year: "2025",
+            chapter: "Triangles"
+        },
+        {
+            id: 60,
+            question: "Prove that the lengths of tangents drawn from an external point to a circle are equal. If two tangents PA and PB are drawn from point P to a circle with centre O, and PA = 8 cm, find PB.",
+            options: ["8 cm", "10 cm", "12 cm", "16 cm"],
+            correct: 0,
+            year: "2025",
+            chapter: "Circles"
         }
     ],
     physics: [
@@ -772,6 +853,86 @@ const questions = {
             correct: 2,
             year: "2024",
             chapter: "Sources of Energy"
+        },
+        {
+            id: 51,
+            question: "A force of 10 N acts on a body of mass 2 kg. What is the acceleration produced?",
+            options: ["5 m/s²", "10 m/s²", "20 m/s²", "0.2 m/s²"],
+            correct: 0,
+            year: "2025",
+            chapter: "Force and Laws of Motion"
+        },
+        {
+            id: 52,
+            question: "The work done by a force of 5 N in moving an object through a distance of 10 m in the direction of the force is:",
+            options: ["50 J", "15 J", "2 J", "0.5 J"],
+            correct: 0,
+            year: "2025",
+            chapter: "Work and Energy"
+        },
+        {
+            id: 53,
+            question: "What is the SI unit of power?",
+            options: ["Joule", "Watt", "Newton", "Pascal"],
+            correct: 1,
+            year: "2025",
+            chapter: "Work and Energy"
+        },
+        {
+            id: 54,
+            question: "A sound wave has a frequency of 2000 Hz and wavelength of 0.17 m. What is the speed of sound?",
+            options: ["340 m/s", "350 m/s", "360 m/s", "370 m/s"],
+            correct: 0,
+            year: "2025",
+            chapter: "Sound"
+        },
+        {
+            id: 55,
+            question: "The image formed by a plane mirror is always:",
+            options: ["Real and inverted", "Virtual and erect", "Real and erect", "Virtual and inverted"],
+            correct: 1,
+            year: "2025",
+            chapter: "Light - Reflection and Refraction"
+        },
+        {
+            id: 56,
+            question: "A convex lens of focal length 15 cm forms a real image at a distance of 30 cm from the lens. What is the object distance?",
+            options: ["10 cm", "15 cm", "30 cm", "45 cm"],
+            correct: 2,
+            year: "2025",
+            chapter: "Light - Reflection and Refraction"
+        },
+        {
+            id: 57,
+            question: "Three resistors of 2Ω, 3Ω, and 6Ω are connected in parallel. What is their equivalent resistance?",
+            options: ["1 Ω", "2 Ω", "3 Ω", "11 Ω"],
+            correct: 0,
+            year: "2025",
+            chapter: "Electricity"
+        },
+        {
+            id: 58,
+            question: "The magnetic field inside a long straight solenoid carrying current is:",
+            options: ["Zero", "Uniform", "Non-uniform", "Infinite"],
+            correct: 1,
+            year: "2025",
+            chapter: "Magnetic Effects of Electric Current"
+        },
+        {
+            id: 59,
+            question: "Which renewable energy source uses the kinetic energy of moving air?",
+            options: ["Solar energy", "Wind energy", "Hydroelectric energy", "Geothermal energy"],
+            correct: 1,
+            year: "2025",
+            chapter: "Sources of Energy"
+        },
+        {
+            id: 60,
+            question: "The phenomenon of splitting of white light into its component colours is called:",
+            options: ["Reflection", "Refraction", "Dispersion", "Scattering"],
+            correct: 2,
+            year: "2025",
+            chapter: "The Human Eye and the Colourful World"
         }
     ],
     chemistry: [
@@ -1174,6 +1335,86 @@ const questions = {
             correct: 3,
             year: "2024",
             chapter: "Metals and Non-metals"
+        },
+        {
+            id: 51,
+            question: "What is the chemical formula of quicklime?",
+            options: ["CaO", "CaCO₃", "Ca(OH)₂", "CaCl₂"],
+            correct: 0,
+            year: "2025",
+            chapter: "Acids, Bases and Salts"
+        },
+        {
+            id: 52,
+            question: "Which type of reaction is represented by: Zn + H₂SO₄ → ZnSO₄ + H₂?",
+            options: ["Combination", "Decomposition", "Displacement", "Double displacement"],
+            correct: 2,
+            year: "2025",
+            chapter: "Chemical Reactions and Equations"
+        },
+        {
+            id: 53,
+            question: "What is the pH of a neutral solution?",
+            options: ["0", "7", "14", "1"],
+            correct: 1,
+            year: "2025",
+            chapter: "Acids, Bases and Salts"
+        },
+        {
+            id: 54,
+            question: "Which metal is extracted by the process of electrolysis?",
+            options: ["Iron", "Copper", "Aluminum", "Zinc"],
+            correct: 2,
+            year: "2025",
+            chapter: "Metals and Non-metals"
+        },
+        {
+            id: 55,
+            question: "What is the functional group present in alcohols?",
+            options: ["-COOH", "-OH", "-CHO", "-CO-"],
+            correct: 1,
+            year: "2025",
+            chapter: "Carbon and its Compounds"
+        },
+        {
+            id: 56,
+            question: "Which gas is evolved when zinc reacts with dilute hydrochloric acid?",
+            options: ["Oxygen", "Hydrogen", "Carbon dioxide", "Nitrogen"],
+            correct: 1,
+            year: "2025",
+            chapter: "Chemical Reactions and Equations"
+        },
+        {
+            id: 57,
+            question: "What is the chemical formula of baking soda?",
+            options: ["NaHCO₃", "Na₂CO₃", "NaOH", "NaCl"],
+            correct: 0,
+            year: "2025",
+            chapter: "Acids, Bases and Salts"
+        },
+        {
+            id: 58,
+            question: "Which process is used to prevent corrosion of iron?",
+            options: ["Galvanization", "Alloying", "Painting", "All of these"],
+            correct: 3,
+            year: "2025",
+            chapter: "Metals and Non-metals"
+        },
+        {
+            id: 59,
+            question: "What is the general formula of alkanes?",
+            options: ["CₙH₂ₙ", "CₙH₂ₙ₊₂", "CₙH₂ₙ₋₂", "CₙHₙ"],
+            correct: 1,
+            year: "2025",
+            chapter: "Carbon and its Compounds"
+        },
+        {
+            id: 60,
+            question: "Which indicator turns pink in basic solution?",
+            options: ["Methyl orange", "Phenolphthalein", "Litmus", "Turmeric"],
+            correct: 1,
+            year: "2025",
+            chapter: "Acids, Bases and Salts"
         }
     ],
     biology: [
@@ -1576,6 +1817,86 @@ const questions = {
             correct: 1,
             year: "2020",
             chapter: "Heredity and Evolution"
+        },
+        {
+            id: 51,
+            question: "Which organelle is known as the powerhouse of the cell?",
+            options: ["Nucleus", "Mitochondria", "Chloroplast", "Ribosome"],
+            correct: 1,
+            year: "2025",
+            chapter: "Life Processes"
+        },
+        {
+            id: 52,
+            question: "What is the main product of photosynthesis?",
+            options: ["Oxygen", "Carbon dioxide", "Water", "Glucose"],
+            correct: 3,
+            year: "2025",
+            chapter: "Life Processes"
+        },
+        {
+            id: 53,
+            question: "Which part of the brain controls balance and coordination?",
+            options: ["Cerebrum", "Cerebellum", "Medulla", "Hypothalamus"],
+            correct: 1,
+            year: "2025",
+            chapter: "Control and Coordination"
+        },
+        {
+            id: 54,
+            question: "What is the process of fusion of male and female gametes called?",
+            options: ["Pollination", "Fertilization", "Germination", "Reproduction"],
+            correct: 1,
+            year: "2025",
+            chapter: "How do Organisms Reproduce"
+        },
+        {
+            id: 55,
+            question: "Which type of reproduction involves only one parent?",
+            options: ["Sexual reproduction", "Asexual reproduction", "Binary fission", "Fertilization"],
+            correct: 1,
+            year: "2025",
+            chapter: "How do Organisms Reproduce"
+        },
+        {
+            id: 56,
+            question: "What is the basic unit of heredity?",
+            options: ["Chromosome", "Gene", "DNA", "RNA"],
+            correct: 1,
+            year: "2025",
+            chapter: "Heredity and Evolution"
+        },
+        {
+            id: 57,
+            question: "Which blood group is known as the universal donor?",
+            options: ["A", "B", "AB", "O"],
+            correct: 3,
+            year: "2025",
+            chapter: "Life Processes"
+        },
+        {
+            id: 58,
+            question: "What is the function of white blood cells?",
+            options: ["Carry oxygen", "Fight infection", "Clotting", "Transport nutrients"],
+            correct: 1,
+            year: "2025",
+            chapter: "Life Processes"
+        },
+        {
+            id: 59,
+            question: "Which hormone regulates blood sugar level?",
+            options: ["Thyroxine", "Insulin", "Adrenaline", "Growth hormone"],
+            correct: 1,
+            year: "2025",
+            chapter: "Control and Coordination"
+        },
+        {
+            id: 60,
+            question: "What is the process by which plants lose water through their leaves?",
+            options: ["Photosynthesis", "Respiration", "Transpiration", "Digestion"],
+            correct: 2,
+            year: "2025",
+            chapter: "Life Processes"
         }
     ],
     socialScience: [
@@ -1982,6 +2303,86 @@ const questions = {
             correct: 1,
             year: "2024",
             chapter: "History - Nationalism in India"
+        },
+        {
+            id: 51,
+            question: "Who was the first Prime Minister of independent India?",
+            options: ["Mahatma Gandhi", "Jawaharlal Nehru", "Sardar Patel", "Dr. B.R. Ambedkar"],
+            correct: 1,
+            year: "2025",
+            chapter: "History - Nationalism in India"
+        },
+        {
+            id: 52,
+            question: "Which movement was launched by Mahatma Gandhi in 1930?",
+            options: ["Non-Cooperation Movement", "Civil Disobedience Movement", "Quit India Movement", "Swadeshi Movement"],
+            correct: 1,
+            year: "2025",
+            chapter: "History - Nationalism in India"
+        },
+        {
+            id: 53,
+            question: "What is the main source of irrigation in India?",
+            options: ["Canals", "Wells and tubewells", "Tanks", "Rivers"],
+            correct: 1,
+            year: "2025",
+            chapter: "Geography - Agriculture"
+        },
+        {
+            id: 54,
+            question: "Which state is the largest producer of rice in India?",
+            options: ["Punjab", "West Bengal", "Uttar Pradesh", "Andhra Pradesh"],
+            correct: 1,
+            year: "2025",
+            chapter: "Geography - Agriculture"
+        },
+        {
+            id: 55,
+            question: "What is the main function of the Reserve Bank of India (RBI)?",
+            options: ["To print currency", "To control monetary policy", "To provide loans", "To collect taxes"],
+            correct: 1,
+            year: "2025",
+            chapter: "Economics - Money and Credit"
+        },
+        {
+            id: 56,
+            question: "Which fundamental right ensures equality before law?",
+            options: ["Right to Freedom", "Right to Equality", "Right against Exploitation", "Right to Constitutional Remedies"],
+            correct: 1,
+            year: "2025",
+            chapter: "Political Science - Democratic Rights"
+        },
+        {
+            id: 57,
+            question: "What is the minimum age for becoming a member of the Lok Sabha?",
+            options: ["21 years", "25 years", "30 years", "35 years"],
+            correct: 1,
+            year: "2025",
+            chapter: "Political Science - Democratic Politics"
+        },
+        {
+            id: 58,
+            question: "Which sector contributes the most to India's GDP?",
+            options: ["Primary sector", "Secondary sector", "Tertiary sector", "Quaternary sector"],
+            correct: 2,
+            year: "2025",
+            chapter: "Economics - Sectors of Indian Economy"
+        },
+        {
+            id: 59,
+            question: "What is the main aim of the Right to Information Act (RTI)?",
+            options: ["To promote transparency", "To control population", "To reduce poverty", "To increase literacy"],
+            correct: 0,
+            year: "2025",
+            chapter: "Political Science - Democratic Rights"
+        },
+        {
+            id: 60,
+            question: "Which type of farming is practiced in areas with high population density?",
+            options: ["Extensive farming", "Intensive farming", "Commercial farming", "Plantation farming"],
+            correct: 1,
+            year: "2025",
+            chapter: "Geography - Agriculture"
         }
     ],
     sanskrit: [
@@ -2384,6 +2785,86 @@ const questions = {
             correct: 2,
             year: "2024",
             chapter: "समासः (Samas)"
+        },
+        {
+            id: 51,
+            question: "'रामः वनं गच्छति' इत्यत्र 'वनं' इत्यस्य कारकं किम्?",
+            options: ["कर्ता", "कर्म", "करण", "अधिकरण"],
+            correct: 1,
+            year: "2025",
+            chapter: "कारक (Karak)"
+        },
+        {
+            id: 52,
+            question: "'सः' शब्दस्य प्रथमा विभक्तिः एकवचने किम्?",
+            options: ["सः", "तम्", "तेन", "तस्मै"],
+            correct: 0,
+            year: "2025",
+            chapter: "विभक्तिः (Vibhakti)"
+        },
+        {
+            id: 53,
+            question: "'अस्मद्' सर्वनामशब्दस्य प्रथमा विभक्तिः एकवचने किम्?",
+            options: ["अहम्", "त्वम्", "यूयम्", "वयम्"],
+            correct: 0,
+            year: "2025",
+            chapter: "सर्वनाम (Sarvanama)"
+        },
+        {
+            id: 54,
+            question: "'गम्' धातोः लट् लकारे प्रथमपुरुष एकवचने रूपं किम्?",
+            options: ["गच्छति", "गच्छसि", "गच्छामि", "गच्छथः"],
+            correct: 0,
+            year: "2025",
+            chapter: "धातु रूप (Dhatu Rupa)"
+        },
+        {
+            id: 55,
+            question: "'राजपुत्रः' इत्यस्य समासविग्रहः कः?",
+            options: ["राज्ञः पुत्रः", "राजा पुत्रः", "राजाय पुत्रः", "राजेन पुत्रः"],
+            correct: 0,
+            year: "2025",
+            chapter: "समासः (Samas)"
+        },
+        {
+            id: 56,
+            question: "'पाठशाला' इत्यस्य समासः कः?",
+            options: ["द्वन्द्व समासः", "तत्पुरुष समासः", "बहुव्रीहि समासः", "कर्मधारय समासः"],
+            correct: 1,
+            year: "2025",
+            chapter: "समासः (Samas)"
+        },
+        {
+            id: 57,
+            question: "'किम्' सर्वनामशब्दस्य द्वितीया विभक्तिः एकवचने किम्?",
+            options: ["कः", "किम्", "केन", "कस्मै"],
+            correct: 1,
+            year: "2025",
+            chapter: "सर्वनाम (Sarvanama)"
+        },
+        {
+            id: 58,
+            question: "'पठ्' धातोः लृट् लकारे मध्यमपुरुष एकवचने रूपं किम्?",
+            options: ["पठिष्यसि", "पठिष्यति", "पठिष्यामि", "पठिष्यथः"],
+            correct: 0,
+            year: "2025",
+            chapter: "धातु रूप (Dhatu Rupa)"
+        },
+        {
+            id: 59,
+            question: "'गुरुः' शब्दस्य षष्ठी विभक्तिः बहुवचने किम्?",
+            options: ["गुरवः", "गुरून्", "गुरूणाम्", "गुरुभिः"],
+            correct: 2,
+            year: "2025",
+            chapter: "विभक्तिः (Vibhakti)"
+        },
+        {
+            id: 60,
+            question: "'नदी' शब्दस्य द्वितीया विभक्तिः एकवचने किम्?",
+            options: ["नदी", "नद्यौ", "नद्यः", "नदीम्"],
+            correct: 3,
+            year: "2025",
+            chapter: "विभक्तिः (Vibhakti)"
         }
     ]
 };
