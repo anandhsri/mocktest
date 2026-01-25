@@ -1,0 +1,59 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+
+# Backups
+backups/
+*.backup
+*.bak
+
+# Logs
+*.log
+*.log.*
+
+# Node modules (not needed for Python server)
+node_modules/
+package-lock.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Scripts (not needed in container)
+*.sh
+!start-server.sh
+
+# Temporary files
+*.tmp
+*.temp
+dummy
+
+# Environment files
+.env
+.env.local
+
+# AWS deployment files (not needed in container)
+aws/
+deploy/
+*.tf
+*.tfstate

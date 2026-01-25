@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  neet-mock-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: neet-mock-test
+    ports:
+      - "8040:8040"
+    environment:
+      - PORT=8040
+      - HOST=0.0.0.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8040/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
