@@ -27,93 +27,172 @@ class NEETMockTest {
     }
 
     initializeEventListeners() {
-        // Login buttons - simple and reliable approach
-        const studentLoginBtn = document.getElementById('student-login-btn');
-        if (studentLoginBtn) {
-            // Remove inline onclick to avoid conflicts
-            studentLoginBtn.removeAttribute('onclick');
+        // Store reference to 'this' for use in event handlers
+        const self = this;
+        
+        // Use event delegation for login buttons to ensure they work
+        document.addEventListener('click', function(e) {
+            // Check if clicked element is the student login button or inside it
+            const target = e.target;
+            const button = target.closest ? target.closest('#student-login-btn') : 
+                          (target.id === 'student-login-btn' ? target : 
+                          (target.parentElement && target.parentElement.id === 'student-login-btn' ? target.parentElement : null));
             
-            // Add click listener with proper binding
-            studentLoginBtn.addEventListener('click', (e) => {
+            if (button) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Student login button clicked via addEventListener');
-                if (this && this.loginAsStudent) {
-                    this.loginAsStudent();
+                console.log('Student login button clicked via event delegation');
+                if (self && typeof self.loginAsStudent === 'function') {
+                    self.loginAsStudent();
                 } else {
-                    console.error('this.loginAsStudent is not available');
+                    console.error('self.loginAsStudent is not available');
                     // Direct fallback
                     const loginScreen = document.getElementById('login-screen');
                     const subjectScreen = document.getElementById('subject-selection-screen');
                     if (loginScreen && subjectScreen) {
                         loginScreen.classList.remove('active');
+                        loginScreen.style.display = 'none';
                         subjectScreen.classList.add('active');
+                        subjectScreen.style.display = 'block';
                     }
                 }
+            }
+        }, false);
+        
+        // Also try direct attachment as backup (keep inline onclick as fallback)
+        const studentLoginBtn = document.getElementById('student-login-btn');
+        if (studentLoginBtn) {
+            // Keep inline onclick, but also add event listener
+            studentLoginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Student login button clicked via direct listener');
+                if (self && typeof self.loginAsStudent === 'function') {
+                    self.loginAsStudent();
+                }
             }, false);
-            
             console.log('Student login button listener attached successfully');
         } else {
-            console.error('Student login button not found during initialization!');
+            console.warn('Student login button not found during initialization - using event delegation and inline onclick');
         }
         
         const adminLoginBtn = document.getElementById('admin-login-btn');
         if (adminLoginBtn) {
-            adminLoginBtn.addEventListener('click', () => {
-                this.showAdminPasswordInput();
+            adminLoginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.showAdminPasswordInput === 'function') {
+                    self.showAdminPasswordInput();
+                }
             });
         }
         
-        document.getElementById('admin-submit-btn').addEventListener('click', () => {
-            this.loginAsAdmin();
-        });
+        const adminSubmitBtn = document.getElementById('admin-submit-btn');
+        if (adminSubmitBtn) {
+            adminSubmitBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.loginAsAdmin === 'function') {
+                    self.loginAsAdmin();
+                }
+            });
+        }
         
-        document.getElementById('cancel-admin-login-btn').addEventListener('click', () => {
-            this.hideAdminPasswordInput();
-        });
+        const cancelAdminBtn = document.getElementById('cancel-admin-login-btn');
+        if (cancelAdminBtn) {
+            cancelAdminBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.hideAdminPasswordInput === 'function') {
+                    self.hideAdminPasswordInput();
+                }
+            });
+        }
         
         // Logout buttons - use event delegation for dynamically added buttons
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', function(e) {
             if (e.target.classList.contains('logout-btn')) {
-                this.logout();
+                if (self && typeof self.logout === 'function') {
+                    self.logout();
+                }
             }
             
             // Acknowledge proctor warning
             if (e.target.id === 'acknowledge-warning-btn') {
-                document.getElementById('proctor-warning-modal').style.display = 'none';
+                const modal = document.getElementById('proctor-warning-modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
             }
             
             // Exit test button
             if (e.target.id === 'exit-test-btn' || e.target.closest('#exit-test-btn')) {
                 e.preventDefault();
                 e.stopPropagation();
-                this.exitTest();
+                if (self && typeof self.exitTest === 'function') {
+                    self.exitTest();
+                }
+            }
+            
+            // Subject selection cards - simple event delegation
+            const subjectCard = e.target.closest('.subject-card');
+            if (subjectCard) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const subject = subjectCard.getAttribute('data-subject');
+                if (!subject) {
+                    console.warn('Subject card clicked but no data-subject attribute found');
+                    return;
+                }
+                
+                console.log('Subject card clicked:', subject);
+                
+                // Ensure app is available
+                if (!self) {
+                    console.error('App instance not available');
+                    alert('Application is not ready. Please refresh the page.');
+                    return;
+                }
+                
+                // Call selectSubject
+                if (typeof self.selectSubject === 'function') {
+                    try {
+                        self.selectSubject(subject);
+                    } catch (error) {
+                        console.error('Error calling selectSubject:', error);
+                        alert('Error selecting subject: ' + error.message);
+                    }
+                } else {
+                    console.error('selectSubject method not available');
+                    alert('Subject selection is not available. Please refresh the page.');
+                }
             }
         });
         
-        // Subject selection cards
-        document.querySelectorAll('.subject-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                e.preventDefault();
-                const subject = e.currentTarget.getAttribute('data-subject');
-                if (!subject) return;
-                
-                // Get base URL without query parameters
-                const baseUrl = window.location.origin + window.location.pathname;
-                // Navigate to full page with subject parameter
-                window.location.href = baseUrl + '?subject=' + encodeURIComponent(subject);
-            });
-        });
-        
         // Change subject button
-        document.getElementById('change-subject-btn').addEventListener('click', () => {
-            this.goToSubjectSelection();
-        });
+        const changeSubjectBtn = document.getElementById('change-subject-btn');
+        if (changeSubjectBtn) {
+            changeSubjectBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.goToSubjectSelection === 'function') {
+                    self.goToSubjectSelection();
+                }
+            });
+        }
         
         // Start test button
-        document.getElementById('start-test-btn').addEventListener('click', () => {
-            this.startTest();
-        });
+        const startTestBtn = document.getElementById('start-test-btn');
+        if (startTestBtn) {
+            startTestBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.startTest === 'function') {
+                    self.startTest();
+                }
+            });
+        }
 
         // Navigation buttons
         document.getElementById('prev-btn').addEventListener('click', () => {
@@ -227,13 +306,15 @@ class NEETMockTest {
                 return;
             }
             
-            // Remove active class from login screen
+            // Hide login screen and show subject selection screen
             loginScreen.classList.remove('active');
-            console.log('Removed active class from login screen');
+            loginScreen.style.display = 'none';
+            console.log('Hidden login screen');
             
-            // Add active class to subject selection screen
+            // Show subject selection screen
             subjectScreen.classList.add('active');
-            console.log('Added active class to subject selection screen');
+            subjectScreen.style.display = 'block';
+            console.log('Shown subject selection screen');
             
             console.log('Navigation successful - moved to subject selection screen');
             
@@ -264,7 +345,10 @@ class NEETMockTest {
         const password = document.getElementById('admin-password').value;
         if (password === this.adminPassword) {
             this.userType = 'admin';
-            document.getElementById('login-screen').classList.remove('active');
+            const loginScreen = document.getElementById('login-screen');
+            loginScreen.classList.remove('active');
+            loginScreen.style.display = 'none';
+            this.hideAdminPasswordInput();
             this.showAdminDashboard();
         } else {
             document.getElementById('admin-error').textContent = 'Incorrect password. Please try again.';
@@ -1563,47 +1647,88 @@ class NEETMockTest {
     }
 
     selectSubject(subject) {
+        console.log('selectSubject called with:', subject);
         this.selectedSubject = subject;
-        this.isDescriptiveTest = subject === 'Physics Descriptive';
+        this.isDescriptiveTest = false; // Physics Descriptive test removed
         this.is80MarksTest = false; // Disabled 80 marks test
-        this.is40MarksTest = subject === 'Mathematics';
+        this.is40MarksTest = false; // Disabled 40 marks test - use regular questions for all subjects
         
-        // Handle descriptive test
-        if (this.isDescriptiveTest && typeof physicsDescriptiveTest !== 'undefined') {
-            this.questions = physicsDescriptiveTest.questions.map(q => ({
-                ...q,
-                subject: 'Physics Descriptive',
-                isDescriptive: true
-            }));
-        } else if (this.is40MarksTest && typeof mathematics40Marks !== 'undefined') {
-            // Handle 40 marks mathematics MCQ test
-            this.questions = mathematics40Marks.questions.map(q => ({
-                ...q,
-                subject: 'Mathematics',
-                marks: q.marks || 1
-            }));
+        // Get base questions from questions.js
+        let baseQuestions = allQuestions.filter(q => q.subject === subject);
+        
+        // Get uploaded questions for this subject
+        const uploadedQuestions = this.getUploadedQuestions().filter(q => q.subject === subject);
+        
+        // Merge questions (uploaded questions take precedence if same ID)
+        const questionMap = new Map();
+        
+        // Add base questions first
+        baseQuestions.forEach(q => {
+            questionMap.set(q.id, q);
+        });
+        
+        // Add/override with uploaded questions
+        uploadedQuestions.forEach(q => {
+            questionMap.set(q.id, q);
+        });
+        
+        // Convert back to array
+        let allSubjectQuestions = Array.from(questionMap.values());
+        
+        // For Mathematics, ensure up to 50 unique questions
+        if (subject === 'Mathematics') {
+            // Remove duplicates by ID to ensure uniqueness
+            const uniqueQuestions = [];
+            const seenIds = new Set();
+            for (const q of allSubjectQuestions) {
+                if (!seenIds.has(q.id)) {
+                    seenIds.add(q.id);
+                    uniqueQuestions.push(q);
+                }
+            }
+            allSubjectQuestions = uniqueQuestions;
+            
+            // Shuffle the questions
+            for (let i = allSubjectQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allSubjectQuestions[i], allSubjectQuestions[j]] = [allSubjectQuestions[j], allSubjectQuestions[i]];
+            }
+            
+            // Ensure exactly 50 questions for Mathematics
+            if (allSubjectQuestions.length >= 50) {
+                this.questions = allSubjectQuestions.slice(0, 50);
+            } else {
+                // If fewer than 50 available, show warning but use all available
+                console.warn(`Only ${allSubjectQuestions.length} Mathematics questions available. Need at least 50.`);
+                this.questions = allSubjectQuestions;
+            }
         } else {
-            // Get base questions from questions.js
-            let baseQuestions = allQuestions.filter(q => q.subject === subject);
+            // For all other subjects, ensure exactly 50 unique questions
+            // Remove duplicates by ID to ensure uniqueness
+            const uniqueQuestions = [];
+            const seenIds = new Set();
+            for (const q of allSubjectQuestions) {
+                if (!seenIds.has(q.id)) {
+                    seenIds.add(q.id);
+                    uniqueQuestions.push(q);
+                }
+            }
+            allSubjectQuestions = uniqueQuestions;
             
-            // Get uploaded questions for this subject
-            const uploadedQuestions = this.getUploadedQuestions().filter(q => q.subject === subject);
+            // Shuffle the questions
+            for (let i = allSubjectQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allSubjectQuestions[i], allSubjectQuestions[j]] = [allSubjectQuestions[j], allSubjectQuestions[i]];
+            }
             
-            // Merge questions (uploaded questions take precedence if same ID)
-            const questionMap = new Map();
-            
-            // Add base questions first
-            baseQuestions.forEach(q => {
-                questionMap.set(q.id, q);
-            });
-            
-            // Add/override with uploaded questions
-            uploadedQuestions.forEach(q => {
-                questionMap.set(q.id, q);
-            });
-            
-            // Convert back to array
-            this.questions = Array.from(questionMap.values());
+            // Ensure exactly 50 questions for all subjects
+            if (allSubjectQuestions.length >= 50) {
+                this.questions = allSubjectQuestions.slice(0, 50);
+            } else {
+                // If fewer than 50 available, show warning but use all available
+                console.warn(`Only ${allSubjectQuestions.length} ${subject} questions available. Need at least 50.`);
+                this.questions = allSubjectQuestions;
+            }
         }
         
         if (this.questions.length === 0) {
@@ -1619,12 +1744,33 @@ class NEETMockTest {
         // Update welcome screen with subject-specific info
         this.updateWelcomeScreenForSubject(subject);
         
-        // Show welcome screen
-        document.getElementById('subject-selection-screen').classList.remove('active');
-        document.getElementById('welcome-screen').classList.add('active');
+        // Show welcome screen and hide subject selection
+        const subjectScreen = document.getElementById('subject-selection-screen');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        
+        console.log('Subject screen element:', subjectScreen ? 'Found' : 'NOT FOUND');
+        console.log('Welcome screen element:', welcomeScreen ? 'Found' : 'NOT FOUND');
+        
+        if (subjectScreen) {
+            subjectScreen.classList.remove('active');
+            subjectScreen.style.display = 'none';
+            console.log('Hidden subject selection screen');
+        } else {
+            console.error('subject-selection-screen element not found!');
+        }
+        
+        if (welcomeScreen) {
+            welcomeScreen.classList.add('active');
+            welcomeScreen.style.display = 'block';
+            console.log('Shown welcome screen');
+        } else {
+            console.error('welcome-screen element not found!');
+        }
         
         // Scroll to top of the page
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        console.log('selectSubject completed for:', subject);
     }
     
     updateWelcomeScreenForSubject(subject) {
@@ -1636,9 +1782,7 @@ class NEETMockTest {
         
         if (welcomeTitle) welcomeTitle.textContent = `${subject} Mock Test`;
         if (welcomeSubtitle) {
-            welcomeSubtitle.textContent = this.isDescriptiveTest 
-                ? '10th Grade CBSE - Descriptive Type Test' 
-                : '10th Grade CBSE - Tough Questions';
+            welcomeSubtitle.textContent = '10th Grade CBSE - Tough Questions';
         }
         if (subjectBadge) {
             subjectBadge.style.display = 'block';
@@ -1649,14 +1793,29 @@ class NEETMockTest {
         
         if (testInfo) {
             const questionCount = this.questions.length;
-            if (this.isDescriptiveTest) {
-                const totalMarks = this.questions.reduce((sum, q) => sum + (q.marks || 5), 0);
-                testInfo.innerHTML = `
-                    <li><strong>Total Questions:</strong> ${questionCount}</li>
-                    <li><strong>Total Marks:</strong> ${totalMarks}</li>
-                    <li><strong>Duration:</strong> 90 minutes (1.5 hours)</li>
-                `;
-            } else if (this.is40MarksTest) {
+            
+            // Calculate duration based on question difficulty
+            const totalDurationSeconds = this.calculateTestDuration();
+            const totalMinutes = Math.floor(totalDurationSeconds / 60);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            let durationText = '';
+            if (hours > 0) {
+                durationText = minutes > 0 ? `${hours} hour${hours > 1 ? 's' : ''} ${minutes} minute${minutes > 1 ? 's' : ''}` : `${hours} hour${hours > 1 ? 's' : ''}`;
+            } else {
+                durationText = `${minutes} minute${minutes > 1 ? 's' : ''}`;
+            }
+            
+            // Calculate difficulty breakdown
+            const difficultyCounts = { easy: 0, medium: 0, hard: 0 };
+            this.questions.forEach(q => {
+                const complexity = this.getQuestionComplexity(q);
+                if (difficultyCounts.hasOwnProperty(complexity)) {
+                    difficultyCounts[complexity]++;
+                }
+            });
+            
+            if (this.is40MarksTest) {
                 const totalMarks = this.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
                 const marksBreakdown = {
                     1: this.questions.filter(q => q.marks === 1).length,
@@ -1667,20 +1826,20 @@ class NEETMockTest {
                 testInfo.innerHTML = `
                     <li><strong>Total Questions:</strong> ${questionCount}</li>
                     <li><strong>Total Marks:</strong> ${totalMarks}</li>
-                    <li><strong>Duration:</strong> 90 minutes (1.5 hours)</li>
+                    <li><strong>Duration:</strong> ${durationText} (${totalMinutes} minutes)</li>
+                    <li><strong>Difficulty Breakdown:</strong> ${difficultyCounts.easy} Easy, ${difficultyCounts.medium} Medium, ${difficultyCounts.hard} Hard</li>
                     <li><strong>Marking Scheme:</strong> ${marksBreakdown[1]}×1, ${marksBreakdown[2]}×2, ${marksBreakdown[3]}×3, ${marksBreakdown[5]}×5 marks</li>
                     <li><strong>Question Type:</strong> Multiple Choice (MCQ)</li>
                     <li><strong>Question Source:</strong> Years 2020-2025</li>
-                    <li><strong>Difficulty:</strong> Moderate</li>
                     <li><strong>Marking:</strong> Variable marks per question, negative marking applies</li>
                 `;
             } else {
                 testInfo.innerHTML = `
                     <li><strong>Total Questions:</strong> ${questionCount}</li>
-                    <li><strong>Duration:</strong> 60 minutes (1 hour)</li>
+                    <li><strong>Duration:</strong> ${durationText} (${totalMinutes} minutes)</li>
+                    <li><strong>Difficulty Breakdown:</strong> ${difficultyCounts.easy} Easy, ${difficultyCounts.medium} Medium, ${difficultyCounts.hard} Hard</li>
                     <li><strong>${subject}:</strong> ${questionCount} questions (100%)</li>
                     <li><strong>Question Source:</strong> Years 2020-2025</li>
-                    <li><strong>Difficulty:</strong> Moderate</li>
                     <li><strong>Marking:</strong> +4 for correct, -1 for incorrect</li>
                 `;
             }
@@ -1739,15 +1898,42 @@ class NEETMockTest {
             subjectBadge.style.display = 'none';
         }
         
+        // Hide all screens
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const testScreen = document.getElementById('test-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const historyScreen = document.getElementById('test-history-screen');
+        const subjectScreen = document.getElementById('subject-selection-screen');
+        
+        if (welcomeScreen) {
+            welcomeScreen.classList.remove('active');
+            welcomeScreen.style.display = 'none';
+        }
+        if (testScreen) {
+            testScreen.classList.remove('active');
+            testScreen.style.display = 'none';
+        }
+        if (resultsScreen) {
+            resultsScreen.classList.remove('active');
+            resultsScreen.style.display = 'none';
+        }
+        if (historyScreen) {
+            historyScreen.classList.remove('active');
+            historyScreen.style.display = 'none';
+        }
+        
         // Show subject selection screen
-        document.getElementById('welcome-screen').classList.remove('active');
-        document.getElementById('test-screen').classList.remove('active');
-        document.getElementById('results-screen').classList.remove('active');
-        document.getElementById('test-history-screen').classList.remove('active');
-        document.getElementById('subject-selection-screen').classList.add('active');
+        if (subjectScreen) {
+            subjectScreen.classList.add('active');
+            subjectScreen.style.display = 'block';
+        }
     }
     
     startTest() {
+        console.log('startTest() called');
+        console.log('Selected subject:', this.selectedSubject);
+        console.log('Questions count:', this.questions.length);
+        
         if (!this.selectedSubject) {
             alert('Please select a subject first.');
             return;
@@ -1763,14 +1949,30 @@ class NEETMockTest {
         // Shuffle questions for each test
         this.shuffleQuestions();
         
-        document.getElementById('welcome-screen').classList.remove('active');
-        document.getElementById('test-screen').classList.add('active');
+        // Hide welcome screen and show test screen
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const testScreen = document.getElementById('test-screen');
+        
+        console.log('Welcome screen element:', welcomeScreen ? 'Found' : 'NOT FOUND');
+        console.log('Test screen element:', testScreen ? 'Found' : 'NOT FOUND');
+        
+        if (welcomeScreen) {
+            welcomeScreen.classList.remove('active');
+            welcomeScreen.style.display = 'none';
+            console.log('Welcome screen hidden');
+        }
+        
+        if (testScreen) {
+            testScreen.classList.add('active');
+            testScreen.style.display = 'block';
+            console.log('Test screen shown');
+        }
         
         // Initialize proctoring system (includes fullscreen request)
         this.initializeProctoring();
         
-        // Reset timer and time tracking (90 minutes for descriptive, 90 for 40 marks math, 60 for others)
-        this.timeRemaining = this.isDescriptiveTest ? 90 * 60 : (this.is40MarksTest ? 90 * 60 : 60 * 60);
+        // Calculate test duration based on question difficulty
+        this.timeRemaining = this.calculateTestDuration();
         this.currentQuestionIndex = 0;
         
         // Render subject icon for the selected subject
@@ -2111,12 +2313,42 @@ class NEETMockTest {
     getTimeForComplexity(complexity) {
         // Time allocations based on complexity (in seconds)
         const timeAllocations = {
-            'easy': 60,      // 1 minute
-            'medium': 90,    // 1.5 minutes
-            'hard': 120      // 2 minutes
+            'easy': 60,      // 1 minute per question
+            'medium': 90,    // 1.5 minutes per question
+            'hard': 120      // 2 minutes per question
         };
         
         return timeAllocations[complexity] || timeAllocations['medium'];
+    }
+    
+    calculateTestDuration() {
+        // Calculate total time based on question difficulties
+        let totalTime = 0;
+        
+        // Sum up time for each question based on its complexity
+        this.questions.forEach(question => {
+            const complexity = this.getQuestionComplexity(question);
+            const questionTime = this.getTimeForComplexity(complexity);
+            totalTime += questionTime;
+        });
+        
+        // Add buffer time for review and navigation (15 minutes)
+        const bufferTime = 15 * 60; // 15 minutes in seconds
+        totalTime += bufferTime;
+        
+        // Set minimum duration (60 minutes) and maximum duration (120 minutes)
+        const minDuration = 60 * 60; // 60 minutes
+        const maxDuration = 120 * 60; // 120 minutes
+        
+        // For 40 marks mathematics test, use 90 minutes as base
+        if (this.is40MarksTest) {
+            const baseTime = 90 * 60; // 90 minutes
+            // Add time based on difficulty but cap at 120 minutes
+            return Math.min(Math.max(totalTime, baseTime), maxDuration);
+        }
+        
+        // Ensure duration is within reasonable bounds
+        return Math.min(Math.max(totalTime, minDuration), maxDuration);
     }
     
     // Per-question timer removed
@@ -2191,7 +2423,6 @@ class NEETMockTest {
     renderQuestion() {
         const question = this.questions[this.currentQuestionIndex];
         const questionNum = this.currentQuestionIndex + 1;
-        const isDescriptive = question.isDescriptive || this.isDescriptiveTest;
         
         // Stop timer for previous question and start for current
         
@@ -2201,10 +2432,10 @@ class NEETMockTest {
         
         // Update subject badge (use question's subject property since questions are shuffled)
         const subject = question.subject || 'Mathematics';
-        document.getElementById('subject-badge').textContent = isDescriptive ? 'Physics Descriptive' : subject;
+        document.getElementById('subject-badge').textContent = subject;
         
         // Render subject icon
-        this.renderSubjectIcon(isDescriptive ? 'Physics' : subject);
+        this.renderSubjectIcon(subject);
         
         // Update complexity badge
         const complexity = this.getQuestionComplexity(question);
@@ -2229,13 +2460,43 @@ class NEETMockTest {
             marksBadge.textContent = `${question.marks} Marks`;
         }
         
-        // Update question text (preserve line breaks for descriptive)
-        const questionTextEl = document.getElementById('question-text');
-        if (isDescriptive) {
-            questionTextEl.innerHTML = question.question.replace(/\n/g, '<br>');
+        // Update chapter name and source link
+        const questionMetaInfo = document.getElementById('question-meta-info');
+        const chapterNameEl = document.getElementById('chapter-name');
+        const sourceLinkEl = document.getElementById('source-link');
+        
+        if (question.chapter || question.source) {
+            questionMetaInfo.style.display = 'block';
+            
+            // Display chapter name
+            if (question.chapter && chapterNameEl) {
+                chapterNameEl.textContent = question.chapter;
+            } else if (chapterNameEl) {
+                chapterNameEl.textContent = 'General';
+            }
+            
+            // Display source link
+            if (question.source && sourceLinkEl) {
+                sourceLinkEl.href = question.source;
+                // Update link text based on URL type
+                if (question.source.includes('SQP_CLASSX') || question.source.includes('SQP')) {
+                    sourceLinkEl.textContent = 'View CBSE Sample Papers';
+                } else if (question.source.includes('.pdf')) {
+                    sourceLinkEl.textContent = 'View Question Paper PDF';
+                } else {
+                    sourceLinkEl.textContent = 'View Source';
+                }
+                sourceLinkEl.style.display = 'inline-block';
+            } else if (sourceLinkEl) {
+                sourceLinkEl.style.display = 'none';
+            }
         } else {
-            questionTextEl.textContent = question.question;
+            questionMetaInfo.style.display = 'none';
         }
+        
+        // Update question text
+        const questionTextEl = document.getElementById('question-text');
+        questionTextEl.textContent = question.question;
         
         // Start timer for current question
         if (this.testStarted) {
@@ -2244,43 +2505,17 @@ class NEETMockTest {
         // Render diagram if available
         this.renderDiagram(question);
         
-        // Show/hide options vs descriptive answer
+        // Show options
         const optionsContainer = document.getElementById('options');
         const descriptiveSection = document.getElementById('descriptive-answer-section');
-        const descriptiveTextarea = document.getElementById('descriptive-answer');
-        const expectedPoints = document.getElementById('expected-points');
-        const expectedPointsList = document.getElementById('expected-points-list');
         
-        if (isDescriptive) {
-            // Hide options, show descriptive answer
-            optionsContainer.style.display = 'none';
-            descriptiveSection.style.display = 'block';
-            
-            // Load saved answer
-            descriptiveTextarea.value = this.answers[this.currentQuestionIndex] || '';
-            
-            // Update textarea on input
-            descriptiveTextarea.oninput = () => {
-                this.answers[this.currentQuestionIndex] = descriptiveTextarea.value;
-                this.updateQuestionPalette();
-            };
-            
-            // Show expected points if available
-            if (question.expectedPoints && question.expectedPoints.length > 0) {
-                expectedPoints.style.display = 'block';
-                expectedPointsList.innerHTML = question.expectedPoints.map(point => 
-                    `<li>${point}</li>`
-                ).join('');
-            } else {
-                expectedPoints.style.display = 'none';
-            }
-        } else {
-            // Show options, hide descriptive answer
-            descriptiveSection.style.display = 'none';
-            optionsContainer.style.display = 'block';
-            optionsContainer.innerHTML = '';
-            
-            question.options.forEach((option, index) => {
+        // Always show options, hide descriptive section
+        if (optionsContainer) optionsContainer.style.display = 'block';
+        if (descriptiveSection) descriptiveSection.style.display = 'none';
+        
+        optionsContainer.innerHTML = '';
+        
+        question.options.forEach((option, index) => {
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'option';
                 if (this.answers[this.currentQuestionIndex] === index) {
@@ -2311,7 +2546,6 @@ class NEETMockTest {
                 
                 optionsContainer.appendChild(optionDiv);
             });
-        }
         
         // Update navigation buttons
         document.getElementById('prev-btn').disabled = this.currentQuestionIndex === 0;
@@ -2403,10 +2637,8 @@ class NEETMockTest {
             numberDiv.className = 'question-number';
             numberDiv.textContent = questionNum;
             
-            // Check if answered (for descriptive, check if answer exists and is not empty)
-            const isAnswered = this.isDescriptiveTest 
-                ? (this.answers[index] !== null && this.answers[index].trim() !== '')
-                : (this.answers[index] !== null);
+            // Check if answered
+            const isAnswered = this.answers[index] !== null;
             
             if (isAnswered) {
                 numberDiv.classList.add('answered');
@@ -2427,10 +2659,8 @@ class NEETMockTest {
     }
 
     confirmSubmit() {
-        // Count unanswered questions (for descriptive, also check for empty strings)
-        const unanswered = this.isDescriptiveTest
-            ? this.answers.filter(a => a === null || (typeof a === 'string' && a.trim() === '')).length
-            : this.answers.filter(a => a === null).length;
+        // Count unanswered questions
+        const unanswered = this.answers.filter(a => a === null).length;
         const message = `Are you sure you want to submit the test?\n\nUnanswered questions: ${unanswered}\n\nYou cannot change your answers after submission.`;
         
         if (confirm(message)) {
@@ -2453,66 +2683,6 @@ class NEETMockTest {
     }
 
     calculateResults() {
-        // Handle descriptive tests differently
-        if (this.isDescriptiveTest) {
-            let answeredCount = 0;
-            let unansweredCount = 0;
-            const totalMarks = this.questions.reduce((sum, q) => sum + (q.marks || 5), 0);
-            
-            this.questions.forEach((question, index) => {
-                const userAnswer = this.answers[index];
-                if (userAnswer === null || userAnswer.trim() === '') {
-                    unansweredCount++;
-                } else {
-                    answeredCount++;
-                }
-            });
-            
-            // For descriptive tests, just show completion status
-            document.getElementById('total-score').textContent = 'N/A (Descriptive)';
-            document.getElementById('correct-count').textContent = answeredCount;
-            document.getElementById('incorrect-count').textContent = 'N/A';
-            document.getElementById('unanswered-count').textContent = unansweredCount;
-            document.getElementById('mathematics-score').textContent = `${answeredCount}/${this.questions.length} Answered`;
-            const resultSubjectName = document.getElementById('result-subject-name');
-            if (resultSubjectName) {
-                resultSubjectName.textContent = 'Physics Descriptive';
-            }
-            
-            // Initialize marks array if not present
-            if (!this.currentResults || !this.currentResults.marks) {
-                this.currentResults = {
-                    subject: 'Physics Descriptive',
-                    totalQuestions: this.questions.length,
-                    answeredCount: answeredCount,
-                    unansweredCount: unansweredCount,
-                    totalMarks: totalMarks,
-                    answers: this.answers,
-                    questions: this.questions,
-                    isDescriptive: true,
-                    candidateName: 'Siddesh Anand',
-                    timestamp: new Date().toISOString(),
-                    marks: new Array(this.questions.length).fill(null), // Marks assigned by evaluator
-                    totalScore: null // Will be calculated after correction
-                };
-            } else {
-                // Update existing results
-                this.currentResults.answeredCount = answeredCount;
-                this.currentResults.unansweredCount = unansweredCount;
-                this.currentResults.answers = this.answers;
-            }
-            
-            // Save results to localStorage
-            this.saveResultsToStorage(this.currentResults);
-            
-            // Show correction interface for descriptive tests
-            this.displayDescriptiveCorrection();
-            
-            // Hide detailed results for descriptive tests
-            this.hideDetailedResults();
-            return;
-        }
-        
         // Regular MCQ test scoring
         let correctCount = 0;
         let incorrectCount = 0;
@@ -3323,7 +3493,7 @@ class NEETMockTest {
         // Restore questions and answers for display
         this.questions = results.questions;
         this.answers = results.answers;
-        this.isDescriptiveTest = results.isDescriptive || false;
+        this.isDescriptiveTest = false; // Physics Descriptive test removed
         
         // Store current results for PDF generation
         this.currentResults = results;
@@ -3333,8 +3503,8 @@ class NEETMockTest {
         document.getElementById('test-screen').classList.remove('active');
         document.getElementById('results-screen').classList.add('active');
         
-        // Handle descriptive tests
-        if (results.isDescriptive) {
+        // Regular MCQ test results
+        if (false) { // Descriptive test removed
             const totalMarks = results.totalMarks || results.questions.reduce((sum, q) => sum + (q.marks || 5), 0);
             const totalScore = results.totalScore !== null && results.totalScore !== undefined ? results.totalScore : 'N/A (Not Corrected)';
             const answeredCount = results.answeredCount || 0;
@@ -4102,9 +4272,122 @@ class NEETMockTest {
 // Initialize the application when the page loads
 let app;
 
+// Define global functions FIRST, before any initialization, so they're always available
+// Global fallback function for subject selection - defined early to ensure it's always available
+window.handleSubjectSelect = function(subject) {
+    console.log('Global handleSubjectSelect called with:', subject);
+    
+    // Try to initialize app if not ready
+    if (!window.app) {
+        console.log('App not initialized, attempting to initialize...');
+        try {
+            if (document.readyState === 'loading') {
+                // Wait for DOM to be ready, but also try to initialize now
+                const initAndSelect = function() {
+                    if (initializeApp() && window.app && window.app.selectSubject) {
+                        window.app.selectSubject(subject);
+                    } else {
+                        // Retry after a short delay
+                        setTimeout(function() {
+                            if (window.app && window.app.selectSubject) {
+                                window.app.selectSubject(subject);
+                            } else {
+                                console.error('Failed to initialize app after retry');
+                                alert('Application is loading. Please wait a moment and try again.');
+                            }
+                        }, 500);
+                    }
+                };
+                
+                if (document.body) {
+                    // DOM might be ready even if readyState says loading
+                    initAndSelect();
+                } else {
+                    document.addEventListener('DOMContentLoaded', initAndSelect);
+                }
+                return;
+            } else {
+                // DOM is ready, initialize immediately
+                if (initializeApp() && window.app && window.app.selectSubject) {
+                    window.app.selectSubject(subject);
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error('Error during initialization:', error);
+        }
+    }
+    
+    // App should be ready now, try to use it
+    if (window.app && window.app.selectSubject) {
+        try {
+            window.app.selectSubject(subject);
+        } catch (error) {
+            console.error('Error calling selectSubject:', error);
+            alert('Error selecting subject: ' + error.message);
+        }
+    } else {
+        console.log('App still not ready, using direct navigation');
+        const subjectScreen = document.getElementById('subject-selection-screen');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        if (subjectScreen && welcomeScreen) {
+            subjectScreen.style.display = 'none';
+            welcomeScreen.style.display = 'block';
+            console.log('Direct navigation successful');
+        } else {
+            console.error('Screen elements not found for direct navigation');
+            // Retry after a short delay
+            setTimeout(function() {
+                if (window.app && window.app.selectSubject) {
+                    window.app.selectSubject(subject);
+                } else {
+                    alert('Application is still loading. Please wait a moment and try again.');
+                }
+            }, 1000);
+        }
+    }
+};
+
+// Initialize app immediately if DOM is ready, otherwise wait for DOMContentLoaded
+function initializeApp() {
+    console.log('Initializing NEETMockTest application...');
+    try {
+        if (!app) {
+            app = new NEETMockTest();
+            window.app = app; // Make accessible globally
+            console.log('Application initialized successfully, window.app is available');
+        } else {
+            console.log('Application already initialized');
+        }
+        return true;
+    } catch (error) {
+        console.error('Error initializing application:', error);
+        console.error('Error stack:', error.stack);
+        alert('Error loading application: ' + error.message);
+        return false;
+    }
+}
+
 // Global fallback function for login (works even if app not initialized)
 window.handleStudentLogin = function() {
     console.log('Global handleStudentLogin called');
+    // Try to initialize app if not ready
+    if (!window.app) {
+        console.log('App not initialized, attempting to initialize...');
+        if (document.readyState === 'loading') {
+            // Wait for DOM to be ready
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeApp();
+                if (window.app && window.app.loginAsStudent) {
+                    window.app.loginAsStudent();
+                }
+            });
+            return;
+        } else {
+            initializeApp();
+        }
+    }
+    
     if (window.app && window.app.loginAsStudent) {
         window.app.loginAsStudent();
     } else {
@@ -4113,7 +4396,9 @@ window.handleStudentLogin = function() {
         const subjectScreen = document.getElementById('subject-selection-screen');
         if (loginScreen && subjectScreen) {
             loginScreen.classList.remove('active');
+            loginScreen.style.display = 'none';
             subjectScreen.classList.add('active');
+            subjectScreen.style.display = 'block';
             console.log('Direct navigation successful');
         } else {
             console.error('Screen elements not found for direct navigation');
@@ -4122,49 +4407,132 @@ window.handleStudentLogin = function() {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOMContentLoaded event fired');
-    try {
-        console.log('Initializing NEETMockTest application...');
-        app = new NEETMockTest();
-        window.app = app; // Make accessible globally
-        
-        // Auto-login as student
-        app.userType = 'student';
-        const loginScreen = document.getElementById('login-screen');
-        const subjectScreen = document.getElementById('subject-selection-screen');
-        
-        if (loginScreen) {
-            loginScreen.classList.remove('active');
-            loginScreen.style.display = 'none';
-        }
-        
-        // Check if subject parameter is in URL (for full page load)
-        const urlParams = new URLSearchParams(window.location.search);
-        const subjectParam = urlParams.get('subject');
-        
-        if (subjectParam) {
-            // Load test directly for the subject in full page
-            console.log('Subject parameter found, loading test:', subjectParam);
-            setTimeout(() => {
-                app.selectSubject(subjectParam);
-            }, 100);
-        } else {
-            // Show subject selection screen
-            if (subjectScreen) {
-                subjectScreen.classList.add('active');
-                subjectScreen.style.display = 'block';
+// Global fallback function for subject selection - defined early to ensure it's always available
+window.handleSubjectSelect = function(subject) {
+    console.log('Global handleSubjectSelect called with:', subject);
+    
+    // Try to initialize app if not ready
+    if (!window.app) {
+        console.log('App not initialized, attempting to initialize...');
+        try {
+            if (document.readyState === 'loading') {
+                // Wait for DOM to be ready, but also try to initialize now
+                const initAndSelect = function() {
+                    if (initializeApp() && window.app && window.app.selectSubject) {
+                        window.app.selectSubject(subject);
+                    } else {
+                        // Retry after a short delay
+                        setTimeout(function() {
+                            if (window.app && window.app.selectSubject) {
+                                window.app.selectSubject(subject);
+                            } else {
+                                console.error('Failed to initialize app after retry');
+                                alert('Application is loading. Please wait a moment and try again.');
+                            }
+                        }, 500);
+                    }
+                };
+                
+                if (document.body) {
+                    // DOM might be ready even if readyState says loading
+                    initAndSelect();
+                } else {
+                    document.addEventListener('DOMContentLoaded', initAndSelect);
+                }
+                return;
+            } else {
+                // DOM is ready, initialize immediately
+                if (initializeApp() && window.app && window.app.selectSubject) {
+                    window.app.selectSubject(subject);
+                    return;
+                }
             }
+        } catch (error) {
+            console.error('Error during initialization:', error);
         }
-        
-        console.log('Application initialized successfully - auto-logged in as student');
-        
-    } catch (error) {
-        console.error('Error initializing application:', error);
-        console.error('Error stack:', error.stack);
-        alert('Error loading application: ' + error.message + '\n\nPlease refresh the page.');
     }
-});
+    
+    // App should be ready now, try to use it
+    if (window.app && window.app.selectSubject) {
+        try {
+            window.app.selectSubject(subject);
+        } catch (error) {
+            console.error('Error calling selectSubject:', error);
+            alert('Error selecting subject: ' + error.message);
+        }
+    } else {
+        console.log('App still not ready, using direct navigation');
+        const subjectScreen = document.getElementById('subject-selection-screen');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        if (subjectScreen && welcomeScreen) {
+            subjectScreen.style.display = 'none';
+            welcomeScreen.style.display = 'block';
+            console.log('Direct navigation successful');
+        } else {
+            console.error('Screen elements not found for direct navigation');
+            // Retry after a short delay
+            setTimeout(function() {
+                if (window.app && window.app.selectSubject) {
+                    window.app.selectSubject(subject);
+                } else {
+                    alert('Application is still loading. Please wait a moment and try again.');
+                }
+            }, 1000);
+        }
+    }
+};
 
+// Initialize app when DOM is ready
+function initApp() {
+    console.log('Initializing app...');
+    if (initializeApp()) {
+        setupInitialScreen();
+        console.log('App initialization complete');
+    }
+}
 
+// Initialize based on document ready state
+if (document.readyState === 'loading') {
+    // DOM is still loading, wait for DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded event fired');
+        initApp();
+    });
+} else {
+    // DOM is already ready, initialize immediately
+    console.log('DOM already ready, initializing immediately');
+    initApp();
+}
 
+// Helper function to set up initial screen state
+function setupInitialScreen() {
+    // Show login screen by default (no auto-login)
+    const loginScreen = document.getElementById('login-screen');
+    const subjectScreen = document.getElementById('subject-selection-screen');
+    
+    if (loginScreen) {
+        loginScreen.classList.add('active');
+        loginScreen.style.display = 'block';
+    }
+    
+    if (subjectScreen) {
+        subjectScreen.classList.remove('active');
+        subjectScreen.style.display = 'none';
+    }
+    
+    // Check if subject parameter is in URL (for full page load)
+    const urlParams = new URLSearchParams(window.location.search);
+    const subjectParam = urlParams.get('subject');
+    
+    if (subjectParam) {
+        // Load test directly for the subject in full page
+        console.log('Subject parameter found, loading test:', subjectParam);
+        setTimeout(() => {
+            if (window.app && window.app.selectSubject) {
+                window.app.selectSubject(subjectParam);
+            }
+        }, 100);
+    }
+    
+    console.log('Application initialization complete');
+}
