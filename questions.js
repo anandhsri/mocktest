@@ -661,7 +661,7 @@ const questions = {
         },
         {
             id: 87,
-            question: "Find the area of the shaded region in the given figure, where ABCD is a square of side 14 cm and four circles are drawn with centres A, B, C, D.",
+            question: "Find the area of the shaded region where ABCD is a square of side 14 cm and four circles are drawn with centres A, B, C, D.",
             options: ["196 - 154π cm²", "196 - 49π cm²", "196 - 98π cm²", "196 - 196π cm²"],
             correct: 0,
             year: "2024",
@@ -669,7 +669,7 @@ const questions = {
         },
         {
             id: 88,
-            question: "Find the area of the shaded design in the given figure, where ABCD is a square of side 10 cm and semicircles are drawn with each side of the square as diameter.",
+            question: "Find the area of the shaded design where ABCD is a square of side 10 cm and semicircles are drawn with each side of the square as diameter.",
             options: ["50π cm²", "100 - 25π cm²", "100 - 50π cm²", "25π cm²"],
             correct: 0,
             year: "2025",

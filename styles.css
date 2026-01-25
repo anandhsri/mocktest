@@ -15,6 +15,53 @@
     margin: 0 auto;
 }
 
+.login-centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.about-portal-section {
+    margin-top: 40px;
+    padding: 25px 30px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    text-align: center;
+    width: 100%;
+    max-width: 700px;
+}
+
+.about-portal-section h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.about-portal-section p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.about-portal-section ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.about-portal-section li {
+    background: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: #667eea;
+    font-size: 0.9em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .login-content h1 {
     color: #667eea;
     font-size: 2.5em;
@@ -28,13 +75,19 @@
 }
 
 .login-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
     gap: 30px;
     margin-bottom: 30px;
+    flex-wrap: nowrap;
 }
 
 .login-card {
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border-radius: 15px;

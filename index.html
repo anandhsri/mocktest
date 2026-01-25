@@ -15,44 +15,40 @@
     <div class="container">
         <!-- Login Screen -->
         <div id="login-screen" class="screen active">
-            <div class="login-content split-layout">
-                <div class="split-main">
-                    <div class="login-content-header">
-                        <h1>CBSE Mock Test Portal</h1>
-                        <h2>10th Grade Test System</h2>
+            <div class="login-content login-centered">
+                <div class="login-content-header">
+                    <h1>CBSE Mock Test Portal</h1>
+                    <h2>10th Grade Test System</h2>
+                </div>
+                <div class="login-options">
+                    <div class="login-card" id="student-login-card">
+                        <div class="login-icon">👤</div>
+                        <h3>Student Login</h3>
+                        <p>Take mock tests and view your results</p>
+                        <button id="student-login-btn" class="btn-primary" onclick="if(window.app && window.app.loginAsStudent) { window.app.loginAsStudent(); } else { const ls = document.getElementById('login-screen'); const ss = document.getElementById('subject-selection-screen'); if(ls) { ls.style.display='none'; } if(ss) { ss.style.display='block'; } } return false;">Login as Student</button>
                     </div>
-                    <div class="login-options">
-                        <div class="login-card" id="student-login-card">
-                            <div class="login-icon">👤</div>
-                            <h3>Student Login</h3>
-                            <p>Take mock tests and view your results</p>
-                            <button id="student-login-btn" class="btn-primary">Login as Student</button>
-                        </div>
-                        <div class="login-card" id="admin-login-card">
-                            <div class="login-icon">🔐</div>
-                            <h3>Admin Login</h3>
-                            <p>Review all test results and analytics</p>
-                            <button id="admin-login-btn" class="btn-primary">Login as Admin</button>
-                        </div>
-                    </div>
-                    <div id="admin-password-section" class="admin-password-section" style="display: none;">
-                        <input type="password" id="admin-password" placeholder="Enter Admin Password" class="password-input">
-                        <button id="admin-submit-btn" class="btn-primary">Submit</button>
-                        <button id="cancel-admin-login-btn" class="btn-secondary">Cancel</button>
-                        <p id="admin-error" class="error-message" style="display: none;"></p>
+                    <div class="login-card" id="admin-login-card">
+                        <div class="login-icon">🔐</div>
+                        <h3>Admin Login</h3>
+                        <p>Review all test results and analytics</p>
+                        <button id="admin-login-btn" class="btn-primary">Login as Admin</button>
                     </div>
                 </div>
-                <div class="split-sidebar">
-                    <div class="split-sidebar-card">
-                        <h3>About the Portal</h3>
-                        <p>Welcome to the CBSE 10th Grade Mock Test Portal. This platform provides comprehensive practice tests based on the CBSE curriculum.</p>
-                        <ul>
-                            <li>Multiple subjects available</li>
-                            <li>Real exam-like experience</li>
-                            <li>Detailed performance analysis</li>
-                            <li>Chapter-wise breakdown</li>
-                        </ul>
-                    </div>
+                <div id="admin-password-section" class="admin-password-section" style="display: none;">
+                    <input type="password" id="admin-password" placeholder="Enter Admin Password" class="password-input">
+                    <button id="admin-submit-btn" class="btn-primary">Submit</button>
+                    <button id="cancel-admin-login-btn" class="btn-secondary">Cancel</button>
+                    <p id="admin-error" class="error-message" style="display: none;"></p>
+                </div>
+                <div class="about-portal-section">
+                    <h3>About the Portal</h3>
+                    <p>Welcome to the CBSE 10th Grade Mock Test Portal. This platform provides comprehensive practice tests based on the CBSE curriculum.</p>
+                    <ul>
+                        <li>Multiple subjects available</li>
+                        <li>Real exam-like experience</li>
+                        <li>Detailed performance analysis</li>
+                        <li>Chapter-wise breakdown</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -142,21 +138,6 @@
                             <h3>Social Science</h3>
                             <p class="subject-description">50 Questions | 60 Minutes</p>
                             <p class="subject-years">Years: 2020-2025</p>
-                        </div>
-                        <div class="subject-card" data-subject="Physics Descriptive">
-                            <div class="subject-icon">
-                                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.2)"/>
-                                    <circle cx="35" cy="35" r="8" fill="white" opacity="0.9"/>
-                                    <circle cx="65" cy="35" r="8" fill="white" opacity="0.9"/>
-                                    <circle cx="50" cy="65" r="8" fill="white" opacity="0.9"/>
-                                    <path d="M35 35 L50 65 M65 35 L50 65" stroke="white" stroke-width="2" opacity="0.9"/>
-                                    <text x="50" y="85" font-size="12" fill="white" text-anchor="middle" font-weight="bold">DESC</text>
-                                </svg>
-                            </div>
-                            <h3>Physics Descriptive</h3>
-                            <p class="subject-description">5 Questions | 90 Minutes</p>
-                            <p class="subject-years">25 Marks | 2020-2025</p>
                         </div>
                     </div>
                     <div class="subject-actions">
@@ -499,7 +480,6 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
     <script src="questions.js"></script>
-    <script src="physics_descriptive_25marks.js"></script>
     <script src="mathematics_40marks.js"></script>
     <script src="app.js"></script>
 </body>
