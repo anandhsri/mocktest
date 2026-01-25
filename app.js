@@ -27,6 +27,9 @@ class NEETMockTest {
     }
 
     initializeEventListeners() {
+        // Store reference to 'this' for use in event handlers
+        const self = this;
+        
         // Login buttons - simple and reliable approach
         const studentLoginBtn = document.getElementById('student-login-btn');
         if (studentLoginBtn) {
@@ -34,20 +37,22 @@ class NEETMockTest {
             studentLoginBtn.removeAttribute('onclick');
             
             // Add click listener with proper binding
-            studentLoginBtn.addEventListener('click', (e) => {
+            studentLoginBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Student login button clicked via addEventListener');
-                if (this && this.loginAsStudent) {
-                    this.loginAsStudent();
+                if (self && typeof self.loginAsStudent === 'function') {
+                    self.loginAsStudent();
                 } else {
-                    console.error('this.loginAsStudent is not available');
+                    console.error('self.loginAsStudent is not available');
                     // Direct fallback
                     const loginScreen = document.getElementById('login-screen');
                     const subjectScreen = document.getElementById('subject-selection-screen');
                     if (loginScreen && subjectScreen) {
                         loginScreen.classList.remove('active');
+                        loginScreen.style.display = 'none';
                         subjectScreen.classList.add('active');
+                        subjectScreen.style.display = 'block';
                     }
                 }
             }, false);
@@ -59,61 +64,103 @@ class NEETMockTest {
         
         const adminLoginBtn = document.getElementById('admin-login-btn');
         if (adminLoginBtn) {
-            adminLoginBtn.addEventListener('click', () => {
-                this.showAdminPasswordInput();
+            adminLoginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.showAdminPasswordInput === 'function') {
+                    self.showAdminPasswordInput();
+                }
             });
         }
         
-        document.getElementById('admin-submit-btn').addEventListener('click', () => {
-            this.loginAsAdmin();
-        });
+        const adminSubmitBtn = document.getElementById('admin-submit-btn');
+        if (adminSubmitBtn) {
+            adminSubmitBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.loginAsAdmin === 'function') {
+                    self.loginAsAdmin();
+                }
+            });
+        }
         
-        document.getElementById('cancel-admin-login-btn').addEventListener('click', () => {
-            this.hideAdminPasswordInput();
-        });
+        const cancelAdminBtn = document.getElementById('cancel-admin-login-btn');
+        if (cancelAdminBtn) {
+            cancelAdminBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.hideAdminPasswordInput === 'function') {
+                    self.hideAdminPasswordInput();
+                }
+            });
+        }
         
         // Logout buttons - use event delegation for dynamically added buttons
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', function(e) {
             if (e.target.classList.contains('logout-btn')) {
-                this.logout();
+                if (self && typeof self.logout === 'function') {
+                    self.logout();
+                }
             }
             
             // Acknowledge proctor warning
             if (e.target.id === 'acknowledge-warning-btn') {
-                document.getElementById('proctor-warning-modal').style.display = 'none';
+                const modal = document.getElementById('proctor-warning-modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
             }
             
             // Exit test button
             if (e.target.id === 'exit-test-btn' || e.target.closest('#exit-test-btn')) {
                 e.preventDefault();
                 e.stopPropagation();
-                this.exitTest();
+                if (self && typeof self.exitTest === 'function') {
+                    self.exitTest();
+                }
+            }
+            
+            // Subject selection cards - use event delegation
+            const subjectCard = e.target.closest('.subject-card');
+            if (subjectCard) {
+                e.preventDefault();
+                e.stopPropagation();
+                const subject = subjectCard.getAttribute('data-subject');
+                if (!subject) return;
+                
+                console.log('Subject card clicked:', subject);
+                // Call selectSubject directly without page reload
+                if (self && typeof self.selectSubject === 'function') {
+                    self.selectSubject(subject);
+                } else {
+                    console.error('selectSubject method not available');
+                }
             }
         });
         
-        // Subject selection cards
-        document.querySelectorAll('.subject-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                e.preventDefault();
-                const subject = e.currentTarget.getAttribute('data-subject');
-                if (!subject) return;
-                
-                // Get base URL without query parameters
-                const baseUrl = window.location.origin + window.location.pathname;
-                // Navigate to full page with subject parameter
-                window.location.href = baseUrl + '?subject=' + encodeURIComponent(subject);
-            });
-        });
-        
         // Change subject button
-        document.getElementById('change-subject-btn').addEventListener('click', () => {
-            this.goToSubjectSelection();
-        });
+        const changeSubjectBtn = document.getElementById('change-subject-btn');
+        if (changeSubjectBtn) {
+            changeSubjectBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.goToSubjectSelection === 'function') {
+                    self.goToSubjectSelection();
+                }
+            });
+        }
         
         // Start test button
-        document.getElementById('start-test-btn').addEventListener('click', () => {
-            this.startTest();
-        });
+        const startTestBtn = document.getElementById('start-test-btn');
+        if (startTestBtn) {
+            startTestBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (self && typeof self.startTest === 'function') {
+                    self.startTest();
+                }
+            });
+        }
 
         // Navigation buttons
         document.getElementById('prev-btn').addEventListener('click', () => {
@@ -1568,7 +1615,7 @@ class NEETMockTest {
         this.is80MarksTest = false; // Disabled 80 marks test
         this.is40MarksTest = subject === 'Mathematics';
         
-        // Handle descriptive test
+        // Handle descriptive test (keep as is - descriptive tests have fewer questions)
         if (this.isDescriptiveTest && typeof physicsDescriptiveTest !== 'undefined') {
             this.questions = physicsDescriptiveTest.questions.map(q => ({
                 ...q,
@@ -1576,12 +1623,38 @@ class NEETMockTest {
                 isDescriptive: true
             }));
         } else if (this.is40MarksTest && typeof mathematics40Marks !== 'undefined') {
-            // Handle 40 marks mathematics MCQ test
-            this.questions = mathematics40Marks.questions.map(q => ({
+            // Handle 40 marks mathematics MCQ test - ensure exactly 50 unique questions
+            let mathQuestions = mathematics40Marks.questions.map(q => ({
                 ...q,
                 subject: 'Mathematics',
                 marks: q.marks || 1
             }));
+            
+            // Remove duplicates by ID
+            const uniqueQuestions = [];
+            const seenIds = new Set();
+            for (const q of mathQuestions) {
+                if (!seenIds.has(q.id)) {
+                    seenIds.add(q.id);
+                    uniqueQuestions.push(q);
+                }
+            }
+            mathQuestions = uniqueQuestions;
+            
+            // Shuffle first
+            for (let i = mathQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [mathQuestions[i], mathQuestions[j]] = [mathQuestions[j], mathQuestions[i]];
+            }
+            
+            // Ensure exactly 50 questions for Mathematics
+            if (mathQuestions.length >= 50) {
+                this.questions = mathQuestions.slice(0, 50);
+            } else {
+                // If fewer than 50 available, show warning but use all available
+                console.warn(`Only ${mathQuestions.length} Mathematics questions available. Need at least 50.`);
+                this.questions = mathQuestions;
+            }
         } else {
             // Get base questions from questions.js
             let baseQuestions = allQuestions.filter(q => q.subject === subject);
@@ -1603,7 +1676,60 @@ class NEETMockTest {
             });
             
             // Convert back to array
-            this.questions = Array.from(questionMap.values());
+            let allSubjectQuestions = Array.from(questionMap.values());
+            
+            // For Mathematics, ensure up to 50 unique questions
+            if (subject === 'Mathematics') {
+                // Remove duplicates by ID to ensure uniqueness
+                const uniqueQuestions = [];
+                const seenIds = new Set();
+                for (const q of allSubjectQuestions) {
+                    if (!seenIds.has(q.id)) {
+                        seenIds.add(q.id);
+                        uniqueQuestions.push(q);
+                    }
+                }
+                allSubjectQuestions = uniqueQuestions;
+                
+                // Shuffle the questions
+                for (let i = allSubjectQuestions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [allSubjectQuestions[i], allSubjectQuestions[j]] = [allSubjectQuestions[j], allSubjectQuestions[i]];
+                }
+                
+                // Ensure exactly 50 questions for Mathematics
+                if (allSubjectQuestions.length >= 50) {
+                    this.questions = allSubjectQuestions.slice(0, 50);
+                } else {
+                    // If fewer than 50 available, show warning but use all available
+                    console.warn(`Only ${allSubjectQuestions.length} Mathematics questions available. Need at least 50.`);
+                    this.questions = allSubjectQuestions;
+                }
+            } else {
+                // For other subjects, limit to 50 unique questions - shuffle first, then take first 50
+                // Remove duplicates by ID to ensure uniqueness
+                const uniqueQuestions = [];
+                const seenIds = new Set();
+                for (const q of allSubjectQuestions) {
+                    if (!seenIds.has(q.id)) {
+                        seenIds.add(q.id);
+                        uniqueQuestions.push(q);
+                    }
+                }
+                allSubjectQuestions = uniqueQuestions;
+                
+                if (allSubjectQuestions.length > 50) {
+                    // Shuffle the questions
+                    for (let i = allSubjectQuestions.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [allSubjectQuestions[i], allSubjectQuestions[j]] = [allSubjectQuestions[j], allSubjectQuestions[i]];
+                    }
+                    // Take first 50 questions
+                    this.questions = allSubjectQuestions.slice(0, 50);
+                } else {
+                    this.questions = allSubjectQuestions;
+                }
+            }
         }
         
         if (this.questions.length === 0) {
@@ -1619,9 +1745,19 @@ class NEETMockTest {
         // Update welcome screen with subject-specific info
         this.updateWelcomeScreenForSubject(subject);
         
-        // Show welcome screen
-        document.getElementById('subject-selection-screen').classList.remove('active');
-        document.getElementById('welcome-screen').classList.add('active');
+        // Show welcome screen and hide subject selection
+        const subjectScreen = document.getElementById('subject-selection-screen');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        
+        if (subjectScreen) {
+            subjectScreen.classList.remove('active');
+            subjectScreen.style.display = 'none';
+        }
+        
+        if (welcomeScreen) {
+            welcomeScreen.classList.add('active');
+            welcomeScreen.style.display = 'block';
+        }
         
         // Scroll to top of the page
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1649,12 +1785,34 @@ class NEETMockTest {
         
         if (testInfo) {
             const questionCount = this.questions.length;
+            
+            // Calculate duration based on question difficulty
+            const totalDurationSeconds = this.calculateTestDuration();
+            const totalMinutes = Math.floor(totalDurationSeconds / 60);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            let durationText = '';
+            if (hours > 0) {
+                durationText = minutes > 0 ? `${hours} hour${hours > 1 ? 's' : ''} ${minutes} minute${minutes > 1 ? 's' : ''}` : `${hours} hour${hours > 1 ? 's' : ''}`;
+            } else {
+                durationText = `${minutes} minute${minutes > 1 ? 's' : ''}`;
+            }
+            
+            // Calculate difficulty breakdown
+            const difficultyCounts = { easy: 0, medium: 0, hard: 0 };
+            this.questions.forEach(q => {
+                const complexity = this.getQuestionComplexity(q);
+                if (difficultyCounts.hasOwnProperty(complexity)) {
+                    difficultyCounts[complexity]++;
+                }
+            });
+            
             if (this.isDescriptiveTest) {
                 const totalMarks = this.questions.reduce((sum, q) => sum + (q.marks || 5), 0);
                 testInfo.innerHTML = `
                     <li><strong>Total Questions:</strong> ${questionCount}</li>
                     <li><strong>Total Marks:</strong> ${totalMarks}</li>
-                    <li><strong>Duration:</strong> 90 minutes (1.5 hours)</li>
+                    <li><strong>Duration:</strong> ${durationText} (${totalMinutes} minutes)</li>
                 `;
             } else if (this.is40MarksTest) {
                 const totalMarks = this.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
@@ -1667,20 +1825,20 @@ class NEETMockTest {
                 testInfo.innerHTML = `
                     <li><strong>Total Questions:</strong> ${questionCount}</li>
                     <li><strong>Total Marks:</strong> ${totalMarks}</li>
-                    <li><strong>Duration:</strong> 90 minutes (1.5 hours)</li>
+                    <li><strong>Duration:</strong> ${durationText} (${totalMinutes} minutes)</li>
+                    <li><strong>Difficulty Breakdown:</strong> ${difficultyCounts.easy} Easy, ${difficultyCounts.medium} Medium, ${difficultyCounts.hard} Hard</li>
                     <li><strong>Marking Scheme:</strong> ${marksBreakdown[1]}×1, ${marksBreakdown[2]}×2, ${marksBreakdown[3]}×3, ${marksBreakdown[5]}×5 marks</li>
                     <li><strong>Question Type:</strong> Multiple Choice (MCQ)</li>
                     <li><strong>Question Source:</strong> Years 2020-2025</li>
-                    <li><strong>Difficulty:</strong> Moderate</li>
                     <li><strong>Marking:</strong> Variable marks per question, negative marking applies</li>
                 `;
             } else {
                 testInfo.innerHTML = `
                     <li><strong>Total Questions:</strong> ${questionCount}</li>
-                    <li><strong>Duration:</strong> 60 minutes (1 hour)</li>
+                    <li><strong>Duration:</strong> ${durationText} (${totalMinutes} minutes)</li>
+                    <li><strong>Difficulty Breakdown:</strong> ${difficultyCounts.easy} Easy, ${difficultyCounts.medium} Medium, ${difficultyCounts.hard} Hard</li>
                     <li><strong>${subject}:</strong> ${questionCount} questions (100%)</li>
                     <li><strong>Question Source:</strong> Years 2020-2025</li>
-                    <li><strong>Difficulty:</strong> Moderate</li>
                     <li><strong>Marking:</strong> +4 for correct, -1 for incorrect</li>
                 `;
             }
@@ -1739,15 +1897,42 @@ class NEETMockTest {
             subjectBadge.style.display = 'none';
         }
         
+        // Hide all screens
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const testScreen = document.getElementById('test-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const historyScreen = document.getElementById('test-history-screen');
+        const subjectScreen = document.getElementById('subject-selection-screen');
+        
+        if (welcomeScreen) {
+            welcomeScreen.classList.remove('active');
+            welcomeScreen.style.display = 'none';
+        }
+        if (testScreen) {
+            testScreen.classList.remove('active');
+            testScreen.style.display = 'none';
+        }
+        if (resultsScreen) {
+            resultsScreen.classList.remove('active');
+            resultsScreen.style.display = 'none';
+        }
+        if (historyScreen) {
+            historyScreen.classList.remove('active');
+            historyScreen.style.display = 'none';
+        }
+        
         // Show subject selection screen
-        document.getElementById('welcome-screen').classList.remove('active');
-        document.getElementById('test-screen').classList.remove('active');
-        document.getElementById('results-screen').classList.remove('active');
-        document.getElementById('test-history-screen').classList.remove('active');
-        document.getElementById('subject-selection-screen').classList.add('active');
+        if (subjectScreen) {
+            subjectScreen.classList.add('active');
+            subjectScreen.style.display = 'block';
+        }
     }
     
     startTest() {
+        console.log('startTest() called');
+        console.log('Selected subject:', this.selectedSubject);
+        console.log('Questions count:', this.questions.length);
+        
         if (!this.selectedSubject) {
             alert('Please select a subject first.');
             return;
@@ -1763,14 +1948,30 @@ class NEETMockTest {
         // Shuffle questions for each test
         this.shuffleQuestions();
         
-        document.getElementById('welcome-screen').classList.remove('active');
-        document.getElementById('test-screen').classList.add('active');
+        // Hide welcome screen and show test screen
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const testScreen = document.getElementById('test-screen');
+        
+        console.log('Welcome screen element:', welcomeScreen ? 'Found' : 'NOT FOUND');
+        console.log('Test screen element:', testScreen ? 'Found' : 'NOT FOUND');
+        
+        if (welcomeScreen) {
+            welcomeScreen.classList.remove('active');
+            welcomeScreen.style.display = 'none';
+            console.log('Welcome screen hidden');
+        }
+        
+        if (testScreen) {
+            testScreen.classList.add('active');
+            testScreen.style.display = 'block';
+            console.log('Test screen shown');
+        }
         
         // Initialize proctoring system (includes fullscreen request)
         this.initializeProctoring();
         
-        // Reset timer and time tracking (90 minutes for descriptive, 90 for 40 marks math, 60 for others)
-        this.timeRemaining = this.isDescriptiveTest ? 90 * 60 : (this.is40MarksTest ? 90 * 60 : 60 * 60);
+        // Calculate test duration based on question difficulty
+        this.timeRemaining = this.calculateTestDuration();
         this.currentQuestionIndex = 0;
         
         // Render subject icon for the selected subject
@@ -2111,12 +2312,47 @@ class NEETMockTest {
     getTimeForComplexity(complexity) {
         // Time allocations based on complexity (in seconds)
         const timeAllocations = {
-            'easy': 60,      // 1 minute
-            'medium': 90,    // 1.5 minutes
-            'hard': 120      // 2 minutes
+            'easy': 60,      // 1 minute per question
+            'medium': 90,    // 1.5 minutes per question
+            'hard': 120      // 2 minutes per question
         };
         
         return timeAllocations[complexity] || timeAllocations['medium'];
+    }
+    
+    calculateTestDuration() {
+        // For descriptive tests, use fixed duration
+        if (this.isDescriptiveTest) {
+            return 90 * 60; // 90 minutes
+        }
+        
+        // Calculate total time based on question difficulties
+        let totalTime = 0;
+        
+        // Sum up time for each question based on its complexity
+        this.questions.forEach(question => {
+            const complexity = this.getQuestionComplexity(question);
+            const questionTime = this.getTimeForComplexity(complexity);
+            totalTime += questionTime;
+        });
+        
+        // Add buffer time for review and navigation (15 minutes)
+        const bufferTime = 15 * 60; // 15 minutes in seconds
+        totalTime += bufferTime;
+        
+        // Set minimum duration (60 minutes) and maximum duration (120 minutes)
+        const minDuration = 60 * 60; // 60 minutes
+        const maxDuration = 120 * 60; // 120 minutes
+        
+        // For 40 marks mathematics test, use 90 minutes as base
+        if (this.is40MarksTest) {
+            const baseTime = 90 * 60; // 90 minutes
+            // Add time based on difficulty but cap at 120 minutes
+            return Math.min(Math.max(totalTime, baseTime), maxDuration);
+        }
+        
+        // Ensure duration is within reasonable bounds
+        return Math.min(Math.max(totalTime, minDuration), maxDuration);
     }
     
     // Per-question timer removed
@@ -2227,6 +2463,40 @@ class NEETMockTest {
         const marksBadge = document.querySelector('.marks-badge');
         if (marksBadge && question.marks) {
             marksBadge.textContent = `${question.marks} Marks`;
+        }
+        
+        // Update chapter name and source link
+        const questionMetaInfo = document.getElementById('question-meta-info');
+        const chapterNameEl = document.getElementById('chapter-name');
+        const sourceLinkEl = document.getElementById('source-link');
+        
+        if (question.chapter || question.source) {
+            questionMetaInfo.style.display = 'block';
+            
+            // Display chapter name
+            if (question.chapter && chapterNameEl) {
+                chapterNameEl.textContent = question.chapter;
+            } else if (chapterNameEl) {
+                chapterNameEl.textContent = 'General';
+            }
+            
+            // Display source link
+            if (question.source && sourceLinkEl) {
+                sourceLinkEl.href = question.source;
+                // Update link text based on URL type
+                if (question.source.includes('SQP_CLASSX') || question.source.includes('SQP')) {
+                    sourceLinkEl.textContent = 'View CBSE Sample Papers';
+                } else if (question.source.includes('.pdf')) {
+                    sourceLinkEl.textContent = 'View Question Paper PDF';
+                } else {
+                    sourceLinkEl.textContent = 'View Source';
+                }
+                sourceLinkEl.style.display = 'inline-block';
+            } else if (sourceLinkEl) {
+                sourceLinkEl.style.display = 'none';
+            }
+        } else {
+            questionMetaInfo.style.display = 'none';
         }
         
         // Update question text (preserve line breaks for descriptive)
