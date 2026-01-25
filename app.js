@@ -367,10 +367,13 @@ class NEETMockTest {
         // Hide all screens
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
+            screen.style.display = 'none';
         });
         
         // Show login screen
-        document.getElementById('login-screen').classList.add('active');
+        const loginScreen = document.getElementById('login-screen');
+        loginScreen.classList.add('active');
+        loginScreen.style.display = 'block';
         this.hideAdminPasswordInput();
     }
 
