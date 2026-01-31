@@ -37,12 +37,12 @@ A comprehensive mock test application for NEET preparation based on 10th grade C
 
 ### Option 1: Local Access (Single Device)
 1. **Open the Application**
-   - Simply open `index.html` in any modern web browser
+   - Simply open `neet-web/index.html` in any modern web browser
    - No server or installation required
 
 ### Option 2: Network Access (Home Network)
 1. **Start the Server**
-   - Run `python3 server.py`
+   - Run `python3 server/server.py`
    - The server will start on port 8040
 
 2. **Access from Any Device on Your Network**
@@ -98,10 +98,14 @@ docker compose up --build
 
 ```
 neet-mock-test/
-├── index.html      # Main HTML file
-├── styles.css      # Styling and layout
-├── questions.js    # Question bank (50 questions from 2020+)
-├── app.js          # Application logic and functionality
+├── neet-web/       # Static web app (HTML/CSS/JS)
+│   ├── index.html  # Main HTML file
+│   ├── styles.css  # Styling and layout
+│   ├── questions.js# Question bank (50 questions from 2020+)
+│   └── app.js      # Application logic and functionality
+├── server/         # Python servers (local + production)
+│   ├── server.py
+│   └── server-production.py
 ├── Dockerfile      # Docker image for local run
 ├── docker-compose.yml # Local docker run (maps host 8080 -> container 8040)
 └── README.md       # This file
@@ -130,10 +134,10 @@ The question bank includes:
 ## Customization
 
 You can easily customize:
-- **Questions**: Edit `questions.js` to add/modify questions
-- **Timer Duration**: Change `timeRemaining` in `app.js` (currently 180 minutes)
+- **Questions**: Edit `neet-web/questions.js` to add/modify questions
+- **Timer Duration**: Change `timeRemaining` in `neet-web/app.js` (currently 180 minutes)
 - **Scoring**: Modify the marking scheme in `calculateResults()` function
-- **Styling**: Update `styles.css` for different color schemes
+- **Styling**: Update `neet-web/styles.css` for different color schemes
 
 ## Chapter-wise Performance Analysis
 

@@ -10,6 +10,8 @@ import socket
 import os
 
 PORT = 8040
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'neet-web'))
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
@@ -35,8 +37,12 @@ class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
 
 if __name__ == "__main__":
-    # Change to the directory where this script is located
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    # Serve files from the static web directory
+    if os.path.isdir(STATIC_DIR):
+        os.chdir(STATIC_DIR)
+    else:
+        # Fallback: serve from the script directory
+        os.chdir(BASE_DIR)
     
     local_ip = get_local_ip()
     

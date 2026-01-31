@@ -26,7 +26,7 @@ A modern, beautiful todo list management application built with React and Vite.
 
 1. Navigate to the todo-app directory:
 ```bash
-cd todo-app
+cd apps/todo-app
 ```
 
 2. Install dependencies:
@@ -67,7 +67,7 @@ npm run preview
 ## Project Structure
 
 ```
-todo-app/
+apps/todo-app/
 ├── public/          # Static assets
 ├── src/
 │   ├── App.jsx      # Main app component

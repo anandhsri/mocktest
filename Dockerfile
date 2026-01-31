@@ -10,10 +10,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy core application files
-COPY index.html app.js questions.js styles.css ./
+COPY neet-web/ ./neet-web/
 
 # Copy server files
-COPY server.py server-production.py ./
+COPY server/ ./server/
 
 # Expose port (default 8040, can be overridden via env)
 EXPOSE 8040
@@ -23,4 +23,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8040/')" || exit 1
 
 # Use production server by default
-CMD ["python3", "server-production.py"]
+CMD ["python3", "server/server-production.py"]

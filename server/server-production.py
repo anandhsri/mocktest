@@ -18,6 +18,8 @@ from urllib.parse import urlparse
 PORT = int(os.environ.get('PORT', 8040))
 HOST = os.environ.get('HOST', '0.0.0.0')
 RESULTS_DB = os.environ.get('RESULTS_DB', '/data/results.db')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'neet-web'))
 
 _results_lock = threading.Lock()
 
@@ -196,8 +198,12 @@ class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
 
 if __name__ == "__main__":
-    # Change to the directory where this script is located
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    # Serve files from the static web directory
+    if os.path.isdir(STATIC_DIR):
+        os.chdir(STATIC_DIR)
+    else:
+        # Fallback: serve from the script directory
+        os.chdir(BASE_DIR)
     
     container_info = get_container_info()
     _ensure_results_db()
