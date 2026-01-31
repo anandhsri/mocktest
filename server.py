@@ -30,13 +30,17 @@ def get_local_ip():
     except Exception:
         return "localhost"
 
+class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
 if __name__ == "__main__":
     # Change to the directory where this script is located
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     
     local_ip = get_local_ip()
     
-    with socketserver.TCPServer(("0.0.0.0", PORT), MyHTTPRequestHandler) as httpd:
+    with ThreadingTCPServer(("0.0.0.0", PORT), MyHTTPRequestHandler) as httpd:
         print("=" * 60)
         print("NEET Mock Test Server Started!")
         print("=" * 60)

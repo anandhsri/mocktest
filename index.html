@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="description" content="CBSE 10th Grade Mock Test Portal - Comprehensive practice tests with detailed analytics">
     <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>CBSE Mock Test Portal - 10th Grade</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -199,17 +202,6 @@
                                 <li>Timer will be displayed at the top</li>
                             </ul>
                         </div>
-                        <div class="proctoring-notice">
-                            <h3>⚠️ Proctoring Rules</h3>
-                            <ul>
-                                <li><strong>Fullscreen Mode:</strong> Test must be taken in fullscreen mode</li>
-                                <li><strong>No Tab Switching:</strong> Switching tabs/windows is not allowed</li>
-                                <li><strong>No Copy/Paste:</strong> Copying or pasting is disabled</li>
-                                <li><strong>No Right-Click:</strong> Right-click menu is disabled</li>
-                                <li><strong>No Developer Tools:</strong> Opening developer tools is not allowed</li>
-                                <li><strong>Violation Limit:</strong> Maximum 3 violations allowed. Exceeding will auto-submit test</li>
-                            </ul>
-                        </div>
                     </div>
                     <div class="welcome-actions">
                         <button id="change-subject-btn" class="btn-secondary">Change Subject</button>
@@ -225,15 +217,6 @@
                             <li>Manage time wisely</li>
                             <li>Mark difficult questions for review</li>
                             <li>Double-check before submitting</li>
-                        </ul>
-                    </div>
-                    <div class="split-sidebar-card">
-                        <h3>Proctoring Rules</h3>
-                        <ul style="font-size: 0.9em;">
-                            <li>Fullscreen mode required</li>
-                            <li>No tab switching</li>
-                            <li>No copy/paste</li>
-                            <li>Max 3 violations</li>
                         </ul>
                     </div>
                 </div>
@@ -257,25 +240,8 @@
                 <div class="question-counter">
                     <span id="question-number">1</span> / <span id="total-questions">100</span>
                 </div>
-                <div class="proctor-status">
-                    <span id="proctor-warning" class="proctor-warning" style="display: none;"></span>
-                    <span id="violation-count" class="violation-count" style="display: none;">Violations: 0</span>
-                </div>
                 <div class="exit-test-section">
                     <button id="exit-test-btn" class="exit-test-btn" title="Exit Test">✕</button>
-                </div>
-            </div>
-            
-            <!-- Proctor Warning Modal -->
-            <div id="proctor-warning-modal" class="proctor-modal" style="display: none;">
-                <div class="proctor-modal-content">
-                    <h2>⚠️ Proctoring Warning</h2>
-                    <p id="proctor-warning-message"></p>
-                    <div class="proctor-violation-info">
-                        <p><strong>Violations:</strong> <span id="modal-violation-count">0</span> / <span id="max-violations">3</span></p>
-                        <p class="warning-text">Repeated violations will result in automatic test submission.</p>
-                    </div>
-                    <button id="acknowledge-warning-btn" class="btn-primary">I Understand</button>
                 </div>
             </div>
 
@@ -386,6 +352,25 @@
             </div>
         </div>
 
+        <!-- Success Screen (shown immediately after submission) -->
+        <div id="success-screen" class="screen" style="display: none;">
+            <div class="success-content">
+                <div class="success-card">
+                    <div class="success-icon">✅</div>
+                    <h1 class="success-title">Test Submitted Successfully</h1>
+                    <p class="success-subtitle">Your answers have been recorded.</p>
+                    <div class="success-meta">
+                        <div><strong>Submitted at:</strong> <span id="submitted-at">-</span></div>
+                        <div><strong>Violations:</strong> <span id="submitted-violations">0</span></div>
+                    </div>
+                    <div class="success-actions">
+                        <button id="view-results-btn" class="btn-primary">View Results</button>
+                        <button id="take-another-test-btn" class="btn-secondary">Choose Subject</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Results Screen -->
         <div id="results-screen" class="screen" style="display: none;">
             <!-- Celebration Overlay -->
@@ -480,7 +465,6 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
     <script src="questions.js"></script>
-    <script src="mathematics_40marks.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

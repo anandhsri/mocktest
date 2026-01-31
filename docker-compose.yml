@@ -5,13 +5,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: neet-mock-test
+    container_name: neet-mock-test-local
     ports:
-      - "8040:8040"
+      - "8080:8040"
     environment:
       - PORT=8040
       - HOST=0.0.0.0
+      - RESULTS_DB=/data/results.db
     restart: unless-stopped
+    volumes:
+      - ./data:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8040/"]
       interval: 30s

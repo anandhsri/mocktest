@@ -42,8 +42,7 @@ A comprehensive mock test application for NEET preparation based on 10th grade C
 
 ### Option 2: Network Access (Home Network)
 1. **Start the Server**
-   - Run `./start-server.sh` in the terminal, or
-   - Run `python3 server.py` directly
+   - Run `python3 server.py`
    - The server will start on port 8040
 
 2. **Access from Any Device on Your Network**
@@ -55,23 +54,40 @@ A comprehensive mock test application for NEET preparation based on 10th grade C
 3. **Stop the Server**
    - Press `Ctrl+C` in the terminal where the server is running
 
-2. **Start the Test**
+### Local Run (Docker) — Recommended
+
+This is the supported way to run the app locally (and on your Wi‑Fi network) without relying on macOS Python firewall rules.
+
+1. **Start Docker Desktop**
+2. **Run with Docker Compose**
+
+```bash
+cd neet-mock-test
+docker compose up --build
+```
+
+3. **Open the app**
+   - On this Mac: `http://localhost:8080`
+   - From other devices on same Wi‑Fi: `http://[YOUR_MAC_IP]:8080` (example: `http://192.168.0.107:8080`)
+
+### Start the Test
+1. **Start the Test**
    - Click "Start Test" on the welcome screen
    - Read the instructions carefully
 
-3. **Take the Test**
+2. **Take the Test**
    - Answer questions by selecting an option
    - Use Previous/Next buttons to navigate
    - Mark questions for review if needed
    - Use the question palette to jump to any question
    - Monitor your time using the timer at the top
 
-4. **Submit the Test**
+3. **Submit the Test**
    - Click "Submit Test" when finished
    - Confirm your submission
    - View your results with detailed score breakdown
 
-5. **Review Results**
+4. **Review Results**
    - See your total score out of 200
    - Check correct, incorrect, and unanswered counts
    - View subject-wise scores (Physics, Chemistry, Biology)
@@ -86,8 +102,8 @@ neet-mock-test/
 ├── styles.css      # Styling and layout
 ├── questions.js    # Question bank (50 questions from 2020+)
 ├── app.js          # Application logic and functionality
-├── server.py       # Python HTTP server for network access
-├── start-server.sh # Script to start the server easily
+├── Dockerfile      # Docker image for local run
+├── docker-compose.yml # Local docker run (maps host 8080 -> container 8040)
 └── README.md       # This file
 ```
 
@@ -109,7 +125,7 @@ The question bank includes:
 - **Responsive CSS** - Works on all screen sizes
 - **Local Storage Ready** - Can be extended to save progress
 - **Browser Compatible** - Works on Chrome, Firefox, Safari, Edge
-- **Network Server** - Python-based HTTP server for home network access
+- **Local hosting** - Served via Docker container for reliable LAN access
 
 ## Customization
 

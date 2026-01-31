@@ -15,9 +15,6 @@ COPY index.html app.js questions.js styles.css ./
 # Copy server files
 COPY server.py server-production.py ./
 
-# Copy subject-specific question files
-COPY mathematics_40marks.js mathematics_80marks.js physics_descriptive_25marks.js ./
-
 # Expose port (default 8040, can be overridden via env)
 EXPOSE 8040
 

@@ -2653,6 +2653,824 @@ const questions = {
             correct: 1,
             year: "2025",
             chapter: "Geography - Agriculture"
+        },
+
+        // --- Refreshed (2024-2025) hard Social Science set (original, NCERT-aligned) ---
+        // History
+        {
+            id: 61,
+            question: "A historian says: “Nationalism in Europe grew by creating a sense of shared culture and a standard language.” Which example best supports this idea?",
+            options: [
+                "Abolition of tariffs within a customs union",
+                "Compilation of folk tales and promotion of a standard language through print",
+                "Expansion of overseas colonies",
+                "Formation of military alliances after 1871"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "History - The Rise of Nationalism in Europe",
+            difficulty: "hard"
+        },
+        {
+            id: 62,
+            question: "Assertion (A): In India, the idea of nationalism became connected to the movement against colonial rule.\nReason (R): Shared experiences of oppression helped unify diverse groups in the struggle.\nChoose the correct option:",
+            options: [
+                "Both A and R are true, and R is the correct explanation of A.",
+                "Both A and R are true, but R is not the correct explanation of A.",
+                "A is true, but R is false.",
+                "A is false, but R is true."
+            ],
+            correct: 0,
+            year: "2024",
+            chapter: "History - Nationalism in India",
+            difficulty: "hard"
+        },
+        {
+            id: 63,
+            question: "Why did Gandhi link the Civil Disobedience Movement to the salt law?",
+            options: [
+                "Salt was a luxury good consumed only by the rich",
+                "Salt tax affected a wide population and symbolized the injustice of colonial laws",
+                "Salt production was controlled only by Indian princes",
+                "Salt had no economic significance; it was purely symbolic"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "History - Nationalism in India",
+            difficulty: "hard"
+        },
+        {
+            id: 64,
+            question: "Which outcome best shows how the First World War reshaped the idea of the 'global world'?",
+            options: [
+                "Permanent end of international trade",
+                "Increase in colonial control and war-related borrowing that changed economic relations",
+                "Immediate equality between colonies and colonizers",
+                "Complete disappearance of migration"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "History - The Making of a Global World",
+            difficulty: "hard"
+        },
+        {
+            id: 65,
+            question: "Print culture contributed to nationalism because it:",
+            options: [
+                "Only entertained readers through fiction",
+                "Created a shared arena of debate, ideas, and symbols among people",
+                "Stopped the spread of political ideas",
+                "Reduced literacy by discouraging schooling"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "History - Print Culture and the Modern World",
+            difficulty: "hard"
+        },
+        {
+            id: 66,
+            question: "Which pair is correctly matched (movement → key method) for 'Nationalism in India'?",
+            options: [
+                "Non-Cooperation → refusal of titles, boycott of institutions",
+                "Civil Disobedience → joining colonial councils",
+                "Quit India → signing the Gandhi-Irwin Pact",
+                "Swadeshi → supporting only British-made goods"
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "History - Nationalism in India",
+            difficulty: "hard"
+        },
+        {
+            id: 67,
+            question: "Case-based: A peasant family depends on a moneylender due to crop failure. Their debt grows despite repayments.\nWhich concept BEST explains the situation in the context of modern history themes?",
+            options: [
+                "Informal credit and exploitation in agrarian economies",
+                "Universal free education",
+                "Federal division of power",
+                "Judicial review"
+            ],
+            correct: 0,
+            year: "2024",
+            chapter: "History - The Making of a Global World",
+            difficulty: "hard"
+        },
+        {
+            id: 68,
+            question: "A factory owner in late 19th-century Europe prefers colonies as markets. Which argument BEST fits the 'Age of Industrialisation' theme?",
+            options: [
+                "Colonies supplied raw material and also absorbed manufactured goods, supporting industrial profits",
+                "Colonies reduced the need for machines and factories",
+                "Colonies ended competition among European producers",
+                "Colonies guaranteed high wages for all workers"
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "History - The Age of Industrialisation",
+            difficulty: "hard"
+        },
+
+        // Geography
+        {
+            id: 69,
+            question: "A region with heavy rainfall has leached soil that is often acidic and low in humus. Which soil type is MOST likely and what is one suitable land-use practice?",
+            options: [
+                "Alluvial soil; intensive wheat cultivation without irrigation",
+                "Laterite soil; use of manure/fertilisers and plantation crops where suitable",
+                "Black soil; rice cultivation requiring standing water all year",
+                "Arid soil; terrace farming on steep slopes"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Geography - Resources and Development (Soils)",
+            difficulty: "hard"
+        },
+        {
+            id: 70,
+            question: "Assertion (A): Over-irrigation can lead to soil salinity and waterlogging.\nReason (R): Excess water raises the water table and evaporates, leaving salts behind.\nChoose the correct option:",
+            options: [
+                "Both A and R are true, and R is the correct explanation of A.",
+                "Both A and R are true, but R is not the correct explanation of A.",
+                "A is true, but R is false.",
+                "A is false, but R is true."
+            ],
+            correct: 0,
+            year: "2024",
+            chapter: "Geography - Water Resources",
+            difficulty: "hard"
+        },
+        {
+            id: 71,
+            question: "Which change is MOST likely to reduce the ecological impact of large dams while meeting local water needs?",
+            options: [
+                "Promote rainwater harvesting and watershed management for local recharge",
+                "Increase dependence on a single interlinking project only",
+                "Stop all irrigation permanently",
+                "Replace canals with only tube wells everywhere"
+            ],
+            correct: 0,
+            year: "2024",
+            chapter: "Geography - Water Resources",
+            difficulty: "hard"
+        },
+        {
+            id: 72,
+            question: "A farmer wants to reduce risk from monsoon failure. Which strategy BEST matches sustainable agriculture (NCERT)?",
+            options: [
+                "Monoculture of a cash crop only",
+                "Crop diversification with intercropping and improved water management",
+                "Increasing chemical fertiliser use without soil testing",
+                "Burning crop residue to clear fields quickly"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Geography - Agriculture",
+            difficulty: "hard"
+        },
+        {
+            id: 73,
+            question: "Which location factor MOST strongly explains why iron and steel plants are typically set up near raw materials and power sources?",
+            options: [
+                "Finished products are extremely light and costless to transport",
+                "Raw materials are bulky, and transport cost strongly affects production cost",
+                "Markets are always in mountainous regions only",
+                "Skilled labour is available only in rural areas"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Geography - Manufacturing Industries",
+            difficulty: "hard"
+        },
+        {
+            id: 74,
+            question: "Which option correctly links a transport mode with its BEST advantage?",
+            options: [
+                "Roadways → cheapest for long-distance bulk goods",
+                "Railways → most flexible for door-to-door delivery",
+                "Waterways → fuel-efficient for heavy and bulky goods",
+                "Pipelines → best for passenger movement"
+            ],
+            correct: 2,
+            year: "2025",
+            chapter: "Geography - Lifelines of National Economy",
+            difficulty: "hard"
+        },
+        {
+            id: 75,
+            question: "Case-based: A coastal city develops a port-based industrial cluster. Which combination MOST likely drives this growth?",
+            options: [
+                "Proximity to international markets + cheaper transport for bulk goods + infrastructure",
+                "High altitude + low humidity only",
+                "Absence of roads and railways",
+                "No need for skilled labour or capital"
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "Geography - Lifelines of National Economy",
+            difficulty: "hard"
+        },
+        {
+            id: 76,
+            question: "Which practice MOST directly reduces air pollution from industries as discussed in NCERT?",
+            options: [
+                "Releasing untreated smoke through taller chimneys only",
+                "Installing electrostatic precipitators/scrubbers and shifting to cleaner fuels",
+                "Dumping solid waste into rivers",
+                "Increasing production without technology change"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Geography - Manufacturing Industries",
+            difficulty: "hard"
+        },
+
+        // Political Science (Civics)
+        {
+            id: 77,
+            question: "Which is an example of horizontal power sharing (among organs of government)?",
+            options: [
+                "Union–State division of subjects",
+                "Distribution of power among Legislature, Executive and Judiciary",
+                "Reservation of seats for women in local bodies",
+                "Division of power among linguistic communities only"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Political Science - Power Sharing",
+            difficulty: "hard"
+        },
+        {
+            id: 78,
+            question: "Assertion (A): Federalism allows different levels of government to govern the same citizens.\nReason (R): Powers are clearly divided by the Constitution between different levels.\nChoose the correct option:",
+            options: [
+                "Both A and R are true, and R is the correct explanation of A.",
+                "Both A and R are true, but R is not the correct explanation of A.",
+                "A is true, but R is false.",
+                "A is false, but R is true."
+            ],
+            correct: 0,
+            year: "2024",
+            chapter: "Political Science - Federalism",
+            difficulty: "hard"
+        },
+        {
+            id: 79,
+            question: "Which change strengthened decentralisation in India as highlighted in NCERT?",
+            options: [
+                "Abolition of local self-government",
+                "Constitutional status to Panchayats and Municipalities",
+                "Replacing elections with nominations in villages",
+                "Ending Gram Sabhas"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Political Science - Federalism",
+            difficulty: "hard"
+        },
+        {
+            id: 80,
+            question: "A newspaper refuses to publish criticism of the government due to pressure. Which Fundamental Right is MOST directly affected?",
+            options: [
+                "Right to Freedom (speech and expression)",
+                "Right against Exploitation",
+                "Right to Freedom of Religion",
+                "Cultural and Educational Rights"
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "Political Science - Democratic Rights",
+            difficulty: "hard"
+        },
+        {
+            id: 81,
+            question: "Which statement BEST captures the role of political parties in a democracy?",
+            options: [
+                "They only conduct rallies and do nothing else",
+                "They provide choices to voters and help form and run governments",
+                "They reduce political competition by preventing debates",
+                "They are unnecessary because people can govern directly always"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Political Science - Political Parties",
+            difficulty: "hard"
+        },
+        {
+            id: 82,
+            question: "Which scenario BEST illustrates 'power sharing among social groups'?",
+            options: [
+                "Courts reviewing laws",
+                "Reserved representation for disadvantaged groups in legislatures/local bodies",
+                "Transfer of power between Union and State lists",
+                "Cabinet decisions taken by the Prime Minister alone"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Political Science - Power Sharing",
+            difficulty: "hard"
+        },
+        {
+            id: 83,
+            question: "Which is the MOST appropriate way to distinguish 'majoritarianism' from 'democracy'?",
+            options: [
+                "Majoritarianism always protects minority rights",
+                "Majoritarianism can ignore minority voices; democracy requires equal respect and rights for all",
+                "Democracy has no elections; majoritarianism does",
+                "Majoritarianism is only an economic system"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Political Science - Power Sharing",
+            difficulty: "hard"
+        },
+
+        // Economics
+        {
+            id: 84,
+            question: "A state has high per capita income but poor health indicators. Which conclusion BEST fits NCERT’s idea of development?",
+            options: [
+                "Income alone is sufficient to measure development",
+                "Development must include non-income indicators like health and education",
+                "Health indicators are irrelevant to development",
+                "Only military strength measures development"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Economics - Development",
+            difficulty: "hard"
+        },
+        {
+            id: 85,
+            question: "Which feature MOST distinguishes formal credit from informal credit?",
+            options: [
+                "Formal credit never charges interest",
+                "Formal credit is regulated and has defined terms; informal credit is unregulated and often exploitative",
+                "Informal credit always requires documents",
+                "Formal credit is only available to large companies"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Economics - Money and Credit",
+            difficulty: "hard"
+        },
+        {
+            id: 86,
+            question: "Why can 'collateral' reduce the risk for a lender as per NCERT?",
+            options: [
+                "It guarantees the borrower will never default",
+                "It provides an asset that can be sold to recover the loan if repayment fails",
+                "It increases the interest rate automatically",
+                "It prevents any legal procedure"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Economics - Money and Credit",
+            difficulty: "hard"
+        },
+        {
+            id: 87,
+            question: "Case-based: A multinational company outsources production to small units to reduce cost. Which concept does this illustrate?",
+            options: [
+                "Fair trade only",
+                "Foreign trade barriers",
+                "Flexible production through outsourcing and subcontracting",
+                "Barter system"
+            ],
+            correct: 2,
+            year: "2025",
+            chapter: "Economics - Globalisation and the Indian Economy",
+            difficulty: "hard"
+        },
+        {
+            id: 88,
+            question: "Which action BEST strengthens consumer protection as per NCERT?",
+            options: [
+                "Avoiding all advertisements always",
+                "Awareness of rights + using legal redressal mechanisms (consumer courts)",
+                "Buying only imported goods",
+                "Paying higher prices without bills"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Economics - Consumer Rights",
+            difficulty: "hard"
+        },
+        {
+            id: 89,
+            question: "Which factor BEST explains why agriculture still employs many people even when its share in GDP declines?",
+            options: [
+                "Agriculture is highly mechanised everywhere",
+                "Disguised unemployment and limited alternative jobs in rural areas",
+                "All farm workers are in organised sector",
+                "Primary sector output is always increasing faster than others"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Economics - Sectors of the Indian Economy",
+            difficulty: "hard"
+        },
+        {
+            id: 90,
+            question: "Which would be the BEST evidence that globalisation benefits are not equally distributed?",
+            options: [
+                "All producers gain the same income from trade",
+                "Some small producers face strong competition and lose markets while big firms expand",
+                "All workers get identical wages worldwide",
+                "Trade ends because of competition"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Economics - Globalisation and the Indian Economy",
+            difficulty: "hard"
+        },
+
+        // Additional hard MCQs (mix)
+        {
+            id: 91,
+            question: "A pamphlet is circulated to spread an idea rapidly across regions. Which chapter BEST connects this with modern history?",
+            options: [
+                "The Rise of Nationalism in Europe",
+                "Print Culture and the Modern World",
+                "Resources and Development",
+                "Money and Credit"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "History - Print Culture and the Modern World",
+            difficulty: "hard"
+        },
+        {
+            id: 92,
+            question: "Case-based: A village uses rooftop rainwater harvesting and community tanks. Which benefit is MOST consistent with NCERT?",
+            options: [
+                "Immediate creation of minerals",
+                "Groundwater recharge and reduced dependence on distant water sources",
+                "Permanent prevention of drought in all years",
+                "Increase in soil erosion"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Geography - Water Resources",
+            difficulty: "hard"
+        },
+        {
+            id: 93,
+            question: "A region has black soil and farmers prefer cotton. Which explanation is MOST accurate?",
+            options: [
+                "Black soil is sandy and drains water quickly, ideal for cotton",
+                "Black soil retains moisture well and is suitable for cotton in dry regions",
+                "Black soil is always acidic, so cotton grows best",
+                "Cotton requires standing water, so black soil is chosen"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Geography - Resources and Development (Soils)",
+            difficulty: "hard"
+        },
+        {
+            id: 94,
+            question: "A group argues that 'democracy is slow and messy' but still prefers it. Which outcome supports their preference as per NCERT?",
+            options: [
+                "Democracy guarantees instant decisions without debate",
+                "Democracy allows peaceful change of rulers and accountability",
+                "Democracy removes all social inequalities immediately",
+                "Democracy ends the need for institutions"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Political Science - Outcomes of Democracy",
+            difficulty: "hard"
+        },
+        {
+            id: 95,
+            question: "A consumer buys an appliance without a bill and later finds it defective. Which right is the consumer MOST likely to struggle to enforce?",
+            options: [
+                "Right to vote",
+                "Right to information and redressal (proof of purchase)",
+                "Right to property only",
+                "Right against exploitation only"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Economics - Consumer Rights",
+            difficulty: "hard"
+        },
+        {
+            id: 96,
+            question: "Which choice BEST reflects resource planning as per NCERT?",
+            options: [
+                "Using resources quickly to maximize short-term output",
+                "Identifying resources, planning their use, and matching development with conservation",
+                "Avoiding technology in all cases",
+                "Depending only on imports for all resources"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Geography - Resources and Development",
+            difficulty: "hard"
+        },
+        {
+            id: 97,
+            question: "Assertion (A): Political parties are necessary for democracy.\nReason (R): They help aggregate social interests and present policies for voters to choose from.\nChoose the correct option:",
+            options: [
+                "Both A and R are true, and R is the correct explanation of A.",
+                "Both A and R are true, but R is not the correct explanation of A.",
+                "A is true, but R is false.",
+                "A is false, but R is true."
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "Political Science - Political Parties",
+            difficulty: "hard"
+        },
+        {
+            id: 98,
+            question: "A student says: “Resource planning is unnecessary because resources are unlimited.” What is the BEST correction?",
+            options: [
+                "Resources are unlimited; planning only slows development",
+                "Many resources are limited/non-renewable; planning prevents misuse and supports sustainable development",
+                "Only mineral resources need planning; water and soil do not",
+                "Planning is only needed for rich countries"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Geography - Resources and Development",
+            difficulty: "hard"
+        },
+        {
+            id: 99,
+            question: "Which statement BEST explains 'resource conservation' in the context of NCERT Geography?",
+            options: [
+                "Using resources as fast as possible to maximize GDP",
+                "Avoiding all use of resources permanently",
+                "Using resources judiciously with reduce-reuse-recycle and preventing depletion",
+                "Importing all resources so domestic resources remain untouched"
+            ],
+            correct: 2,
+            year: "2024",
+            chapter: "Geography - Resources and Development",
+            difficulty: "hard"
+        },
+        {
+            id: 100,
+            question: "A coal-based power plant is set up near coalfields. Which factor is MOST responsible for this location choice?",
+            options: [
+                "Coal is bulky; transporting it long distances increases cost",
+                "Coal is always required to be imported",
+                "Coal cannot be stored at all",
+                "Power plants must always be located near forests"
+            ],
+            correct: 0,
+            year: "2024",
+            chapter: "Geography - Minerals and Energy Resources",
+            difficulty: "hard"
+        },
+        {
+            id: 101,
+            question: "Which crop combination BEST matches a Kharif–Rabi pattern discussed in NCERT?",
+            options: [
+                "Kharif: wheat; Rabi: rice",
+                "Kharif: rice; Rabi: wheat",
+                "Kharif: barley; Rabi: cotton",
+                "Kharif: gram; Rabi: jute"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Geography - Agriculture",
+            difficulty: "hard"
+        },
+        {
+            id: 102,
+            question: "Which measure MOST directly supports conservation of wildlife while respecting local livelihoods?",
+            options: [
+                "Community-based conservation with regulated access and alternative livelihoods",
+                "Banning all human presence without any rehabilitation",
+                "Promoting hunting as tourism",
+                "Replacing forests with monoculture plantations everywhere"
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "Geography - Forest and Wildlife Resources",
+            difficulty: "hard"
+        },
+        {
+            id: 103,
+            question: "Assertion (A): India’s manufacturing sector can create jobs and raise income.\nReason (R): Manufacturing adds value to raw materials and supports services like transport and trade.\nChoose the correct option:",
+            options: [
+                "Both A and R are true, and R is the correct explanation of A.",
+                "Both A and R are true, but R is not the correct explanation of A.",
+                "A is true, but R is false.",
+                "A is false, but R is true."
+            ],
+            correct: 0,
+            year: "2024",
+            chapter: "Geography - Manufacturing Industries",
+            difficulty: "hard"
+        },
+        {
+            id: 104,
+            question: "Which situation BEST illustrates 'power sharing among different levels of government'?",
+            options: [
+                "Courts overturning laws",
+                "Union and State governments having separate lists of subjects",
+                "Reservation for women in Panchayats",
+                "A single party controlling all institutions"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Political Science - Federalism",
+            difficulty: "hard"
+        },
+        {
+            id: 105,
+            question: "A student says: “The Right to Constitutional Remedies is the heart of the Constitution.” What does this MOST directly mean?",
+            options: [
+                "It allows citizens to approach courts to enforce Fundamental Rights",
+                "It allows Parliament to change any Fundamental Right anytime",
+                "It guarantees free education for all ages",
+                "It replaces elections with courts"
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "Political Science - Democratic Rights",
+            difficulty: "hard"
+        },
+        {
+            id: 106,
+            question: "Which is a valid criticism of political parties mentioned in NCERT?",
+            options: [
+                "Parties reduce the need for leadership",
+                "Parties can promote dynastic succession and money power",
+                "Parties always eliminate corruption completely",
+                "Parties ensure 100% voter participation"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Political Science - Political Parties",
+            difficulty: "hard"
+        },
+        {
+            id: 107,
+            question: "A country has regular elections but no freedom of expression and opposition is suppressed. Which statement BEST fits NCERT’s view?",
+            options: [
+                "It is a democracy because elections alone are sufficient",
+                "It is not a democracy because rights and competition are essential features",
+                "It is a democracy if GDP is high",
+                "It is a democracy if there is one strong leader"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Political Science - Outcomes of Democracy",
+            difficulty: "hard"
+        },
+        {
+            id: 108,
+            question: "Which indicator is NOT part of the Human Development Index (HDI) idea discussed in NCERT?",
+            options: [
+                "Income (per capita)",
+                "Health (life expectancy)",
+                "Education (years of schooling/literacy)",
+                "Number of automobiles per household"
+            ],
+            correct: 3,
+            year: "2024",
+            chapter: "Economics - Development",
+            difficulty: "hard"
+        },
+        {
+            id: 109,
+            question: "Which example BEST shows 'underemployment' in the primary sector?",
+            options: [
+                "A factory worker doing overtime",
+                "More people working on a small farm than needed, so productivity per worker is low",
+                "A teacher teaching two classes",
+                "A doctor working in a hospital"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Economics - Sectors of the Indian Economy",
+            difficulty: "hard"
+        },
+        {
+            id: 110,
+            question: "Which policy measure can improve access to affordable credit for poor households as per NCERT?",
+            options: [
+                "Promoting Self Help Groups (SHGs) and linking them with banks",
+                "Reducing banks and increasing moneylenders",
+                "Abolishing savings accounts",
+                "Stopping all insurance and pensions"
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "Economics - Money and Credit",
+            difficulty: "hard"
+        },
+        {
+            id: 111,
+            question: "Which label/mark is MOST closely associated with quality certification for food/agricultural products in India (NCERT Consumer Rights context)?",
+            options: ["ISI", "AGMARK", "Hallmark", "FPO"],
+            correct: 1,
+            year: "2025",
+            chapter: "Economics - Consumer Rights",
+            difficulty: "hard"
+        },
+        {
+            id: 112,
+            question: "Which statement BEST explains why MNCs may choose to invest in a country?",
+            options: [
+                "Because production costs can be lower and markets may be large",
+                "Because wages are always the same worldwide",
+                "Because there is no need for transport or infrastructure",
+                "Because governments never regulate businesses"
+            ],
+            correct: 0,
+            year: "2024",
+            chapter: "Economics - Globalisation and the Indian Economy",
+            difficulty: "hard"
+        },
+        {
+            id: 113,
+            question: "A student confuses 'trade barrier' with 'outsourcing'. Which definition correctly describes a trade barrier?",
+            options: [
+                "A restriction like tax or quota that makes foreign goods more expensive or harder to enter a country",
+                "Hiring workers from another company to produce parts",
+                "Selling goods only within one city",
+                "A method of water conservation"
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "Economics - Globalisation and the Indian Economy",
+            difficulty: "hard"
+        },
+        {
+            id: 114,
+            question: "Which combination BEST represents a 'package of practices' for sustainable farming mentioned in NCERT?",
+            options: [
+                "Excess irrigation + chemical pesticides only",
+                "Crop rotation + organic manure/green manure + efficient irrigation",
+                "Burning stubble + heavy ploughing in all seasons",
+                "Reducing soil testing and increasing monoculture"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Geography - Agriculture",
+            difficulty: "hard"
+        },
+        {
+            id: 115,
+            question: "Which statement BEST links 'democracy' and 'accountability'?",
+            options: [
+                "Accountability is not needed if leaders are popular",
+                "Elected leaders can be questioned and removed through elections and institutions",
+                "Accountability means only economic growth",
+                "Accountability requires banning opposition"
+            ],
+            correct: 1,
+            year: "2025",
+            chapter: "Political Science - Outcomes of Democracy",
+            difficulty: "hard"
+        },
+        {
+            id: 116,
+            question: "Which statement BEST explains why minerals need careful management in India?",
+            options: [
+                "Minerals are renewable and unlimited",
+                "Minerals are non-renewable and unevenly distributed, so extraction must be planned",
+                "Minerals are found only in river deltas",
+                "Minerals can be grown like crops"
+            ],
+            correct: 1,
+            year: "2024",
+            chapter: "Geography - Minerals and Energy Resources",
+            difficulty: "hard"
+        },
+        {
+            id: 117,
+            question: "Case-based: A garment unit gets orders from a foreign brand but faces strict quality and delivery timelines.\nWhich impact of globalisation does this BEST show?",
+            options: [
+                "Increased integration into world markets with pressure to meet standards",
+                "End of competition",
+                "Total removal of technology",
+                "Guaranteed high wages regardless of skill"
+            ],
+            correct: 0,
+            year: "2025",
+            chapter: "Economics - Globalisation and the Indian Economy",
+            difficulty: "hard"
+        },
+        {
+            id: 118,
+            question: "Assertion (A): Water scarcity can be caused by over-exploitation of groundwater.\nReason (R): Increasing tube wells without recharge can lower the water table.\nChoose the correct option:",
+            options: [
+                "Both A and R are true, and R is the correct explanation of A.",
+                "Both A and R are true, but R is not the correct explanation of A.",
+                "A is true, but R is false.",
+                "A is false, but R is true."
+            ],
+            correct: 0,
+            year: "2024",
+            chapter: "Geography - Water Resources",
+            difficulty: "hard"
         }
     ],
     sanskrit: [
@@ -3145,6 +3963,12 @@ const allQuestions = [
     ...questions.physics.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Physics'})),
     ...questions.chemistry.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Chemistry'})),
     ...questions.biology.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Biology'})),
-    ...questions.socialScience.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Social Science'})),
+    ...questions.socialScience
+        .filter(q =>
+            parseInt(q.year) >= 2024 &&
+            parseInt(q.year) <= 2025 &&
+            String(q.difficulty || '').toLowerCase() === 'hard'
+        )
+        .map(q => ({...q, subject: 'Social Science'})),
     ...questions.sanskrit.filter(q => parseInt(q.year) >= 2020 && parseInt(q.year) <= 2025).map(q => ({...q, subject: 'Sanskrit'}))
 ];

@@ -22,10 +22,15 @@ Thumbs.db
 *.swp
 *.swo
 *~
+.cursor/
+*.code-workspace
 
 # Temporary files
 dummy
 *.tmp
+
+# Local persisted results (Docker volume)
+data/
 
 # Sensitive files (if any)
 *_password.txt

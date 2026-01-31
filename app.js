@@ -11,19 +11,60 @@ class NEETMockTest {
         this.timeRemaining = 60 * 60; // 60 minutes in seconds
         this.timerInterval = null;
         this.testStarted = false;
-        this.adminPassword = 'admin123'; // Default admin password
+        this.isSubmittingTest = false;
+        this.adminPassword = 'ShasSid@123'; // Default admin password
         this.currentResults = null; // Store current results for PDF generation
-        
-        // Proctoring system properties
-        this.proctorViolations = 0;
-        this.maxViolations = 3; // Auto-submit after 3 violations
-        this.isFullScreen = false;
-        this.isTabActive = true;
-        this.proctorWarnings = [];
-        this.proctorCheckInterval = null;
-        this.lastActivityTime = Date.now();
+
+        // Proctoring (client-side, best-effort)
+        // - Enforces fullscreen during the test
+        // - Detects tab switching / focus loss
+        // - Blocks copy/paste/right-click and common devtools shortcuts
+        // Note: This is lightweight proctoring (no webcam).
+        this.proctoringEnabled = true;
+        this.proctoringState = {
+            active: false,
+            violations: 0,
+            maxViolations: 3,
+            events: [],
+            bannerTimeout: null,
+            handlers: {}
+        };
+
+        // Cross-device results: sync from server if available
+        // (works when running via Docker with /api/results endpoint)
+        this.syncResultsFromServer();
         
         this.initializeEventListeners();
+    }
+
+    async syncResultsFromServer() {
+        try {
+            const res = await fetch('/api/results', { cache: 'no-store' });
+            if (!res.ok) return;
+            const serverResults = await res.json();
+            if (!Array.isArray(serverResults)) return;
+
+            // Server is the source-of-truth when available:
+            // - ensures "Clear results" propagates to all devices
+            // - avoids stale localStorage results lingering after DB is wiped
+            const sorted = [...serverResults].sort((a, b) => {
+                const ta = new Date(a?.timestamp || 0).getTime();
+                const tb = new Date(b?.timestamp || 0).getTime();
+                return ta - tb;
+            });
+
+            const limited = sorted.slice(-200);
+            if (limited.length === 0) {
+                localStorage.removeItem('allTestResults');
+                localStorage.removeItem('lastTestResults');
+                return;
+            }
+
+            localStorage.setItem('allTestResults', JSON.stringify(limited));
+            localStorage.setItem('lastTestResults', JSON.stringify(limited[limited.length - 1]));
+        } catch (e) {
+            // ignore if server not available
+        }
     }
 
     initializeEventListeners() {
@@ -117,14 +158,6 @@ class NEETMockTest {
                 }
             }
             
-            // Acknowledge proctor warning
-            if (e.target.id === 'acknowledge-warning-btn') {
-                const modal = document.getElementById('proctor-warning-modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-            }
-            
             // Exit test button
             if (e.target.id === 'exit-test-btn' || e.target.closest('#exit-test-btn')) {
                 e.preventDefault();
@@ -213,10 +246,17 @@ class NEETMockTest {
             this.clearAnswer();
         });
 
-        // Submit test button
-        document.getElementById('submit-test-btn').addEventListener('click', () => {
-            this.confirmSubmit();
-        });
+        // Submit test button (guard against missing element)
+        const submitBtn = document.getElementById('submit-test-btn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.confirmSubmit();
+            });
+        } else {
+            console.warn('Submit test button not found during initialization');
+        }
 
         // Question palette clicks
         document.querySelectorAll('[id$="-questions"]').forEach(grid => {
@@ -231,6 +271,14 @@ class NEETMockTest {
         // Restart test button
         document.getElementById('restart-test-btn').addEventListener('click', () => {
             this.restartTest();
+        });
+
+        // Success screen buttons
+        document.getElementById('view-results-btn')?.addEventListener('click', () => {
+            this.showResultsScreen();
+        });
+        document.getElementById('take-another-test-btn')?.addEventListener('click', () => {
+            this.goToSubjectSelection();
         });
 
         // Download PDF button
@@ -270,16 +318,6 @@ class NEETMockTest {
             }
         });
         
-        // Acknowledge proctor warning button
-        const acknowledgeBtn = document.getElementById('acknowledge-warning-btn');
-        if (acknowledgeBtn) {
-            acknowledgeBtn.addEventListener('click', () => {
-                const modal = document.getElementById('proctor-warning-modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        }
     }
 
     loginAsStudent() {
@@ -1494,15 +1532,20 @@ class NEETMockTest {
     }
 
     displayAllTestResultsForAdmin() {
-        const allResults = this.getAllTestResults();
         const container = document.getElementById('admin-results-container');
+        if (container) container.innerHTML = '<p class="no-results">Loading results...</p>';
+
+        // Ensure we have the latest shared results
+        Promise.resolve(this.syncResultsFromServer()).finally(() => {
+            const allResults = this.getAllTestResults();
+            if (!container) return;
+
+            if (allResults.length === 0) {
+                container.innerHTML = '<p class="no-results">No test results available.</p>';
+                return;
+            }
         
-        if (allResults.length === 0) {
-            container.innerHTML = '<p class="no-results">No test results available.</p>';
-            return;
-        }
-        
-        container.innerHTML = `
+            container.innerHTML = `
             <h2>All Test Results</h2>
             <div class="admin-results-list">
                 ${allResults.map(result => `
@@ -1530,11 +1573,12 @@ class NEETMockTest {
             </div>
         `;
         
-        // Add event listeners for view detail buttons
-        container.querySelectorAll('.view-detail-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const resultId = e.target.getAttribute('data-result-id');
-                this.viewResultDetails(resultId);
+            // Add event listeners for view detail buttons
+            container.querySelectorAll('.view-detail-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const resultId = e.target.getAttribute('data-result-id');
+                    this.viewResultDetails(resultId);
+                });
             });
         });
     }
@@ -1856,31 +1900,22 @@ class NEETMockTest {
                        `Your progress will be lost and the test cannot be resumed.`;
         
         if (confirm(message)) {
-            // Stop proctoring
-            this.stopProctoring();
             
             // Stop all timers
             if (this.timerInterval) {
                 clearInterval(this.timerInterval);
                 this.timerInterval = null;
             }
+
+            // Stop proctoring listeners (if any)
+            this.disableProctoring();
+
             // Reset test state
             this.testStarted = false;
             this.currentQuestionIndex = 0;
             this.answers = [];
             this.markedForReview = [];
             this.timeRemaining = 60 * 60;
-            
-            // Exit fullscreen if active
-            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                }
-            }
             
             // Stop background music
             // Return to subject selection
@@ -1905,6 +1940,7 @@ class NEETMockTest {
         const welcomeScreen = document.getElementById('welcome-screen');
         const testScreen = document.getElementById('test-screen');
         const resultsScreen = document.getElementById('results-screen');
+        const successScreen = document.getElementById('success-screen');
         const historyScreen = document.getElementById('test-history-screen');
         const subjectScreen = document.getElementById('subject-selection-screen');
         
@@ -1919,6 +1955,10 @@ class NEETMockTest {
         if (resultsScreen) {
             resultsScreen.classList.remove('active');
             resultsScreen.style.display = 'none';
+        }
+        if (successScreen) {
+            successScreen.classList.remove('active');
+            successScreen.style.display = 'none';
         }
         if (historyScreen) {
             historyScreen.classList.remove('active');
@@ -1948,6 +1988,9 @@ class NEETMockTest {
         }
         
         this.testStarted = true;
+
+        // Enable proctoring while test is active (fullscreen + focus monitoring)
+        this.enableProctoring();
         
         // Shuffle questions for each test
         this.shuffleQuestions();
@@ -1971,9 +2014,6 @@ class NEETMockTest {
             console.log('Test screen shown');
         }
         
-        // Initialize proctoring system (includes fullscreen request)
-        this.initializeProctoring();
-        
         // Calculate test duration based on question difficulty
         this.timeRemaining = this.calculateTestDuration();
         this.currentQuestionIndex = 0;
@@ -1987,266 +2027,277 @@ class NEETMockTest {
         this.renderQuestionPalette();
         this.startTimer();
     }
-    
-    initializeProctoring() {
-        console.log('Initializing proctoring system...');
-        
-        // Reset violations
-        this.proctorViolations = 0;
-        this.proctorWarnings = [];
-        this.lastActivityTime = Date.now();
-        
-        // Request fullscreen
-        this.requestFullScreen();
-        
-        // Block right-click context menu
-        document.addEventListener('contextmenu', (e) => {
-            if (this.testStarted) {
-                e.preventDefault();
-                this.recordViolation('Right-click attempted');
-                return false;
+
+    // ============================================================================
+    // PROCTORING (client-side, best-effort)
+    // ============================================================================
+
+    ensureProctoringUI() {
+        // Banner (top-center)
+        if (!document.getElementById('proctoring-banner')) {
+            const banner = document.createElement('div');
+            banner.id = 'proctoring-banner';
+            banner.className = 'proctoring-banner';
+            banner.style.display = 'none';
+            document.body.appendChild(banner);
+        }
+
+        // Status pill (top-right)
+        if (!document.getElementById('proctoring-status')) {
+            const status = document.createElement('div');
+            status.id = 'proctoring-status';
+            status.className = 'proctoring-status';
+            status.innerHTML = `
+                <span class="proctoring-dot"></span>
+                <span class="proctoring-text">Proctoring ON</span>
+                <span class="proctoring-count" id="proctoring-violation-count">0</span>
+            `;
+            document.body.appendChild(status);
+        }
+    }
+
+    showProctoringBanner(message) {
+        const banner = document.getElementById('proctoring-banner');
+        if (!banner) return;
+
+        banner.textContent = message;
+        banner.style.display = 'block';
+
+        if (this.proctoringState.bannerTimeout) {
+            clearTimeout(this.proctoringState.bannerTimeout);
+        }
+
+        this.proctoringState.bannerTimeout = setTimeout(() => {
+            banner.style.display = 'none';
+        }, 3500);
+    }
+
+    updateProctoringStatus() {
+        const countEl = document.getElementById('proctoring-violation-count');
+        if (countEl) countEl.textContent = String(this.proctoringState.violations);
+    }
+
+    showConfirmDialog({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', onConfirm }) {
+        // A custom confirm modal (browser confirm() can be flaky in fullscreen on some devices)
+        const existing = document.getElementById('confirm-modal');
+        if (existing) existing.remove();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'confirm-modal';
+        overlay.className = 'confirm-modal-overlay';
+        overlay.innerHTML = `
+            <div class="confirm-modal" role="dialog" aria-modal="true">
+                <div class="confirm-modal-title">${title || 'Confirm'}</div>
+                <div class="confirm-modal-message">${(message || '').replace(/\n/g, '<br/>')}</div>
+                <div class="confirm-modal-actions">
+                    <button type="button" class="btn-secondary confirm-cancel">${cancelText}</button>
+                    <button type="button" class="btn-submit confirm-ok">${confirmText}</button>
+                </div>
+            </div>
+        `;
+
+        const close = () => overlay.remove();
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) close();
+        });
+
+        overlay.querySelector('.confirm-cancel')?.addEventListener('click', () => close());
+        overlay.querySelector('.confirm-ok')?.addEventListener('click', () => {
+            close();
+            try {
+                onConfirm?.();
+            } catch (e) {
+                console.error('Error in confirm handler', e);
             }
         });
-        
-        // Block copy, cut, paste
-        document.addEventListener('copy', (e) => {
-            if (this.testStarted) {
-                e.preventDefault();
-                this.recordViolation('Copy attempted');
-                return false;
-            }
-        });
-        
-        document.addEventListener('cut', (e) => {
-            if (this.testStarted) {
-                e.preventDefault();
-                this.recordViolation('Cut attempted');
-                return false;
-            }
-        });
-        
-        document.addEventListener('paste', (e) => {
-            if (this.testStarted) {
-                e.preventDefault();
-                this.recordViolation('Paste attempted');
-                return false;
-            }
-        });
-        
-        // Block keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (!this.testStarted) return;
-            
-            // Block Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+A, Ctrl+S, Ctrl+P, Ctrl+U
-            if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'a', 's', 'p', 'u'].includes(e.key.toLowerCase())) {
-                e.preventDefault();
-                this.recordViolation(`Keyboard shortcut blocked: ${e.key}`);
-                return false;
-            }
-            
-            // Block F12 (Developer Tools)
-            if (e.key === 'F12') {
-                e.preventDefault();
-                this.recordViolation('Developer tools access attempted');
-                return false;
-            }
-            
-            // Block Ctrl+Shift+I (Developer Tools)
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
-                e.preventDefault();
-                this.recordViolation('Developer tools access attempted');
-                return false;
-            }
-        });
-        
-        // Monitor tab visibility
-        document.addEventListener('visibilitychange', () => {
-            if (!this.testStarted) return;
-            
-            if (document.hidden) {
-                this.isTabActive = false;
-                this.recordViolation('Tab switched or minimized');
-            } else {
-                this.isTabActive = true;
-                this.lastActivityTime = Date.now();
-            }
-        });
-        
-        // Monitor window blur
-        window.addEventListener('blur', () => {
-            if (this.testStarted) {
-                this.recordViolation('Window lost focus');
-            }
-        });
-        
-        // Monitor fullscreen changes
-        document.addEventListener('fullscreenchange', () => {
-            this.isFullScreen = !!document.fullscreenElement;
-            if (!this.isFullScreen && this.testStarted) {
-                this.recordViolation('Exited fullscreen mode');
-                setTimeout(() => this.requestFullScreen(), 500);
-            }
-        });
-        
-        document.addEventListener('webkitfullscreenchange', () => {
-            this.isFullScreen = !!document.webkitFullscreenElement;
-        });
-        
-        document.addEventListener('mozfullscreenchange', () => {
-            this.isFullScreen = !!document.mozFullScreenElement;
-        });
-        
-        // Monitor activity
-        const updateActivity = () => {
-            if (this.testStarted) {
-                this.lastActivityTime = Date.now();
-            }
+
+        document.body.appendChild(overlay);
+        // focus primary action
+        overlay.querySelector('.confirm-ok')?.focus();
+    }
+
+    recordProctoringEvent(type, details = {}) {
+        const event = {
+            ts: new Date().toISOString(),
+            type,
+            details
         };
-        
-        document.addEventListener('mousedown', updateActivity);
-        document.addEventListener('mousemove', updateActivity);
-        document.addEventListener('keypress', updateActivity);
-        document.addEventListener('scroll', updateActivity);
-        document.addEventListener('touchstart', updateActivity);
-        
-        // Periodic proctoring check
-        this.proctorCheckInterval = setInterval(() => {
-            if (this.testStarted) {
-                this.checkProctoringViolations();
+        this.proctoringState.events.push(event);
+
+        const violationTypes = new Set([
+            'TAB_SWITCH',
+            'WINDOW_BLUR',
+            'FULLSCREEN_EXIT',
+            'COPY_PASTE_BLOCKED',
+            'CONTEXT_MENU_BLOCKED',
+            'DEVTOOLS_SHORTCUT_BLOCKED'
+        ]);
+
+        if (violationTypes.has(type)) {
+            this.proctoringState.violations += 1;
+            this.updateProctoringStatus();
+        }
+
+        // Feedback
+        if (type === 'TAB_SWITCH') this.showProctoringBanner('Warning: Tab switching detected.');
+        if (type === 'WINDOW_BLUR') this.showProctoringBanner('Warning: Focus lost. Please stay on the test window.');
+        if (type === 'FULLSCREEN_EXIT') this.showProctoringBanner('Warning: Fullscreen exited. Returning to fullscreen...');
+        if (type === 'COPY_PASTE_BLOCKED') this.showProctoringBanner('Copy/Paste is disabled during the test.');
+        if (type === 'CONTEXT_MENU_BLOCKED') this.showProctoringBanner('Right-click is disabled during the test.');
+        if (type === 'DEVTOOLS_SHORTCUT_BLOCKED') this.showProctoringBanner('Developer tools shortcuts are disabled during the test.');
+
+        // Auto-submit if too many violations
+        if (this.testStarted && this.proctoringState.violations >= this.proctoringState.maxViolations) {
+            try {
+                alert('Proctoring: Too many violations detected. The test will be submitted now.');
+            } catch (e) {
+                // ignore
             }
-        }, 5000); // Check every 5 seconds
-        
-        console.log('Proctoring system initialized');
-    }
-    
-    requestFullScreen() {
-        const element = document.documentElement;
-        
-        if (element.requestFullscreen) {
-            element.requestFullscreen().then(() => {
-                this.isFullScreen = true;
-                console.log('Fullscreen enabled');
-            }).catch((err) => {
-                console.log('Fullscreen request denied:', err);
-                if (this.testStarted) {
-                    this.showProctorWarning('Please enable fullscreen mode for the test');
-                }
-            });
-        } else if (element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen();
-            this.isFullScreen = true;
-        } else if (element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
-            this.isFullScreen = true;
-        } else if (element.msRequestFullscreen) {
-            element.msRequestFullscreen();
-            this.isFullScreen = true;
-        }
-    }
-    
-    checkProctoringViolations() {
-        if (!this.testStarted) return;
-        
-        // Check if tab is still active
-        if (!this.isTabActive) {
-            this.recordViolation('Tab inactive for extended period');
-        }
-        
-        // Check if still in fullscreen
-        if (!this.isFullScreen) {
-            this.recordViolation('Not in fullscreen mode');
-            this.requestFullScreen();
-        }
-        
-        // Check for inactivity (more than 2 minutes)
-        const inactivityTime = Date.now() - this.lastActivityTime;
-        if (inactivityTime > 120000) { // 2 minutes
-            this.recordViolation('Extended inactivity detected');
-        }
-    }
-    
-    recordViolation(type) {
-        if (!this.testStarted) return;
-        
-        this.proctorViolations++;
-        const violation = {
-            type: type,
-            timestamp: new Date().toISOString(),
-            timeRemaining: this.timeRemaining
-        };
-        
-        this.proctorWarnings.push(violation);
-        console.warn('Proctoring violation:', violation);
-        
-        // Update UI
-        const violationCountEl = document.getElementById('violation-count');
-        if (violationCountEl) {
-            violationCountEl.textContent = `Violations: ${this.proctorViolations}`;
-            violationCountEl.style.display = 'block';
-        }
-        
-        // Show warning
-        this.showProctorWarning(`Warning: ${type}. Violations: ${this.proctorViolations}/${this.maxViolations}`);
-        
-        // Auto-submit if max violations reached
-        if (this.proctorViolations >= this.maxViolations) {
-            alert(`Maximum violations (${this.maxViolations}) reached. Test will be submitted automatically.`);
             this.submitTest();
         }
     }
-    
-    showProctorWarning(message) {
-        const warningModal = document.getElementById('proctor-warning-modal');
-        if (warningModal) {
-            const warningText = document.getElementById('proctor-warning-message');
-            const violationCount = document.getElementById('modal-violation-count');
-            
-            if (warningText) {
-                warningText.textContent = message;
-            }
-            if (violationCount) {
-                violationCount.textContent = this.proctorViolations;
-            }
-            
-            warningModal.style.display = 'block';
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                warningModal.style.display = 'none';
-            }, 5000);
-        }
-        
-        // Also update status bar
-        const proctorWarning = document.getElementById('proctor-warning');
-        if (proctorWarning) {
-            proctorWarning.textContent = message;
-            proctorWarning.style.display = 'block';
+
+    requestFullscreen() {
+        const el = document.documentElement;
+        const req =
+            el.requestFullscreen ||
+            el.webkitRequestFullscreen ||
+            el.mozRequestFullScreen ||
+            el.msRequestFullscreen;
+
+        if (!req) return;
+
+        try {
+            const result = req.call(el);
+            if (result && typeof result.catch === 'function') result.catch(() => {});
+        } catch (e) {
+            // ignore
         }
     }
-    
-    stopProctoring() {
-        console.log('Stopping proctoring system...');
-        
-        // Clear interval
-        if (this.proctorCheckInterval) {
-            clearInterval(this.proctorCheckInterval);
-            this.proctorCheckInterval = null;
-        }
-        
-        // Exit fullscreen
-        if (document.fullscreenElement) {
-            document.exitFullscreen().catch(() => {});
-        } else if (document.webkitFullscreenElement) {
-            document.webkitExitFullscreen();
-        } else if (document.mozFullScreenElement) {
-            document.mozCancelFullScreen();
-        }
-        
-        this.isFullScreen = false;
-        
-        console.log('Proctoring system stopped');
+
+    enableProctoring() {
+        if (!this.proctoringEnabled) return;
+        if (this.proctoringState.active) return;
+
+        this.ensureProctoringUI();
+        // Ensure status pill is visible when proctoring starts
+        const status = document.getElementById('proctoring-status');
+        if (status) status.style.display = 'inline-flex';
+
+        this.proctoringState.active = true;
+        this.proctoringState.violations = 0;
+        this.proctoringState.events = [];
+        this.updateProctoringStatus();
+
+        // Enter fullscreen when the test starts (startTest is called from a click handler)
+        this.requestFullscreen();
+
+        const onVisibilityChange = () => {
+            if (!this.testStarted) return;
+            if (document.hidden) this.recordProctoringEvent('TAB_SWITCH');
+        };
+
+        const onWindowBlur = () => {
+            if (!this.testStarted) return;
+            this.recordProctoringEvent('WINDOW_BLUR');
+        };
+
+        const onFullscreenChange = () => {
+            if (!this.testStarted) return;
+            const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+            if (!isFs) {
+                this.recordProctoringEvent('FULLSCREEN_EXIT');
+                setTimeout(() => this.requestFullscreen(), 400);
+            }
+        };
+
+        const onContextMenu = (e) => {
+            if (!this.testStarted) return;
+            e.preventDefault();
+            this.recordProctoringEvent('CONTEXT_MENU_BLOCKED');
+        };
+
+        const onCopyPaste = (e) => {
+            if (!this.testStarted) return;
+            e.preventDefault();
+            this.recordProctoringEvent('COPY_PASTE_BLOCKED', { kind: e.type });
+        };
+
+        const onKeyDown = (e) => {
+            if (!this.testStarted) return;
+
+            const key = (e.key || '').toLowerCase();
+
+            // Block common copy/paste/select-all/print/save/view-source
+            if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'a', 'p', 's', 'u'].includes(key)) {
+                e.preventDefault();
+                this.recordProctoringEvent('COPY_PASTE_BLOCKED', { key: e.key });
+                return;
+            }
+
+            // Block devtools shortcuts (best-effort): F12, Ctrl/Cmd+Shift+I/J/C
+            const isF12 = e.key === 'F12';
+            const isDevtoolsCombo = (e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c'].includes(key);
+            if (isF12 || isDevtoolsCombo) {
+                e.preventDefault();
+                this.recordProctoringEvent('DEVTOOLS_SHORTCUT_BLOCKED', { key: e.key });
+            }
+        };
+
+        this.proctoringState.handlers = {
+            onVisibilityChange,
+            onWindowBlur,
+            onFullscreenChange,
+            onContextMenu,
+            onCopyPaste,
+            onKeyDown
+        };
+
+        document.addEventListener('visibilitychange', onVisibilityChange);
+        window.addEventListener('blur', onWindowBlur);
+        document.addEventListener('fullscreenchange', onFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+        document.addEventListener('contextmenu', onContextMenu);
+        document.addEventListener('copy', onCopyPaste);
+        document.addEventListener('cut', onCopyPaste);
+        document.addEventListener('paste', onCopyPaste);
+        document.addEventListener('keydown', onKeyDown, true);
     }
-    
+
+    disableProctoring() {
+        if (!this.proctoringState.active) return;
+        this.proctoringState.active = false;
+
+        const h = this.proctoringState.handlers || {};
+        if (h.onVisibilityChange) document.removeEventListener('visibilitychange', h.onVisibilityChange);
+        if (h.onWindowBlur) window.removeEventListener('blur', h.onWindowBlur);
+        if (h.onFullscreenChange) {
+            document.removeEventListener('fullscreenchange', h.onFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', h.onFullscreenChange);
+        }
+        if (h.onContextMenu) document.removeEventListener('contextmenu', h.onContextMenu);
+        if (h.onCopyPaste) {
+            document.removeEventListener('copy', h.onCopyPaste);
+            document.removeEventListener('cut', h.onCopyPaste);
+            document.removeEventListener('paste', h.onCopyPaste);
+        }
+        if (h.onKeyDown) document.removeEventListener('keydown', h.onKeyDown, true);
+
+        this.proctoringState.handlers = {};
+
+        if (this.proctoringState.bannerTimeout) {
+            clearTimeout(this.proctoringState.bannerTimeout);
+            this.proctoringState.bannerTimeout = null;
+        }
+
+        const banner = document.getElementById('proctoring-banner');
+        if (banner) banner.style.display = 'none';
+
+        // Hide/remove status pill so proctoring is visibly off after submission
+        const status = document.getElementById('proctoring-status');
+        if (status) status.style.display = 'none';
+    }
+
     shuffleQuestions() {
         // Fisher-Yates shuffle algorithm
         const shuffled = [...this.questions];
@@ -2664,25 +2715,130 @@ class NEETMockTest {
     confirmSubmit() {
         // Count unanswered questions
         const unanswered = this.answers.filter(a => a === null).length;
-        const message = `Are you sure you want to submit the test?\n\nUnanswered questions: ${unanswered}\n\nYou cannot change your answers after submission.`;
-        
-        if (confirm(message)) {
-            this.submitTest();
-        }
+        const message =
+            `Are you sure you want to submit the test?\n\n` +
+            `Unanswered questions: ${unanswered}\n\n` +
+            `You cannot change your answers after submission.`;
+
+        this.showConfirmDialog({
+            title: 'Submit Test',
+            message,
+            confirmText: 'Submit',
+            cancelText: 'Cancel',
+            onConfirm: () => this.submitTest()
+        });
     }
 
     submitTest() {
-        // Stop proctoring
-        this.stopProctoring();
-        
-        // Stop all timers
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
+        // Guard: prevent double-submit, but don't rely on testStarted for flow control
+        if (this.isSubmittingTest) return;
+        this.isSubmittingTest = true;
+
+        try {
+            // Stop all timers
+            if (this.timerInterval) {
+                clearInterval(this.timerInterval);
+            }
+
+            // Stop proctoring listeners (if any)
+            this.disableProctoring();
+
+            // Mark test as completed
+            this.testStarted = false;
+
+            // Calculate results, but never block the success screen on UI rendering errors
+            try {
+                this.calculateResults();
+            } catch (calcErr) {
+                console.error('calculateResults() failed', calcErr);
+            }
+            document.getElementById('test-screen')?.classList.remove('active');
+            document.getElementById('test-screen') && (document.getElementById('test-screen').style.display = 'none');
+
+            // Show success page first (user can open results from there)
+            this.showSuccessScreen();
+
+            // Exit fullscreen if active
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                }
+            }
+        } catch (err) {
+            console.error('submitTest() failed', err);
+            try {
+                alert('Submit failed due to an unexpected error. Please refresh and try again.');
+            } catch (e) {
+                // ignore
+            }
+        } finally {
+            // allow future submits after restart
+            this.isSubmittingTest = false;
         }
-        
-        this.calculateResults();
-        document.getElementById('test-screen').classList.remove('active');
-        document.getElementById('results-screen').classList.add('active');
+    }
+
+    showSuccessScreen() {
+        const successScreen = document.getElementById('success-screen');
+        const resultsScreen = document.getElementById('results-screen');
+
+        // Ensure results screen is hidden until user clicks "View Results"
+        if (resultsScreen) {
+            resultsScreen.classList.remove('active');
+            resultsScreen.style.display = 'none';
+        }
+
+        if (successScreen) {
+            successScreen.classList.add('active');
+            successScreen.style.display = 'block';
+        }
+
+        // Fill success metadata
+        const submittedAtEl = document.getElementById('submitted-at');
+        if (submittedAtEl) {
+            submittedAtEl.textContent = new Date().toLocaleString();
+        }
+
+        const violationsEl = document.getElementById('submitted-violations');
+        if (violationsEl) {
+            const v = this.proctoringState?.violations ?? 0;
+            violationsEl.textContent = String(v);
+        }
+
+        // Bind buttons here as well (in case initialization ran before DOM was ready,
+        // or a previous error prevented listeners from being attached).
+        const viewResultsBtn = document.getElementById('view-results-btn');
+        if (viewResultsBtn) {
+            viewResultsBtn.onclick = (e) => {
+                e.preventDefault();
+                this.showResultsScreen();
+            };
+        }
+
+        const takeAnotherBtn = document.getElementById('take-another-test-btn');
+        if (takeAnotherBtn) {
+            takeAnotherBtn.onclick = (e) => {
+                e.preventDefault();
+                this.goToSubjectSelection();
+            };
+        }
+    }
+
+    showResultsScreen() {
+        const successScreen = document.getElementById('success-screen');
+        const resultsScreen = document.getElementById('results-screen');
+
+        if (successScreen) {
+            successScreen.classList.remove('active');
+            successScreen.style.display = 'none';
+        }
+        if (resultsScreen) {
+            resultsScreen.classList.add('active');
+            resultsScreen.style.display = 'block';
+        }
     }
 
     calculateResults() {
@@ -2747,11 +2903,20 @@ class NEETMockTest {
         const percentage = maxScore > 0 ? (totalScore / maxScore * 100) : 0;
         
         // Update results display
-        document.getElementById('total-score').textContent = totalScore;
-        document.getElementById('correct-count').textContent = correctCount;
-        document.getElementById('incorrect-count').textContent = incorrectCount;
-        document.getElementById('unanswered-count').textContent = unansweredCount;
-        document.getElementById('mathematics-score').textContent = `${subjectScore}/${maxScore}`;
+        const totalScoreEl = document.getElementById('total-score');
+        if (totalScoreEl) totalScoreEl.textContent = totalScore;
+
+        const correctCountEl = document.getElementById('correct-count');
+        if (correctCountEl) correctCountEl.textContent = correctCount;
+
+        const incorrectCountEl = document.getElementById('incorrect-count');
+        if (incorrectCountEl) incorrectCountEl.textContent = incorrectCount;
+
+        const unansweredCountEl = document.getElementById('unanswered-count');
+        if (unansweredCountEl) unansweredCountEl.textContent = unansweredCount;
+
+        const subjectScoreEl = document.getElementById('mathematics-score');
+        if (subjectScoreEl) subjectScoreEl.textContent = `${subjectScore}/${maxScore}`;
         const resultSubjectName = document.getElementById('result-subject-name');
         if (resultSubjectName) {
             resultSubjectName.textContent = subject;
@@ -2792,8 +2957,6 @@ class NEETMockTest {
             subject: subject,
             candidateName: 'Siddesh Anand',
             timestamp: new Date().toISOString(),
-            proctorViolations: this.proctorViolations,
-            proctorWarnings: this.proctorWarnings
         };
         
         // Save results to localStorage
@@ -3450,6 +3613,13 @@ class NEETMockTest {
             // Keep only last 100 test results to avoid storage issues
             const limitedResults = allResults.slice(-100);
             localStorage.setItem('allTestResults', JSON.stringify(limitedResults));
+
+            // Also persist to server for cross-device visibility (best-effort)
+            fetch('/api/results', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(resultWithId)
+            }).catch(() => {});
         } catch (e) {
             console.error('Failed to save results to localStorage:', e);
         }
@@ -3765,6 +3935,9 @@ class NEETMockTest {
     }
 
     restartTest() {
+        // Stop proctoring listeners (if any)
+        this.disableProctoring();
+
         // Reset all data
         this.currentQuestionIndex = 0;
         this.answers = new Array(this.questions.length).fill(null);
@@ -3776,13 +3949,9 @@ class NEETMockTest {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
         }
-        
-        // Show subject selection screen
-        document.getElementById('results-screen').classList.remove('active');
-        document.getElementById('test-screen').classList.remove('active');
-        document.getElementById('test-history-screen').classList.remove('active');
-        document.getElementById('welcome-screen').classList.remove('active');
-        document.getElementById('subject-selection-screen').classList.add('active');
+
+        // Return to subject selection
+        this.goToSubjectSelection();
     }
 
     displayAnswerReview() {
@@ -3918,30 +4087,41 @@ class NEETMockTest {
     }
     
     displayAllTestResults() {
-        const allResults = this.getAllTestResults();
-        
-        if (allResults.length === 0) {
-            document.getElementById('test-history-list').innerHTML = `
-                <div class="no-results">
-                    <p>No test results found. Take a test to see your results here.</p>
-                </div>
-            `;
-        } else {
+        const listEl = document.getElementById('test-history-list');
+        if (listEl) {
+            listEl.innerHTML = '<div class="no-results"><p>Loading results...</p></div>';
+        }
+
+        // Ensure we have latest shared results before rendering
+        Promise.resolve(this.syncResultsFromServer()).finally(() => {
+            const allResults = this.getAllTestResults();
+
+            if (allResults.length === 0) {
+                if (listEl) {
+                    listEl.innerHTML = `
+                        <div class="no-results">
+                            <p>No test results found. Take a test to see your results here.</p>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
             // Sort by timestamp (newest first)
             const sortedResults = [...allResults].sort((a, b) => {
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
-            
+
             const historyHTML = sortedResults.map((result, index) => {
                 const timestamp = new Date(result.timestamp);
                 const dateStr = timestamp.toLocaleDateString();
                 const timeStr = timestamp.toLocaleTimeString();
-                const accuracy = result.correctCount + result.incorrectCount > 0 
+                const accuracy = result.correctCount + result.incorrectCount > 0
                     ? ((result.correctCount / (result.correctCount + result.incorrectCount)) * 100).toFixed(1)
                     : 0;
                 const subject = result.subject || 'Mathematics';
                 const maxScore = 200; // Default max score
-                
+
                 return `
                     <div class="test-history-card" data-test-id="${result.id}">
                         <div class="history-card-header">
@@ -3980,9 +4160,9 @@ class NEETMockTest {
                     </div>
                 `;
             }).join('');
-            
-            document.getElementById('test-history-list').innerHTML = historyHTML;
-            
+
+            if (listEl) listEl.innerHTML = historyHTML;
+
             // Add event listeners to view buttons
             document.querySelectorAll('.btn-view-result').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -3990,7 +4170,7 @@ class NEETMockTest {
                     this.displayTestResultById(testId);
                 });
             });
-        }
+        });
         
         // Show history screen
         document.getElementById('subject-selection-screen').classList.remove('active');
@@ -4102,14 +4282,17 @@ class NEETMockTest {
     }
     
     clearAllTestResults() {
-        try {
-            localStorage.removeItem('allTestResults');
-            localStorage.removeItem('lastTestResults');
-            this.displayAllTestResults(); // Refresh the display
-        } catch (e) {
-            console.error('Failed to clear test results:', e);
-            alert('Failed to clear test results.');
-        }
+        // Clear from DB (shared) and local cache
+        fetch('/api/results', { method: 'DELETE' })
+            .then(() => {
+                localStorage.removeItem('allTestResults');
+                localStorage.removeItem('lastTestResults');
+                this.displayAllTestResults(); // Refresh the display
+            })
+            .catch((e) => {
+                console.error('Failed to clear test results:', e);
+                alert('Failed to clear test results.');
+            });
     }
 
     clearAllTestResultsFromAdmin() {
@@ -4124,24 +4307,28 @@ class NEETMockTest {
         if (confirm(confirmMessage)) {
             // Double confirmation
             if (confirm('Final confirmation: Delete ALL test results permanently?')) {
-                try {
-                    localStorage.removeItem('allTestResults');
-                    localStorage.removeItem('lastTestResults');
-                    
-                    // Refresh admin dashboard
-                    this.loadAdminDashboardData();
-                    
-                    // Clear any displayed results
-                    const resultsContainer = document.getElementById('admin-results-container');
-                    if (resultsContainer) {
-                        resultsContainer.innerHTML = '<p class="no-results">All test results have been cleared.</p>';
-                    }
-                    
-                    alert('✅ All test results have been successfully deleted.');
-                } catch (e) {
-                    console.error('Failed to clear test results:', e);
-                    alert('❌ Failed to clear test results: ' + e.message);
-                }
+                fetch('/api/results', { method: 'DELETE' })
+                    .then(async (res) => {
+                        if (!res.ok) throw new Error('Server rejected delete');
+                        // Clear local cache
+                        localStorage.removeItem('allTestResults');
+                        localStorage.removeItem('lastTestResults');
+
+                        // Refresh admin dashboard
+                        this.loadAdminDashboardData();
+
+                        // Clear any displayed results
+                        const resultsContainer = document.getElementById('admin-results-container');
+                        if (resultsContainer) {
+                            resultsContainer.innerHTML = '<p class="no-results">All test results have been cleared.</p>';
+                        }
+
+                        alert('✅ All test results have been successfully deleted.');
+                    })
+                    .catch((e) => {
+                        console.error('Failed to clear test results:', e);
+                        alert('❌ Failed to clear test results: ' + e.message);
+                    });
             }
         }
     }
